@@ -1,9 +1,9 @@
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { MapPin } from "lucide-react";
-import type { Profile } from "@/data/profiles";
+import type { ResonanceProfile } from "@/data/resonance-profile";
 
 interface ProfileCardProps {
-  profile: Profile;
+  profile: ResonanceProfile;
   onSwipe: (direction: "left" | "right") => void;
   isTop: boolean;
 }

@@ -4,7 +4,7 @@ import { Sliders } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsPage from "./MissedConnectionsPage";
-import { profiles } from "@/data/profiles";
+import { resonanceProfiles as profiles } from "@/data/resonance-profile";
 
 type Mode = "discover" | "missed";
 
