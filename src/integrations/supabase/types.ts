@@ -1113,6 +1113,48 @@ export type Database = {
         }
         Relationships: []
       }
+      fumble_photos: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_primary: boolean
+          photo_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_primary?: boolean
+          photo_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_primary?: boolean
+          photo_url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fumble_photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_jam_resources: {
         Row: {
           created_at: string
@@ -5177,36 +5219,42 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
           avatar_url: string | null
           bio: string | null
           created_at: string
           full_name: string | null
           id: string
           is_public: boolean | null
+          onboarding_complete: boolean | null
           profile_types: string[] | null
           role_attributes: Json | null
           updated_at: string
           username: string | null
         }
         Insert: {
+          age?: number | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           full_name?: string | null
           id: string
           is_public?: boolean | null
+          onboarding_complete?: boolean | null
           profile_types?: string[] | null
           role_attributes?: Json | null
           updated_at?: string
           username?: string | null
         }
         Update: {
+          age?: number | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           is_public?: boolean | null
+          onboarding_complete?: boolean | null
           profile_types?: string[] | null
           role_attributes?: Json | null
           updated_at?: string
