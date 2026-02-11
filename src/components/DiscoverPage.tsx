@@ -54,16 +54,53 @@ const DiscoverPage = () => {
     fetchProfiles();
   }, [user]);
 
+  const recordSwipe = useCallback(
+    async (swipedProfile: ResonanceProfile, direction: "left" | "right" | "super") => {
+      if (!user) return;
+      // Record swipe
+      await supabase.from("swipes").upsert({
+        swiper_id: user.id,
+        swiped_id: swipedProfile.id,
+        direction,
+      }, { onConflict: "swiper_id,swiped_id" });
+
+      // Check for mutual match on right/super swipes
+      if (direction === "right" || direction === "super") {
+        const { data: mutual } = await supabase
+          .from("swipes")
+          .select("id")
+          .eq("swiper_id", swipedProfile.id)
+          .eq("swiped_id", user.id)
+          .in("direction", ["right", "super"])
+          .maybeSingle();
+
+        if (mutual) {
+          // Create match (order IDs consistently)
+          const [u1, u2] = [user.id, swipedProfile.id].sort();
+          await supabase.from("matches").upsert({
+            user1_id: u1,
+            user2_id: u2,
+          }, { onConflict: "user1_id,user2_id" });
+        }
+      }
+    },
+    [user]
+  );
+
   const handleSwipe = useCallback(
     (direction: "left" | "right") => {
+      const profile = profiles[currentIndex];
+      if (profile) recordSwipe(profile, direction);
       setCurrentIndex((prev) => prev + 1);
     },
-    []
+    [currentIndex, profiles, recordSwipe]
   );
 
   const handleSuperLike = useCallback(() => {
+    const profile = profiles[currentIndex];
+    if (profile) recordSwipe(profile, "super");
     setCurrentIndex((prev) => prev + 1);
-  }, []);
+  }, [currentIndex, profiles, recordSwipe]);
 
   const visibleProfiles = profiles.slice(currentIndex, currentIndex + 2);
   const allSwiped = currentIndex >= profiles.length;
