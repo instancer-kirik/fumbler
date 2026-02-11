@@ -1,4 +1,4 @@
-import { Flame, Heart, MessageCircle, User } from "lucide-react";
+import { Compass, Heart, MessageCircle, User } from "lucide-react";
 
 interface BottomNavProps {
   active: string;
@@ -6,7 +6,7 @@ interface BottomNavProps {
 }
 
 const navItems = [
-  { id: "discover", icon: Flame, label: "Discover" },
+  { id: "discover", icon: Compass, label: "Discover" },
   { id: "matches", icon: Heart, label: "Matches" },
   { id: "messages", icon: MessageCircle, label: "Messages" },
   { id: "profile", icon: User, label: "Profile" },
@@ -24,14 +24,17 @@ const BottomNav = ({ active, onNavigate }: BottomNavProps) => {
               onClick={() => onNavigate(item.id)}
               className={`flex flex-col items-center gap-1 rounded-xl px-4 py-2 transition-all ${
                 isActive
-                  ? "text-primary"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <item.icon
-                className={`h-6 w-6 transition-all ${isActive ? "fill-primary stroke-primary" : ""}`}
+                className={`h-6 w-6 transition-all ${isActive ? "text-foreground" : ""}`}
               />
-              <span className="text-[10px] font-semibold">{item.label}</span>
+              <span className={`text-[10px] font-semibold ${isActive ? "text-foreground" : ""}`}>{item.label}</span>
+              {isActive && (
+                <div className="h-1 w-1 rounded-full gradient-warm" />
+              )}
             </button>
           );
         })}
