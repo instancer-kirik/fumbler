@@ -6426,6 +6426,63 @@ export type Database = {
         }
         Relationships: []
       }
+      resonance_field_grants: {
+        Row: {
+          created_at: string
+          field_key: string
+          id: string
+          owner_id: string
+          status: string
+          updated_at: string
+          viewer_id: string
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          id?: string
+          owner_id: string
+          status?: string
+          updated_at?: string
+          viewer_id: string
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          id?: string
+          owner_id?: string
+          status?: string
+          updated_at?: string
+          viewer_id?: string
+        }
+        Relationships: []
+      }
+      resonance_field_visibility: {
+        Row: {
+          created_at: string
+          field_key: string
+          id: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["field_visibility"]
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["field_visibility"]
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["field_visibility"]
+        }
+        Relationships: []
+      }
       resource_consumption_logs: {
         Row: {
           consumption_amount: number | null
@@ -9243,6 +9300,7 @@ export type Database = {
         | "venue"
         | "brand"
         | "shop"
+      field_visibility: "public" | "matches" | "express"
       game_jam_status: "upcoming" | "active" | "completed"
       privacy_level: "public" | "friends_only" | "private" | "invite_only"
       project_aspect_type:
@@ -9407,6 +9465,7 @@ export const Constants = {
         "brand",
         "shop",
       ],
+      field_visibility: ["public", "matches", "express"],
       game_jam_status: ["upcoming", "active", "completed"],
       privacy_level: ["public", "friends_only", "private", "invite_only"],
       project_aspect_type: [
