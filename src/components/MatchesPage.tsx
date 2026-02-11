@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { resonanceProfiles, type ResonanceProfile } from "@/data/resonance-profile";
+import { useState, useMemo, useEffect } from "react";
+import { type ResonanceProfile } from "@/data/resonance-profile";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Map, List, StickyNote, Eye } from "lucide-react";
 import ResonanceProfileView from "@/components/ResonanceProfileView";
@@ -17,14 +17,75 @@ import {
   getNudges,
   touchInteraction,
 } from "@/utils/match-helpers";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+
+// Build a minimal ResonanceProfile from DB row
+const dbToProfile = (row: any): ResonanceProfile => ({
+  id: row.id,
+  name: row.full_name || "Anonymous",
+  handle: `@${row.username || "unknown"}`,
+  description: row.bio || "",
+  image: row.avatar_url || "/placeholder.svg",
+  age: row.age || 0,
+  distance: "Nearby",
+  bio: row.bio || "",
+  interests: [],
+  prompt: "My biggest fumble was...",
+  promptAnswer: "Still figuring that out 🫠",
+  core: {} as any,
+  viability: {} as any,
+  experiential: {} as any,
+  economic: {} as any,
+  seeking: {} as any,
+  safety: {} as any,
+  connection: {} as any,
+});
 
 const MatchesPage = () => {
+  const { user } = useAuth();
+  const [matchedProfiles, setMatchedProfiles] = useState<ResonanceProfile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [matchData, setMatchData] = useState<Record<string, MatchData>>({});
   const [activeProfile, setActiveProfile] = useState<ResonanceProfile | null>(null);
   const [viewingResonance, setViewingResonance] = useState<ResonanceProfile | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [dismissedNudges, setDismissedNudges] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      if (!user) return;
+      // Get matches where I'm user1 or user2
+      const { data: matchRows } = await supabase
+        .from("matches")
+        .select("user1_id, user2_id")
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+      if (!matchRows || matchRows.length === 0) {
+        setMatchedProfiles([]);
+        setLoading(false);
+        return;
+      }
+
+      // Get the other user's ID from each match
+      const otherIds = matchRows.map((m: any) =>
+        m.user1_id === user.id ? m.user2_id : m.user1_id
+      );
+
+      // Fetch their profiles
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, username, avatar_url, bio, age")
+        .in("id", otherIds);
+
+      if (profiles) {
+        setMatchedProfiles(profiles.map(dbToProfile));
+      }
+      setLoading(false);
+    };
+    fetchMatches();
+  }, [user]);
 
   const getMatchData = (id: string): MatchData => matchData[id] || { tags: [], notes: "" };
 
@@ -50,14 +111,14 @@ const MatchesPage = () => {
     setActiveProfile(profile);
   };
 
-  const filteredProfiles = resonanceProfiles.filter((p) =>
+  const filteredProfiles = matchedProfiles.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const tieredGroups = useMemo(() => groupByTier(filteredProfiles), [filteredProfiles]);
   const nudges = useMemo(
-    () => getNudges(resonanceProfiles).filter((n) => !dismissedNudges.has(n.profile.id)),
-    [dismissedNudges]
+    () => getNudges(matchedProfiles).filter((n) => !dismissedNudges.has(n.profile.id)),
+    [matchedProfiles, dismissedNudges]
   );
 
   const tierOrder: MatchTier[] = ["hot", "warming", "cold"];
