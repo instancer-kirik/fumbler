@@ -1,12 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import BottomNav from "@/components/BottomNav";
+import DiscoverPage from "@/components/DiscoverPage";
+import MatchesPage from "@/components/MatchesPage";
+import ProfilePage from "@/components/ProfilePage";
 
 const Index = () => {
+  const [activePage, setActivePage] = useState("discover");
+
+  const renderPage = () => {
+    switch (activePage) {
+      case "discover":
+        return <DiscoverPage />;
+      case "matches":
+      case "messages":
+        return <MatchesPage />;
+      case "profile":
+        return <ProfilePage />;
+      default:
+        return <DiscoverPage />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="mx-auto max-w-lg min-h-screen bg-background">
+      {renderPage()}
+      <BottomNav active={activePage} onNavigate={setActivePage} />
     </div>
   );
 };
