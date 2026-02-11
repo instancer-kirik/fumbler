@@ -93,10 +93,14 @@ const MatchDetailSheet = ({
         </AnimatePresence>
 
         {/* Quick resonance peek */}
-        <div className="mb-4 rounded-2xl bg-secondary/30 p-3">
-          <p className="text-xs font-semibold text-foreground mb-2">🪞 {profile.experiential.type.archetype}</p>
-          <p className="text-xs text-muted-foreground italic">"{profile.experiential.lessons[0]}"</p>
-        </div>
+        {profile.experiential?.type?.archetype && (
+          <div className="mb-4 rounded-2xl bg-secondary/30 p-3">
+            <p className="text-xs font-semibold text-foreground mb-2">🪞 {profile.experiential.type.archetype}</p>
+            {profile.experiential.lessons?.[0] && (
+              <p className="text-xs text-muted-foreground italic">"{profile.experiential.lessons[0]}"</p>
+            )}
+          </div>
+        )}
 
         {/* Tags section */}
         <div className="mb-5">
