@@ -1,87 +1,78 @@
 import { useState, useEffect } from "react";
-import { Settings, Edit3, Shield, HelpCircle, Palette, Check } from "lucide-react";
+import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import profile1 from "@/assets/profile-1.jpg";
 
-const themes = [
+// Curated swatches grouped by mood — enough variety, not chaos
+const colorGroups = [
   {
-    id: "honey",
-    name: "Honey",
-    colors: ["45 95% 55%", "30 80% 55%", "45 30% 97%", "30 20% 12%"],
-    preview: ["#E5A800", "#CC7A29", "#F7F3ED", "#231E17"],
+    label: "Warm",
+    swatches: [
+      { id: "honey",    hue: 45,  sat: 95, lit: 55, name: "Honey",    hex: "#E5A800" },
+      { id: "amber",    hue: 35,  sat: 90, lit: 50, name: "Amber",    hex: "#E09420" },
+      { id: "tangerine",hue: 25,  sat: 90, lit: 52, name: "Tangerine",hex: "#E87A1A" },
+      { id: "ember",    hue: 15,  sat: 85, lit: 50, name: "Ember",    hex: "#E06030" },
+      { id: "coral",    hue: 5,   sat: 80, lit: 58, name: "Coral",    hex: "#E86050" },
+      { id: "peach",    hue: 20,  sat: 80, lit: 68, name: "Peach",    hex: "#F0A070" },
+    ],
   },
   {
-    id: "rose",
-    name: "Rosé",
-    colors: ["350 80% 60%", "330 70% 50%", "350 30% 97%", "350 20% 12%"],
-    preview: ["#E0527A", "#B33D8A", "#F7EDF0", "#2B1720"],
+    label: "Cool",
+    swatches: [
+      { id: "ocean",    hue: 200, sat: 80, lit: 50, name: "Ocean",    hex: "#1A99E0" },
+      { id: "sky",      hue: 195, sat: 70, lit: 58, name: "Sky",      hex: "#40B0D0" },
+      { id: "teal",     hue: 175, sat: 65, lit: 42, name: "Teal",     hex: "#259990" },
+      { id: "mint",     hue: 160, sat: 55, lit: 48, name: "Mint",     hex: "#38B088" },
+      { id: "sage",     hue: 140, sat: 30, lit: 50, name: "Sage",     hex: "#5C9966" },
+      { id: "forest",   hue: 150, sat: 45, lit: 38, name: "Forest",   hex: "#358C5C" },
+    ],
   },
   {
-    id: "lavender",
-    name: "Lavender",
-    colors: ["270 60% 60%", "290 50% 50%", "270 30% 97%", "270 20% 12%"],
-    preview: ["#9966CC", "#9933B3", "#F1EDF7", "#1F172B"],
-  },
-  {
-    id: "ocean",
-    name: "Ocean",
-    colors: ["200 80% 50%", "220 70% 45%", "200 30% 97%", "210 20% 12%"],
-    preview: ["#1A99E0", "#2656A3", "#EDF3F7", "#17202B"],
-  },
-  {
-    id: "mint",
-    name: "Mint",
-    colors: ["160 60% 45%", "140 50% 40%", "160 30% 97%", "160 20% 12%"],
-    preview: ["#2EB88A", "#339966", "#EDF7F3", "#172B22"],
-  },
-  {
-    id: "ember",
-    name: "Ember",
-    colors: ["15 90% 55%", "0 75% 50%", "20 30% 97%", "15 20% 12%"],
-    preview: ["#E8651A", "#C03030", "#F7F0ED", "#2B1D17"],
-  },
-  {
-    id: "midnight",
-    name: "Midnight",
-    colors: ["240 50% 55%", "260 40% 45%", "240 20% 97%", "240 20% 10%"],
-    preview: ["#5555CC", "#6D47A3", "#F0F0F7", "#18182B"],
-  },
-  {
-    id: "sage",
-    name: "Sage",
-    colors: ["130 30% 50%", "90 25% 45%", "120 20% 97%", "120 20% 12%"],
-    preview: ["#5C9966", "#6B8C59", "#F0F5F0", "#1A2B1A"],
+    label: "Bold",
+    swatches: [
+      { id: "rose",     hue: 345, sat: 75, lit: 55, name: "Rosé",     hex: "#D94070" },
+      { id: "magenta",  hue: 330, sat: 70, lit: 50, name: "Magenta",  hex: "#C03080" },
+      { id: "plum",     hue: 300, sat: 45, lit: 45, name: "Plum",     hex: "#A34DA3" },
+      { id: "lavender", hue: 270, sat: 55, lit: 58, name: "Lavender", hex: "#9066CC" },
+      { id: "indigo",   hue: 240, sat: 50, lit: 52, name: "Indigo",   hex: "#5050C0" },
+      { id: "midnight", hue: 225, sat: 55, lit: 45, name: "Midnight", hex: "#3B52A5" },
+    ],
   },
 ];
 
-function applyTheme(themeId: string) {
-  const theme = themes.find((t) => t.id === themeId);
-  if (!theme) return;
+const allSwatches = colorGroups.flatMap((g) => g.swatches);
 
-  const [primary, accent, background, foreground] = theme.colors;
+function deriveAccentHue(hue: number) {
+  // Complementary-adjacent accent
+  return (hue + 30) % 360;
+}
+
+function applyCustomTheme(swatch: { hue: number; sat: number; lit: number }) {
+  const { hue, sat, lit } = swatch;
   const root = document.documentElement;
+  const primary = `${hue} ${sat}% ${lit}%`;
+  const accentHue = deriveAccentHue(hue);
+  const accent = `${accentHue} ${Math.max(sat - 15, 30)}% ${lit}%`;
 
   root.style.setProperty("--primary", primary);
   root.style.setProperty("--accent", accent);
   root.style.setProperty("--ring", primary);
-  root.style.setProperty("--background", background);
-  root.style.setProperty("--foreground", foreground);
-  root.style.setProperty("--card-foreground", foreground);
-  root.style.setProperty("--popover-foreground", foreground);
-  root.style.setProperty("--primary-foreground", foreground);
-  root.style.setProperty("--secondary-foreground", foreground);
 
-  // Derive secondary/muted from primary hue
-  const hue = primary.split(" ")[0];
-  root.style.setProperty("--secondary", `${hue} 40% 92%`);
-  root.style.setProperty("--muted", `${hue} 15% 94%`);
-  root.style.setProperty("--muted-foreground", `${hue} 10% 50%`);
-  root.style.setProperty("--border", `${hue} 15% 90%`);
-  root.style.setProperty("--input", `${hue} 15% 90%`);
-  root.style.setProperty("--card", `${hue} 25% 99%`);
-  root.style.setProperty("--popover", `${hue} 25% 99%`);
+  // Background & foreground stay neutral but tinted
+  root.style.setProperty("--background", `${hue} 20% 97%`);
+  root.style.setProperty("--foreground", `${hue} 15% 12%`);
+  root.style.setProperty("--card", `${hue} 18% 99%`);
+  root.style.setProperty("--card-foreground", `${hue} 15% 12%`);
+  root.style.setProperty("--popover", `${hue} 18% 99%`);
+  root.style.setProperty("--popover-foreground", `${hue} 15% 12%`);
+  root.style.setProperty("--primary-foreground", `${hue} 15% 12%`);
+  root.style.setProperty("--secondary", `${hue} 30% 92%`);
+  root.style.setProperty("--secondary-foreground", `${hue} 15% 12%`);
+  root.style.setProperty("--muted", `${hue} 12% 94%`);
+  root.style.setProperty("--muted-foreground", `${hue} 8% 48%`);
+  root.style.setProperty("--border", `${hue} 12% 90%`);
+  root.style.setProperty("--input", `${hue} 12% 90%`);
 
-  // Update gradients
   root.style.setProperty(
     "--gradient-warm",
     `linear-gradient(135deg, hsl(${primary}), hsl(${accent}))`
@@ -90,8 +81,10 @@ function applyTheme(themeId: string) {
     "--gradient-hero",
     `linear-gradient(135deg, hsl(${primary}) 0%, hsl(${accent}) 100%)`
   );
-
-  localStorage.setItem("fumble-theme", themeId);
+  root.style.setProperty(
+    "--shadow-card",
+    `0 8px 32px -8px hsl(${hue} ${sat}% ${lit}% / 0.12), 0 2px 8px -2px hsl(0 0% 0% / 0.06)`
+  );
 }
 
 const ProfilePage = () => {
@@ -101,12 +94,15 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    applyTheme(activeTheme);
+    const saved = localStorage.getItem("fumble-theme") || "honey";
+    const swatch = allSwatches.find((s) => s.id === saved);
+    if (swatch) applyCustomTheme(swatch);
   }, []);
 
-  const handleThemeSelect = (themeId: string) => {
-    setActiveTheme(themeId);
-    applyTheme(themeId);
+  const handleSelect = (swatch: (typeof allSwatches)[0]) => {
+    setActiveTheme(swatch.id);
+    applyCustomTheme(swatch);
+    localStorage.setItem("fumble-theme", swatch.id);
   };
 
   return (
@@ -118,11 +114,13 @@ const ProfilePage = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setShowPalette(!showPalette)}
-            className={`rounded-full p-2.5 transition-colors ${
-              showPalette ? "gradient-warm" : "bg-secondary"
+            className={`rounded-full p-2.5 transition-all ${
+              showPalette ? "gradient-warm scale-105" : "bg-secondary"
             }`}
           >
-            <Palette className={`h-5 w-5 ${showPalette ? "text-primary-foreground" : "text-foreground"}`} />
+            <Palette
+              className={`h-5 w-5 ${showPalette ? "text-primary-foreground" : "text-foreground"}`}
+            />
           </button>
           <button className="rounded-full bg-secondary p-2.5">
             <Settings className="h-5 w-5 text-foreground" />
@@ -138,41 +136,64 @@ const ProfilePage = () => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden mb-6"
           >
-            <div className="rounded-2xl bg-card p-4 shadow-card">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Choose your vibe
-              </p>
-              <div className="grid grid-cols-4 gap-3">
-                {themes.map((theme) => {
-                  const isActive = activeTheme === theme.id;
-                  return (
-                    <button
-                      key={theme.id}
-                      onClick={() => handleThemeSelect(theme.id)}
-                      className={`relative flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all ${
-                        isActive
-                          ? "bg-secondary ring-2 ring-primary"
-                          : "hover:bg-secondary/50"
-                      }`}
-                    >
-                      <div className="relative flex h-10 w-10 items-center justify-center rounded-full overflow-hidden">
-                        <div
-                          className="absolute inset-0"
-                          style={{
-                            background: `linear-gradient(135deg, ${theme.preview[0]}, ${theme.preview[1]})`,
-                          }}
-                        />
-                        {isActive && (
-                          <Check className="relative z-10 h-4 w-4 text-white drop-shadow-md" />
-                        )}
-                      </div>
-                      <span className="text-[10px] font-medium text-foreground">
-                        {theme.name}
-                      </span>
-                    </button>
-                  );
-                })}
+            <div className="rounded-2xl bg-card p-4 shadow-card space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-foreground">
+                  Theme
+                </p>
+                <span className="text-xs text-muted-foreground">
+                  {allSwatches.find((s) => s.id === activeTheme)?.name || "Custom"}
+                </span>
               </div>
+
+              {colorGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
+                    {group.label}
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    {group.swatches.map((swatch) => {
+                      const isActive = activeTheme === swatch.id;
+                      return (
+                        <button
+                          key={swatch.id}
+                          onClick={() => handleSelect(swatch)}
+                          className="group relative flex flex-col items-center gap-1"
+                          title={swatch.name}
+                        >
+                          <div
+                            className={`h-9 w-9 rounded-full transition-all ${
+                              isActive
+                                ? "ring-2 ring-offset-2 ring-offset-card ring-foreground scale-110"
+                                : "hover:scale-105"
+                            }`}
+                            style={{ backgroundColor: swatch.hex }}
+                          >
+                            {isActive && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="flex h-full w-full items-center justify-center"
+                              >
+                                <Check className="h-4 w-4 text-white drop-shadow-md" />
+                              </motion.div>
+                            )}
+                          </div>
+                          <span
+                            className={`text-[9px] transition-colors ${
+                              isActive
+                                ? "text-foreground font-semibold"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {swatch.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.div>
         )}
@@ -229,6 +250,7 @@ const ProfilePage = () => {
           >
             <item.icon className="h-5 w-5 text-muted-foreground" />
             <span className="font-medium text-foreground">{item.label}</span>
+            <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
           </button>
         ))}
       </div>
