@@ -5278,6 +5278,7 @@ export type Database = {
           is_public: boolean | null
           onboarding_complete: boolean | null
           profile_types: string[] | null
+          resonance_data: Json | null
           role_attributes: Json | null
           updated_at: string
           username: string | null
@@ -5292,6 +5293,7 @@ export type Database = {
           is_public?: boolean | null
           onboarding_complete?: boolean | null
           profile_types?: string[] | null
+          resonance_data?: Json | null
           role_attributes?: Json | null
           updated_at?: string
           username?: string | null
@@ -5306,6 +5308,7 @@ export type Database = {
           is_public?: boolean | null
           onboarding_complete?: boolean | null
           profile_types?: string[] | null
+          resonance_data?: Json | null
           role_attributes?: Json | null
           updated_at?: string
           username?: string | null

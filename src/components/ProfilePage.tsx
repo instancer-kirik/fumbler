@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import ThemePalette from "@/components/profile/ThemePalette";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
+import ResonanceEditor from "@/components/profile/ResonanceEditor";
 
 interface UserProfile {
   id: string;
@@ -21,6 +22,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [showPalette, setShowPalette] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showResonance, setShowResonance] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -119,6 +121,7 @@ const ProfilePage = () => {
       <div className="mt-6 space-y-2">
         {[
           { icon: Edit3, label: "Edit Profile", action: () => setShowEdit(true) },
+          { icon: Settings, label: "Resonance Profile", action: () => setShowResonance(true) },
           { icon: Shield, label: "Safety & Privacy" },
           { icon: HelpCircle, label: "Help & Support" },
         ].map((item) => (
@@ -139,6 +142,11 @@ const ProfilePage = () => {
         onOpenChange={setShowEdit}
         profile={profile}
         onSaved={fetchProfile}
+      />
+
+      <ResonanceEditor
+        open={showResonance}
+        onOpenChange={setShowResonance}
       />
     </div>
   );
