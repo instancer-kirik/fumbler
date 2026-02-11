@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import profile1 from "@/assets/profile-1.jpg";
 
@@ -41,6 +41,40 @@ const colorGroups = [
 ];
 
 const allSwatches = colorGroups.flatMap((g) => g.swatches);
+
+type CustomSwatch = { id: string; hue: number; sat: number; lit: number; name: string; hex: string };
+
+function loadCustomSwatches(): CustomSwatch[] {
+  try {
+    return JSON.parse(localStorage.getItem("fumble-custom-swatches") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomSwatches(swatches: CustomSwatch[]) {
+  localStorage.setItem("fumble-custom-swatches", JSON.stringify(swatches));
+}
+
+function hexToHsl(hex: string): { hue: number; sat: number; lit: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return null;
+  let r = parseInt(result[1], 16) / 255;
+  let g = parseInt(result[2], 16) / 255;
+  let b = parseInt(result[3], 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return { hue: Math.round(h * 360), sat: Math.round(s * 100), lit: Math.round(l * 100) };
+}
 
 function deriveAccentHue(hue: number) {
   // Complementary-adjacent accent
@@ -89,20 +123,52 @@ function applyCustomTheme(swatch: { hue: number; sat: number; lit: number }) {
 
 const ProfilePage = () => {
   const [showPalette, setShowPalette] = useState(false);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customHex, setCustomHex] = useState("#");
+  const [customName, setCustomName] = useState("");
+  const [customSwatches, setCustomSwatches] = useState<CustomSwatch[]>(loadCustomSwatches);
   const [activeTheme, setActiveTheme] = useState(() => {
     return localStorage.getItem("fumble-theme") || "honey";
   });
 
+  const allAvailable = [...allSwatches, ...customSwatches];
+
   useEffect(() => {
     const saved = localStorage.getItem("fumble-theme") || "honey";
-    const swatch = allSwatches.find((s) => s.id === saved);
+    const swatch = allAvailable.find((s) => s.id === saved);
     if (swatch) applyCustomTheme(swatch);
   }, []);
 
-  const handleSelect = (swatch: (typeof allSwatches)[0]) => {
+  const handleSelect = (swatch: { id: string; hue: number; sat: number; lit: number }) => {
     setActiveTheme(swatch.id);
     applyCustomTheme(swatch);
     localStorage.setItem("fumble-theme", swatch.id);
+  };
+
+  const handleAddCustom = () => {
+    const hex = customHex.startsWith("#") ? customHex : `#${customHex}`;
+    const hsl = hexToHsl(hex);
+    if (!hsl) return;
+    const name = customName.trim() || `Custom`;
+    const id = `custom-${Date.now()}`;
+    const swatch: CustomSwatch = { id, ...hsl, name, hex };
+    const updated = [...customSwatches, swatch];
+    setCustomSwatches(updated);
+    saveCustomSwatches(updated);
+    handleSelect(swatch);
+    setCustomHex("#");
+    setCustomName("");
+    setShowCustomInput(false);
+  };
+
+  const handleRemoveCustom = (id: string) => {
+    const updated = customSwatches.filter((s) => s.id !== id);
+    setCustomSwatches(updated);
+    saveCustomSwatches(updated);
+    if (activeTheme === id) {
+      const honey = allSwatches[0];
+      handleSelect(honey);
+    }
   };
 
   return (
@@ -142,7 +208,7 @@ const ProfilePage = () => {
                   Theme
                 </p>
                 <span className="text-xs text-muted-foreground">
-                  {allSwatches.find((s) => s.id === activeTheme)?.name || "Custom"}
+                  {allAvailable.find((s) => s.id === activeTheme)?.name || "Custom"}
                 </span>
               </div>
 
@@ -194,6 +260,122 @@ const ProfilePage = () => {
                   </div>
                 </div>
               ))}
+
+              {/* Custom swatches */}
+              {customSwatches.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
+                    Yours
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    {customSwatches.map((swatch) => {
+                      const isActive = activeTheme === swatch.id;
+                      return (
+                        <button
+                          key={swatch.id}
+                          onClick={() => handleSelect(swatch)}
+                          onDoubleClick={() => handleRemoveCustom(swatch.id)}
+                          className="group relative flex flex-col items-center gap-1"
+                          title={`${swatch.name} — double-tap to remove`}
+                        >
+                          <div
+                            className={`h-9 w-9 rounded-full transition-all ${
+                              isActive
+                                ? "ring-2 ring-offset-2 ring-offset-card ring-foreground scale-110"
+                                : "hover:scale-105"
+                            }`}
+                            style={{ backgroundColor: swatch.hex }}
+                          >
+                            {isActive && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="flex h-full w-full items-center justify-center"
+                              >
+                                <Check className="h-4 w-4 text-white drop-shadow-md" />
+                              </motion.div>
+                            )}
+                          </div>
+                          <span
+                            className={`text-[9px] transition-colors ${
+                              isActive ? "text-foreground font-semibold" : "text-muted-foreground"
+                            }`}
+                          >
+                            {swatch.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Add custom hex */}
+              <div className="border-t border-border pt-3">
+                {!showCustomInput ? (
+                  <button
+                    onClick={() => setShowCustomInput(true)}
+                    className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add custom color
+                  </button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-2"
+                  >
+                    <div className="flex gap-2">
+                      <div className="flex-1 flex items-center gap-2 rounded-xl bg-secondary px-3 py-2">
+                        <div
+                          className="h-5 w-5 rounded-full border border-border shrink-0"
+                          style={{
+                            backgroundColor: /^#[0-9A-Fa-f]{6}$/.test(customHex) ? customHex : "#ccc",
+                          }}
+                        />
+                        <input
+                          type="text"
+                          value={customHex}
+                          onChange={(e) => {
+                            let v = e.target.value;
+                            if (!v.startsWith("#")) v = "#" + v;
+                            setCustomHex(v.slice(0, 7));
+                          }}
+                          placeholder="#A855F7"
+                          className="bg-transparent text-sm font-mono text-foreground outline-none w-20"
+                          maxLength={7}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={customName}
+                          onChange={(e) => setCustomName(e.target.value)}
+                          placeholder="Name it…"
+                          className="w-full rounded-xl bg-secondary px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                          maxLength={16}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleAddCustom}
+                        disabled={!/^#[0-9A-Fa-f]{6}$/.test(customHex)}
+                        className="flex-1 rounded-xl bg-primary py-2 text-xs font-semibold text-primary-foreground disabled:opacity-40 transition-opacity"
+                      >
+                        Save color
+                      </button>
+                      <button
+                        onClick={() => { setShowCustomInput(false); setCustomHex("#"); setCustomName(""); }}
+                        className="rounded-xl bg-secondary px-3 py-2"
+                      >
+                        <X className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
