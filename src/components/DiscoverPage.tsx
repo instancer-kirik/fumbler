@@ -1,14 +1,58 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sliders, Menu } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
-import { resonanceProfiles as profiles } from "@/data/resonance-profile";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import type { ResonanceProfile } from "@/data/resonance-profile";
+
+// Build a minimal ResonanceProfile from DB row for the card stack
+const dbToCardProfile = (row: any): ResonanceProfile => ({
+  id: row.id,
+  name: row.full_name || "Anonymous",
+  handle: `@${row.username || "unknown"}`,
+  description: row.bio || "",
+  image: row.avatar_url || "/placeholder.svg",
+  age: row.age || 0,
+  distance: "Nearby",
+  bio: row.bio || "",
+  interests: [],
+  prompt: "My biggest fumble was...",
+  promptAnswer: "Still figuring that out 🫠",
+  core: {} as any,
+  viability: {} as any,
+  experiential: {} as any,
+  economic: {} as any,
+  seeking: {} as any,
+  safety: {} as any,
+  connection: {} as any,
+});
 
 const DiscoverPage = () => {
+  const { user } = useAuth();
+  const [profiles, setProfiles] = useState<ResonanceProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, username, avatar_url, bio, age")
+        .neq("id", user.id)
+        .eq("onboarding_complete", true);
+
+      if (!error && data) {
+        setProfiles(data.map(dbToCardProfile));
+      }
+      setLoading(false);
+    };
+    fetchProfiles();
+  }, [user]);
 
   const handleSwipe = useCallback(
     (direction: "left" | "right") => {
@@ -47,7 +91,11 @@ const DiscoverPage = () => {
       {/* Card stack */}
       <div className="relative mx-auto w-full max-w-sm flex-1 px-4">
         <div className="relative h-[65vh] w-full">
-          {allSwiped ? (
+          {loading ? (
+            <div className="flex h-full items-center justify-center">
+              <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            </div>
+          ) : allSwiped || profiles.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -55,17 +103,21 @@ const DiscoverPage = () => {
             >
               <span className="mb-4 text-6xl">🫠</span>
               <h2 className="mb-2 font-display text-xl font-bold text-foreground">
-                No more profiles!
+                {profiles.length === 0 ? "No one here yet!" : "No more profiles!"}
               </h2>
               <p className="text-center text-sm text-muted-foreground px-8">
-                You've seen everyone nearby. Check back later for new fumbles.
+                {profiles.length === 0
+                  ? "Be patient — more people are joining."
+                  : "You've seen everyone nearby. Check back later for new fumbles."}
               </p>
-              <button
-                onClick={() => setCurrentIndex(0)}
-                className="mt-6 gradient-warm rounded-full px-6 py-3 font-semibold text-primary-foreground shadow-elevated"
-              >
-                Start Over
-              </button>
+              {profiles.length > 0 && (
+                <button
+                  onClick={() => setCurrentIndex(0)}
+                  className="mt-6 gradient-warm rounded-full px-6 py-3 font-semibold text-primary-foreground shadow-elevated"
+                >
+                  Start Over
+                </button>
+              )}
             </motion.div>
           ) : (
             <AnimatePresence>
@@ -86,7 +138,7 @@ const DiscoverPage = () => {
       </div>
 
       {/* Actions */}
-      {!allSwiped && (
+      {!allSwiped && !loading && profiles.length > 0 && (
         <div className="py-4">
           <SwipeActions onSwipe={handleSwipe} onSuperLike={handleSuperLike} />
         </div>
