@@ -19,7 +19,10 @@ const queryClient = new QueryClient();
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, onboardingComplete } = useAuth();
 
-  if (loading || (user && onboardingComplete === null)) {
+  // Show loading only while auth is resolving or onboarding check is in-flight
+  const isResolving = loading || (user && onboardingComplete === null);
+
+  if (isResolving) {
     return (
       <div className="mx-auto max-w-lg min-h-screen bg-background flex items-center justify-center">
         <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -28,7 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
-  if (!onboardingComplete) return <Navigate to="/onboarding" replace />;
+  if (onboardingComplete === false) return <Navigate to="/onboarding" replace />;
 
   return <>{children}</>;
 };

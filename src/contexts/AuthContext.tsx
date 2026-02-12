@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,26 +21,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
 
-  const checkOnboarding = async (userId: string) => {
-    const { data } = await supabase
+  const checkOnboarding = useCallback((userId: string) => {
+    supabase
       .from("profiles")
       .select("onboarding_complete")
       .eq("id", userId)
-      .maybeSingle();
-    setOnboardingComplete(data?.onboarding_complete ?? false);
-  };
+      .maybeSingle()
+      .then(({ data }) => {
+        setOnboardingComplete(data?.onboarding_complete ?? false);
+      });
+  }, []);
 
-  const refreshOnboarding = async () => {
-    if (user) await checkOnboarding(user.id);
-  };
+  const refreshOnboarding = useCallback(async () => {
+    if (user) checkOnboarding(user.id);
+  }, [user, checkOnboarding]);
 
   useEffect(() => {
+    // Get initial session first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        checkOnboarding(session.user.id);
+      }
+      setLoading(false);
+    });
+
+    // Then listen for changes — no async work inside the callback
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await checkOnboarding(session.user.id);
+          // Use setTimeout to avoid Supabase deadlock with async in callback
+          setTimeout(() => checkOnboarding(session.user.id), 0);
         } else {
           setOnboardingComplete(null);
         }
@@ -48,17 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await checkOnboarding(session.user.id);
-      }
-      setLoading(false);
-    });
-
     return () => subscription.unsubscribe();
-  }, []);
+  }, [checkOnboarding]);
 
   const signUp = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({ email, password });
