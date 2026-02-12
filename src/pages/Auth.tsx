@@ -14,11 +14,23 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Trim and validate email before sending
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      toast.error("Please enter a valid email address (no spaces).");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
 
     const { error } = isSignUp
-      ? await signUp(email, password)
-      : await signIn(email, password);
+      ? await signUp(trimmedEmail, password)
+      : await signIn(trimmedEmail, password);
 
     setLoading(false);
 
