@@ -510,12 +510,19 @@ const EditorSection = ({
   onVisibilityChange?: (v: Visibility) => void;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
+  const [hasOpened, setHasOpened] = useState(defaultOpen);
+
+  const handleToggle = () => {
+    const next = !open;
+    setOpen(next);
+    if (next) setHasOpened(true);
+  };
 
   return (
     <div className="rounded-2xl bg-card border border-border overflow-hidden">
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={handleToggle}
         className="flex w-full items-center gap-3 p-4 text-left"
       >
         <span className="text-xl">{icon}</span>
@@ -538,7 +545,9 @@ const EditorSection = ({
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 pt-0 space-y-3">{children}</div>
+            <div className="px-4 pb-4 pt-0 space-y-3">
+              {hasOpened ? children : null}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
