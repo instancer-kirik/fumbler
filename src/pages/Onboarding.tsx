@@ -33,7 +33,7 @@ const Onboarding = () => {
     if (error) {
       toast.error("Failed to save profile: " + error.message);
     } else {
-      navigate("/app");
+      navigate("/discover");
     }
   };
 
