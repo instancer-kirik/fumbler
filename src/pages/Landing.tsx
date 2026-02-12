@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Heart, Sparkles, MessageCircle } from "lucide-react";
+import { Heart, Sparkles, MessageCircle, Handshake, Zap } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -22,7 +22,9 @@ const Landing = () => {
             fumble
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
-            Dating, but make it honest. Embrace the awkward.
+            No guessing games. No unspoken debts.
+            <br />
+            <span className="text-foreground font-medium">Just clarity, consent & a little chaos.</span>
           </p>
         </motion.div>
 
@@ -34,9 +36,10 @@ const Landing = () => {
           className="mt-10 flex flex-col gap-3 w-full max-w-xs"
         >
           {[
-            { icon: Sparkles, text: "Resonance-based matching" },
+            { icon: Sparkles, text: "Resonance matching, not algorithms" },
+            { icon: Handshake, text: "Mutual agreements, not assumptions" },
             { icon: MessageCircle, text: "Missed connections, found" },
-            { icon: Heart, text: "Perfectly imperfect vibes" },
+            { icon: Zap, text: "Playful stakes, real accountability" },
           ].map((item, i) => (
             <div
               key={i}
@@ -49,20 +52,30 @@ const Landing = () => {
             </div>
           ))}
         </motion.div>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mt-8 text-xs text-muted-foreground max-w-[260px] leading-relaxed"
+        >
+          Social contracts, but editable. Set expectations together — before the awkward part.
+        </motion.p>
       </div>
 
       {/* CTA */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
         className="px-6 pb-10 space-y-3"
       >
         <button
           onClick={() => navigate("/auth")}
           className="w-full rounded-2xl gradient-warm py-4 text-sm font-semibold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
         >
-          Get Started
+          Start fumbling
         </button>
         <button
           onClick={() => navigate("/auth")}
