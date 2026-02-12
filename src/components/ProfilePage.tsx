@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X, LogOut } from "lucide-react";
+import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X, LogOut, Upload } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import ThemePalette from "@/components/profile/ThemePalette";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ResonanceEditor from "@/components/profile/ResonanceEditor";
+import ToonImportSheet from "@/components/profile/ToonImportSheet";
 
 interface UserProfile {
   id: string;
@@ -23,6 +24,7 @@ const ProfilePage = () => {
   const [showPalette, setShowPalette] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showResonance, setShowResonance] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -122,6 +124,7 @@ const ProfilePage = () => {
         {[
           { icon: Edit3, label: "Edit Profile", action: () => setShowEdit(true) },
           { icon: Settings, label: "Resonance Profile", action: () => setShowResonance(true) },
+          { icon: Upload, label: "Import Resonance (TOON)", action: () => setShowImport(true) },
           { icon: Shield, label: "Safety & Privacy" },
           { icon: HelpCircle, label: "Help & Support" },
         ].map((item) => (
@@ -147,6 +150,11 @@ const ProfilePage = () => {
       <ResonanceEditor
         open={showResonance}
         onOpenChange={setShowResonance}
+      />
+
+      <ToonImportSheet
+        open={showImport}
+        onOpenChange={setShowImport}
       />
     </div>
   );
