@@ -6,6 +6,8 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  onboardingComplete: boolean | null;
+  refreshOnboarding: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -17,21 +19,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
+
+  const checkOnboarding = async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("onboarding_complete")
+      .eq("id", userId)
+      .maybeSingle();
+    setOnboardingComplete(data?.onboarding_complete ?? false);
+  };
+
+  const refreshOnboarding = async () => {
+    if (user) await checkOnboarding(user.id);
+  };
 
   useEffect(() => {
-    // Set up listener FIRST, then get session (per Supabase best practices)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        if (session?.user) {
+          await checkOnboarding(session.user.id);
+        } else {
+          setOnboardingComplete(null);
+        }
         setLoading(false);
       }
     );
 
-    // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        await checkOnboarding(session.user.id);
+      }
       setLoading(false);
     });
 
@@ -53,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, onboardingComplete, refreshOnboarding, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

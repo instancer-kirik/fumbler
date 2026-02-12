@@ -27,7 +27,7 @@ const Auth = () => {
     } else if (isSignUp) {
       toast.success("Check your email to confirm your account!");
     } else {
-      navigate("/app");
+      navigate("/discover");
     }
   };
 

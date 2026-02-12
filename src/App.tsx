@@ -4,38 +4,22 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import Landing from "./pages/Landing";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
+import DiscoverPage from "@/components/DiscoverPage";
+import MatchesPage from "@/components/MatchesPage";
+import ProfilePage from "@/components/ProfilePage";
+import PublicProfile from "@/pages/PublicProfile";
+import AppLayout from "@/components/AppLayout";
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
-  const [checking, setChecking] = useState(true);
+  const { user, loading, onboardingComplete } = useAuth();
 
-  useEffect(() => {
-    if (!user) {
-      setChecking(false);
-      return;
-    }
-    supabase
-      .from("profiles")
-      .select("onboarding_complete")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        setOnboardingComplete(data?.onboarding_complete ?? false);
-        setChecking(false);
-      });
-  }, [user]);
-
-  if (loading || checking) {
+  if (loading || (user && onboardingComplete === null)) {
     return (
       <div className="mx-auto max-w-lg min-h-screen bg-background flex items-center justify-center">
         <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -60,14 +44,26 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
+
+            {/* Public sharable profile */}
+            <Route path="/u/:username" element={<PublicProfile />} />
+
+            {/* Authenticated app routes */}
             <Route
-              path="/app"
               element={
                 <ProtectedRoute>
-                  <Index />
+                  <AppLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route path="/discover" element={<DiscoverPage />} />
+              <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+
+            {/* Legacy redirect */}
+            <Route path="/app" element={<Navigate to="/discover" replace />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

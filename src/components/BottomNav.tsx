@@ -1,27 +1,28 @@
 import { Compass, Heart, MessageCircle, User } from "lucide-react";
-
-interface BottomNavProps {
-  active: string;
-  onNavigate: (page: string) => void;
-}
+import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
-  { id: "discover", icon: Compass, label: "Discover" },
-  { id: "matches", icon: Heart, label: "Matches" },
-  { id: "messages", icon: MessageCircle, label: "Messages" },
-  { id: "profile", icon: User, label: "Profile" },
+  { id: "discover", icon: Compass, label: "Discover", path: "/discover" },
+  { id: "matches", icon: Heart, label: "Matches", path: "/matches" },
+  { id: "messages", icon: MessageCircle, label: "Messages", path: "/matches" },
+  { id: "profile", icon: User, label: "Profile", path: "/profile" },
 ];
 
-const BottomNav = ({ active, onNavigate }: BottomNavProps) => {
+const BottomNav = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const activeId = navItems.find((item) => location.pathname === item.path)?.id || "discover";
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-lg items-center justify-around py-2">
         {navItems.map((item) => {
-          const isActive = active === item.id;
+          const isActive = activeId === item.id;
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => navigate(item.path)}
               className={`flex flex-col items-center gap-1 rounded-xl px-4 py-2 transition-all ${
                 isActive
                   ? "text-foreground"
