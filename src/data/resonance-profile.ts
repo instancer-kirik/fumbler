@@ -128,8 +128,28 @@ export interface ResonanceProfile {
 // Section metadata for UI rendering
 // ============================================================================
 
+export interface ConsumerInterface {
+  trustSignals: string[];
+  distrustSignals: string[];
+}
+
+export interface GlossaryEntry {
+  meaning: string;
+  state: string;
+}
+
+export interface DiscoveryMetadata {
+  visibility: "public" | "authenticated" | "invite_only";
+  seekingStatus: string;
+  privacyComfortLevel: "low" | "medium" | "high";
+  willingToBeCompared: boolean;
+  portfolioLinks: string[];
+  writtenBio: string;
+}
+
 export const RESONANCE_SECTIONS = [
   { id: "core", label: "Core", icon: "🎯", description: "How you engage" },
+  { id: "consumer", label: "Consumer", icon: "🔎", description: "What works on you" },
   { id: "viability", label: "Viability", icon: "⚡", description: "Whether it can work" },
   { id: "loops", label: "Loops", icon: "🔄", description: "Behavioral recursion" },
   { id: "lessons", label: "Lessons", icon: "💡", description: "Integrated wisdom" },
@@ -140,6 +160,8 @@ export const RESONANCE_SECTIONS = [
   { id: "safety", label: "Safety", icon: "🛡️", description: "Consent & boundaries" },
   { id: "economic", label: "Economic", icon: "💎", description: "Labor & exchange" },
   { id: "connection", label: "Connect", icon: "📡", description: "Logistics & preferences" },
+  { id: "glossary", label: "Glossary", icon: "📖", description: "Your personal lexicon" },
+  { id: "discovery", label: "Discovery", icon: "🔭", description: "How you want to be found" },
 ] as const;
 
 // ============================================================================
