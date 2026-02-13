@@ -1,0 +1,206 @@
+/home/bon/Code/lovable/fumble-em/wwom-draft.toon
+# ============================================================================
+# FUMBLE RESONANCE PROFILE — TOON FORMAT v0.5
+# ============================================================================
+
+meta:
+  version: 0.5
+  mode: fumble_resonance_profile
+  author: kirik
+  created_at: 2026-02-11T00:00:10Z
+
+profile:
+  name: "Your Name / Handle"
+  desc: "Brief intro to who you are"
+
+# ============================================================================
+# CORE RESONANCE
+# ============================================================================
+
+attention:
+  type: resonance_not_persuasion
+  desc: Engagement occurs through emergent alignment, not direct convincing.
+
+vectors[3]{type,items[]}:
+  activation,competent_weirdness|layered_meaning|curiosity_invitation
+  repulsion,performative_confidence|over_explanation|extractive_attention
+
+flirt[2]{category,items[]}:
+  attracts,calm_curiosity|subtle_mastery|specific_noticing
+  fails_when,intensity_too_early|emotional_oversharing_without_context|mirroring_too_aggressively
+
+trust[2]{type,items[]}:
+  trust_signals,artifact_built_tools|intentional_rough_edges|depth_discoverable_over_time
+  distrust_signals,over_polished_emptiness|hidden_complexity
+
+glossary[2]{term,meaning,state}:
+  leethia,misunderstanding resolving into clarity,emergent_insight
+  pattern_emergence,when disparate signals suddenly cohere into shape,recognition
+
+# ============================================================================
+# VIABILITY
+# ============================================================================
+
+availability:
+  freq: daily
+  hours: 5-10
+  tz: US/Pacific
+  async: true
+  season: available_and_seeking
+
+relationships[3]: romantic,creative_collaboration,mentorship
+conflict_style: use_for_understanding
+reciprocity: symmetric_preferred
+
+comms[2]{primary,secondary,freq}:
+  async_text,voice_calls,whenever_feels_right
+
+growth[2]: deepening_craft,emotional_resilience
+values[3]: autonomy,authenticity,emergence_over_control
+
+# ============================================================================
+# EXPERIENTIAL
+# ============================================================================
+
+loops[4]:
+  withdraw-seek-withdraw when triggered
+  intellectualize before feeling
+  need full resolution before moving on
+  escalate quickly then recover slowly
+
+lessons[4]:
+  caretaking is control; stop saving people
+  my intensity scares people away; I need to slow down
+  I can't demand reciprocity; I can only choose alignment
+  vulnerability is a strength, not a burden
+
+receive_love[3]: acts_of_service,quality_time,physical_presence
+express_love[3]: creation,words,acts
+comm_style: poetic_with_metaphor
+creative[3]: writing,code,conversation
+vulnerability: metaphor_first_then_direct
+
+kinks[5]{aspect,value}:
+  intellectual,being_challenged_and_pushed_intellectually
+  relational,full_attention_and_presence
+  intensity,high_but_safe
+  play,exploring_edges_together
+  avoid,performance_without_authenticity
+
+archetype: guide_and_witness
+attraction: people_learning_to_think_for_themselves
+role: usually_the_one_who_sees
+pattern: intensity_then_distance_then_depth
+
+# ============================================================================
+# ECONOMIC
+# ============================================================================
+
+invoicing: true
+
+contexts[5]:
+  mentorship_and_guidance
+  emotional_labor_and_processing
+  time_and_attention
+  creative_collaboration
+  specific_expertise_sharing
+
+rates[2]{context,rate}:
+  mentorship,negotiable
+  emotional_labor,negotiable
+
+base_philosophy: time_has_value
+
+econ_values[3]:
+  explicit_beats_implicit
+  labor_deserves_payment
+  clarity_is_intimate
+
+econ_boundaries[3]:
+  only_in_appropriate_contexts
+  not_required_for_connection
+  opt_in_only
+
+kink_align[3]:
+  power_exchange
+  transactional_intimacy
+  financial_asymmetry_as_play
+
+# ============================================================================
+# SEEKING
+# ============================================================================
+
+actively_seeking: true
+seeking_archetype: other_guides,learners,challengers
+seeking_loops: people_who_iterate_not_stagnate
+seeking_languages[2]: acts_of_service,quality_time
+seeking_lang_tolerance: low
+seeking_lessons: people_learning_to_trust_themselves
+
+seeking_kinks[3]:
+  intellectual_challenge
+  authentic_presence
+  high_intensity
+
+non_negotiables[3]:
+  must_be_doing_their_own_work
+  no_playing_victim
+  authenticity_required
+
+nice_to_haves[3]:
+  creative_expression
+  philosophical_depth
+  comfort_with_silence
+
+# ============================================================================
+# SAFETY
+# ============================================================================
+
+consent[3]:
+  enthusiastic_consent_required
+  sober_only_preferred
+  check_in_during_intensity
+
+hard_boundaries[3]:
+  no_untruth
+  no_emotional_manipulation
+  no_unilateral_decisions_about_us
+
+harm_history: none_to_disclose
+refs_available: false
+
+accountability[3]:
+  willing_to_be_called_in
+  repair_orientation
+  transparent_about_failures
+
+safe_sex: discussed_before_intimacy
+substances: occasional_alcohol, no_other_substances
+
+# ============================================================================
+# CONNECTION
+# ============================================================================
+
+contact_method: text_first_then_call
+response_time: 24-48_hours
+contact_freq: daily_async_or_less_frequent_sync
+modality: hybrid
+location: remote_ok
+travel: occasionally_for_right_person
+
+# ============================================================================
+# DISCOVERY
+# ============================================================================
+
+visibility: visible_to_authenticated_users
+seeking_status: actively_looking
+privacy: high
+comparable: true
+share_compat: false
+
+bio: I'm a guide, witness, and builder...
+
+portfolio[3]:
+  github.com/yourname
+  yourwriting.com
+  yourmusic.com
