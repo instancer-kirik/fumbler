@@ -22,13 +22,13 @@ const Landing = () => {
             fumble
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
-            No guessing games. No unspoken debts.
+            I built this to figure myself out.
             <br />
-            <span className="text-foreground font-medium">Just clarity, consent & a little chaos.</span>
+            <span className="text-foreground font-medium">Then I thought — what if you could too?</span>
           </p>
         </motion.div>
 
-        {/* Feature pills */}
+        {/* What this actually is */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -36,10 +36,10 @@ const Landing = () => {
           className="mt-10 flex flex-col gap-3 w-full max-w-xs"
         >
           {[
-            { icon: Sparkles, text: "Resonance matching, not algorithms" },
-            { icon: Handshake, text: "Mutual agreements, not assumptions" },
-            { icon: MessageCircle, text: "Missed connections, found" },
-            { icon: Zap, text: "Playful stakes, real accountability" },
+            { icon: Sparkles, text: "Know what works on you — share it" },
+            { icon: Handshake, text: "Say what you actually need upfront" },
+            { icon: MessageCircle, text: "Find the ones you almost met" },
+            { icon: Zap, text: "Small stakes, real follow-through" },
           ].map((item, i) => (
             <div
               key={i}
@@ -53,14 +53,14 @@ const Landing = () => {
           ))}
         </motion.div>
 
-        {/* Tagline */}
+        {/* Origin note */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
           className="mt-8 text-xs text-muted-foreground max-w-[260px] leading-relaxed"
         >
-          Social contracts, but editable. Set expectations together — before the awkward part.
+          Not another app trying to sell you on connection. Just a tool for clarity — yours first, then shared.
         </motion.p>
       </div>
 
@@ -75,13 +75,13 @@ const Landing = () => {
           onClick={() => navigate("/auth")}
           className="w-full rounded-2xl gradient-warm py-4 text-sm font-semibold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
         >
-          Start fumbling
+          Figure yourself out
         </button>
         <button
           onClick={() => navigate("/auth")}
           className="w-full rounded-2xl bg-card py-4 text-sm font-semibold text-foreground shadow-card transition-colors hover:bg-secondary"
         >
-          I already have an account
+          I've been here before
         </button>
       </motion.div>
     </div>
