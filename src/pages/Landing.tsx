@@ -18,13 +18,11 @@ const Landing = () => {
             <Heart className="h-10 w-10 text-primary-foreground" fill="currentColor" />
           </div>
 
-          <h1 className="font-display text-5xl font-bold text-foreground mb-3">
-            fumble
-          </h1>
+          <h1 className="font-display text-5xl font-bold text-foreground mb-3">fumble</h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
             Figure out what works on you.
             <br />
-            <span className="text-foreground font-medium">Then find someone who gets it.</span>
+            <span className="text-foreground font-medium">Share your context.</span>
           </p>
         </motion.div>
 
@@ -41,10 +39,7 @@ const Landing = () => {
             { icon: MessageCircle, text: "Find the ones you almost met" },
             { icon: Zap, text: "Small stakes, real follow-through" },
           ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 rounded-2xl bg-card p-3.5 shadow-card"
-            >
+            <div key={i} className="flex items-center gap-3 rounded-2xl bg-card p-3.5 shadow-card">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                 <item.icon className="h-4 w-4 text-primary" />
               </div>
@@ -60,7 +55,7 @@ const Landing = () => {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="mt-8 text-xs text-muted-foreground max-w-[260px] leading-relaxed"
         >
-          No guessing games. No unspoken debts. Just two people who showed up clear.
+          Selective visibility and tag based discovery.
         </motion.p>
       </div>
 
@@ -75,13 +70,7 @@ const Landing = () => {
           onClick={() => navigate("/auth")}
           className="w-full rounded-2xl gradient-warm py-4 text-sm font-semibold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
         >
-          Figure yourself out
-        </button>
-        <button
-          onClick={() => navigate("/auth")}
-          className="w-full rounded-2xl bg-card py-4 text-sm font-semibold text-foreground shadow-card transition-colors hover:bg-secondary"
-        >
-          I've been here before
+          Welcome
         </button>
       </motion.div>
     </div>
