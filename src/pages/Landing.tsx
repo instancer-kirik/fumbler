@@ -22,7 +22,7 @@ const Landing = () => {
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
             Figure out what works on you.
             <br />
-            <span className="text-foreground font-medium">Share your context.</span>
+            <span className="text-foreground font-medium">Then find someone who gets it.</span>
           </p>
         </motion.div>
 
@@ -34,10 +34,10 @@ const Landing = () => {
           className="mt-10 flex flex-col gap-3 w-full max-w-xs"
         >
           {[
-            { icon: Sparkles, text: "Know yourself — then share it" },
-            { icon: Handshake, text: "Set expectations together, not after" },
-            { icon: MessageCircle, text: "Find the ones you almost met" },
-            { icon: Zap, text: "Small stakes, real follow-through" },
+            { icon: Sparkles, text: "This started with me trying to create a compendium of 'what works on me'" },
+            { icon: Handshake, text: "Better ways to set expectations and boundaries." },
+            { icon: MessageCircle, text: "Missed Connections thingy" },
+            { icon: Zap, text: "Consensual variety invoicing because asking and dynamics. Default is disabled." },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-3 rounded-2xl bg-card p-3.5 shadow-card">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
