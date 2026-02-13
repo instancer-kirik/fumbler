@@ -17,22 +17,26 @@ interface ResonanceData {
   consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
   glossary?: Record<string, { meaning: string; state: string }>;
   economic?: { openToInvoicing?: boolean; contexts?: string[]; values?: string[]; boundaries?: string[]; kinkAlignment?: string[] };
-  discovery?: { visibility?: string; seekingStatus?: string; privacyComfortLevel?: string; willingToBeCompared?: boolean; portfolioLinks?: string[]; writtenBio?: string };
+  discovery?: { visibility?: string; seekingStatus?: string; privacyComfortLevel?: string; willingToBeCompared?: boolean; willingToHaveCompatibilityShared?: boolean; portfolioLinks?: string[]; writtenBio?: string; audioIntro?: string; videoIntro?: string };
   core?: any;
   viability?: any;
   experiential?: any;
   seeking?: any;
   safety?: any;
   connection?: any;
+  archetypes?: any[];
+  attraction?: { slowBurn?: boolean; fastHook?: boolean; whatDrawsIn?: string[]; timeline?: string };
+  engagement?: { phase1?: string; phase2?: string; phase3?: string; cooperationStyle?: string };
+  powerDynamics?: { enabled?: boolean; expressionModes?: string[]; exploration?: string };
+  playPreferences?: { mode?: string; intensityProfile?: { emotional?: number; theatrical?: number; intellectual?: number } };
+  repulsion?: { hardStops?: string[]; yellowFlags?: string[]; patternConcerns?: string[] };
   [key: string]: any;
 }
 
 interface Props {
   profile: ResonanceProfile;
   onClose: () => void;
-  /** If not provided, will be determined from DB (match status + express grants) */
   viewerRelationship?: "public" | "match" | "express";
-  /** If provided, skip DB fetch */
   resonanceData?: ResonanceData | null;
 }
 
@@ -96,7 +100,7 @@ const LockedSection = ({
   label: string;
   sectionId: string;
   targetId: string;
-  requestStatus?: string | null; // "pending" | "approved" | "denied" | null
+  requestStatus?: string | null;
   onRequestAccess: (sectionId: string) => void;
 }) => (
   <div className="rounded-2xl bg-card/50 border border-border p-4 flex items-center gap-3 opacity-60">
@@ -166,22 +170,31 @@ const LabelValue = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
+const IntensityBar = ({ label, value }: { label: string; value: number }) => (
+  <div className="space-y-1">
+    <div className="flex justify-between">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-xs text-primary font-medium">{value}%</span>
+    </div>
+    <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+      <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${value}%` }} />
+    </div>
+  </div>
+);
+
 const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelationship, resonanceData: propData }: Props) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(!propData);
   const [dbData, setDbData] = useState<ResonanceData | null>(propData || null);
   const [relationship, setRelationship] = useState<"public" | "match" | "express">(propRelationship || "public");
-  const [accessRequests, setAccessRequests] = useState<Record<string, string>>({}); // sectionId -> status
+  const [accessRequests, setAccessRequests] = useState<Record<string, string>>({});
 
-  // Fetch resonance_data + determine relationship from DB
   useEffect(() => {
-    if (propData !== undefined) return; // Skip if data was passed in
+    if (propData !== undefined) return;
     if (!user || !profile.id) return;
 
     const fetchAll = async () => {
       setLoading(true);
-
-      // Fetch resonance_data, match status, and access grants in parallel
       const [profileRes, matchRes, accessRes] = await Promise.all([
         supabase.from("profiles").select("resonance_data").eq("id", profile.id).single(),
         supabase.from("matches").select("id").or(`and(user1_id.eq.${user.id},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${user.id})`).limit(1),
@@ -192,20 +205,16 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
         setDbData(profileRes.data.resonance_data as any);
       }
 
-      // Determine relationship
       const isMatch = (matchRes.data?.length ?? 0) > 0;
       const approvedSections = (accessRes.data || []).filter((r: any) => r.status === "approved").map((r: any) => r.section_id);
       const hasExpress = approvedSections.length > 0;
-
       setRelationship(hasExpress ? "express" : isMatch ? "match" : "public");
 
-      // Build access request status map
       const reqMap: Record<string, string> = {};
       (accessRes.data || []).forEach((r: any) => {
         reqMap[r.section_id] = r.status;
       });
       setAccessRequests(reqMap);
-
       setLoading(false);
     };
 
@@ -227,11 +236,8 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
     }
   };
 
-  // Use DB data or fall back to profile object data
   const rd = dbData;
   const sv = rd?.sectionVisibility;
-  
-  // For display, merge DB resonance_data with the profile object
   const core = rd?.core || profile.core;
   const viability = rd?.viability || profile.viability;
   const exp = rd?.experiential || profile.experiential;
@@ -367,6 +373,118 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
               </SectionCard>
             ) : renderLocked("🪞", "Relational Type", "type")}
 
+            {/* ═══ NEW: Archetypes ═══ */}
+            {canSee("archetypes") ? (
+              rd?.archetypes?.length ? (
+                <SectionCard icon="🎭" label="Archetypes" description="Identity packets">
+                  <div className="space-y-2">
+                    {rd.archetypes.map((arch: any) => (
+                      <div key={arch.id || arch.label} className="rounded-xl bg-secondary/50 p-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{arch.label}</p>
+                            <p className="text-xs text-muted-foreground">{arch.class} · {arch.energy?.replace(/_/g, " ")}</p>
+                          </div>
+                          {arch.isCustom && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-accent-foreground">custom</span>}
+                        </div>
+                        {arch.aesthetic?.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {arch.aesthetic.map((a: string) => (
+                              <span key={a} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{a}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : renderLocked("🎭", "Archetypes", "archetypes")}
+
+            {/* ═══ NEW: Attraction Gradient ═══ */}
+            {canSee("attraction") ? (
+              rd?.attraction && (rd.attraction.slowBurn || rd.attraction.fastHook || rd.attraction.whatDrawsIn?.length) ? (
+                <SectionCard icon="🧲" label="Attraction Gradient" description="What draws them in">
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      {rd.attraction.slowBurn && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">🕯️ Slow Burn</span>}
+                      {rd.attraction.fastHook && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">⚡ Fast Hook</span>}
+                    </div>
+                    {rd.attraction.whatDrawsIn?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">What draws in</p><TagList items={rd.attraction.whatDrawsIn} variant="warm" /></div> : null}
+                    <LabelValue label="Timeline" value={rd.attraction.timeline || ""} />
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : renderLocked("🧲", "Attraction Gradient", "attraction")}
+
+            {/* ═══ NEW: Engagement Curve ═══ */}
+            {canSee("engagement") ? (
+              rd?.engagement && (rd.engagement.phase1 || rd.engagement.phase2 || rd.engagement.phase3) ? (
+                <SectionCard icon="📈" label="Engagement Curve" description="How connection develops">
+                  <div className="space-y-3">
+                    {rd.engagement.phase1 && (
+                      <div className="rounded-xl bg-secondary/50 p-3">
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 1 — Initial</p>
+                        <p className="text-xs text-foreground/80">{rd.engagement.phase1}</p>
+                      </div>
+                    )}
+                    {rd.engagement.phase2 && (
+                      <div className="rounded-xl bg-secondary/50 p-3">
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 2 — Building</p>
+                        <p className="text-xs text-foreground/80">{rd.engagement.phase2}</p>
+                      </div>
+                    )}
+                    {rd.engagement.phase3 && (
+                      <div className="rounded-xl bg-secondary/50 p-3">
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 3 — Established</p>
+                        <p className="text-xs text-foreground/80">{rd.engagement.phase3}</p>
+                      </div>
+                    )}
+                    <LabelValue label="Cooperation" value={rd.engagement.cooperationStyle || ""} />
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : renderLocked("📈", "Engagement Curve", "engagement")}
+
+            {/* ═══ NEW: Dynamics (Power + Play) ═══ */}
+            {canSee("dynamics") ? (
+              (rd?.powerDynamics?.enabled || rd?.playPreferences?.mode) ? (
+                <SectionCard icon="⚔️" label="Dynamics" description="Power exchange & play">
+                  <div className="space-y-3">
+                    {rd?.powerDynamics?.enabled && (
+                      <>
+                        {rd.powerDynamics.expressionModes?.length ? (
+                          <div><p className="text-xs font-semibold text-foreground mb-1.5">Expression modes</p><TagList items={rd.powerDynamics.expressionModes} /></div>
+                        ) : null}
+                        {rd.powerDynamics.exploration && <LabelValue label="Exploration" value={rd.powerDynamics.exploration} />}
+                      </>
+                    )}
+                    {rd?.playPreferences?.mode && <LabelValue label="Play mode" value={rd.playPreferences.mode} />}
+                    {rd?.playPreferences?.intensityProfile && (
+                      <div className="space-y-2">
+                        <IntensityBar label="Emotional" value={rd.playPreferences.intensityProfile.emotional ?? 50} />
+                        <IntensityBar label="Theatrical" value={rd.playPreferences.intensityProfile.theatrical ?? 50} />
+                        <IntensityBar label="Intellectual" value={rd.playPreferences.intensityProfile.intellectual ?? 50} />
+                      </div>
+                    )}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : renderLocked("⚔️", "Dynamics", "dynamics")}
+
+            {/* ═══ NEW: Repulsion Vectors ═══ */}
+            {canSee("repulsion") ? (
+              rd?.repulsion && (rd.repulsion.hardStops?.length || rd.repulsion.yellowFlags?.length || rd.repulsion.patternConcerns?.length) ? (
+                <SectionCard icon="🚧" label="Repulsion Vectors" description="Hard stops & flags">
+                  <div className="space-y-3">
+                    {rd.repulsion.hardStops?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🛑 Hard stops</p><TagList items={rd.repulsion.hardStops} variant="muted" /></div> : null}
+                    {rd.repulsion.yellowFlags?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">⚠️ Yellow flags</p><TagList items={rd.repulsion.yellowFlags} /></div> : null}
+                    {rd.repulsion.patternConcerns?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🔍 Pattern concerns</p><TagList items={rd.repulsion.patternConcerns} /></div> : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : renderLocked("🚧", "Repulsion Vectors", "repulsion")}
+
             {/* Viability */}
             {canSee("viability") ? (
               <SectionCard icon="⚡" label="Viability" description="Whether connection can work">
@@ -398,18 +516,22 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
               </SectionCard>
             ) : renderLocked("🧭", "Seeking", "seeking")}
 
-            {/* Safety */}
+            {/* Safety + Trust */}
             {canSee("safety") ? (
-              <SectionCard icon="🛡️" label="Safety" description="Consent, boundaries & accountability">
+              <SectionCard icon="🛡️" label="Safety & Trust" description="Consent, boundaries & accountability">
                 <div className="space-y-3">
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Consent frameworks</p><TagList items={safety?.consentFrameworks} variant="warm" /></div>
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Hard boundaries</p><TagList items={safety?.hardBoundaries} variant="muted" /></div>
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Accountability</p><TagList items={safety?.accountability} /></div>
                   <LabelValue label="Safe sex" value={safety?.safeSexPractices} />
                   <LabelValue label="Substances" value={safety?.substanceClarity} />
+                  {safety?.harmHistory && <LabelValue label="Harm history" value={safety.harmHistory} />}
+                  {safety?.referencesAvailable && (
+                    <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">✅ References available</span>
+                  )}
                 </div>
               </SectionCard>
-            ) : renderLocked("🛡️", "Safety", "safety")}
+            ) : renderLocked("🛡️", "Safety & Trust", "safety")}
 
             {/* Economic */}
             {canSee("economic") ? (
@@ -418,6 +540,7 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
                   <LabelValue label="Open to invoicing" value={economic?.openToInvoicing ? "Yes" : "No"} />
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Values</p><TagList items={economic?.values} /></div>
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Boundaries</p><TagList items={economic?.boundaries} variant="muted" /></div>
+                  {economic?.kinkAlignment?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">Kink alignment</p><TagList items={economic.kinkAlignment} variant="warm" /></div> : null}
                 </div>
               </SectionCard>
             ) : renderLocked("💎", "Economic", "economic")}
@@ -450,6 +573,26 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
                 </div>
               </SectionCard>
             ) : canSee("glossary") ? null : renderLocked("📖", "Glossary", "glossary")}
+
+            {/* Discovery Media */}
+            {canSee("discovery") && rd?.discovery && (rd.discovery.audioIntro || rd.discovery.videoIntro) ? (
+              <SectionCard icon="🔭" label="Discovery" description="Introduction media">
+                <div className="space-y-3">
+                  {rd.discovery.audioIntro && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">🎙️ Audio intro</p>
+                      <audio controls className="w-full" src={rd.discovery.audioIntro} />
+                    </div>
+                  )}
+                  {rd.discovery.videoIntro && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">🎬 Video intro</p>
+                      <video controls className="w-full rounded-xl" src={rd.discovery.videoIntro} />
+                    </div>
+                  )}
+                </div>
+              </SectionCard>
+            ) : null}
           </div>
         )}
       </motion.div>
