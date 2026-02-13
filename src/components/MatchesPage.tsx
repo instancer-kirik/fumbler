@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { type ResonanceProfile } from "@/data/resonance-profile";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Map, List, StickyNote, Eye } from "lucide-react";
@@ -7,119 +7,87 @@ import MatchDetailSheet from "@/components/matches/MatchDetailSheet";
 import MatchNudges from "@/components/matches/MatchNudges";
 import MatchMapView from "@/components/matches/MatchMapView";
 import {
-  type MatchData,
   type MatchTier,
-  groupByTier,
   tierLabel,
   getFadeOpacity,
   getTimeSinceLabel,
-  getSimulatedLastInteraction,
-  getNudges,
-  touchInteraction,
+  getTier,
 } from "@/utils/match-helpers";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useMatches, useUpdateMatch, type MatchWithProfile } from "@/hooks/use-matches";
 
-// Build a minimal ResonanceProfile from DB row
-const dbToProfile = (row: any): ResonanceProfile => ({
-  id: row.id,
-  name: row.full_name || "Anonymous",
-  handle: `@${row.username || "unknown"}`,
-  description: row.bio || "",
-  image: row.avatar_url || "/placeholder.svg",
-  age: row.age || 0,
-  distance: "Nearby",
-  bio: row.bio || "",
-  interests: [],
-  prompt: "My biggest fumble was...",
-  promptAnswer: "Still figuring that out 🫠",
-  core: {} as any,
-  viability: {} as any,
-  experiential: {} as any,
-  economic: {} as any,
-  seeking: {} as any,
-  safety: {} as any,
-  connection: {} as any,
-});
+// Group matches by tier using last_interaction_at from DB
+function groupMatchesByTier(
+  matches: MatchWithProfile[]
+): Record<MatchTier, MatchWithProfile[]> {
+  const grouped: Record<MatchTier, MatchWithProfile[]> = { hot: [], warming: [], cold: [] };
+  for (const m of matches) {
+    const ts = new Date(m.match.last_interaction_at).getTime();
+    grouped[getTier(ts)].push(m);
+  }
+  for (const tier of Object.keys(grouped) as MatchTier[]) {
+    grouped[tier].sort(
+      (a, b) =>
+        new Date(b.match.last_interaction_at).getTime() -
+        new Date(a.match.last_interaction_at).getTime()
+    );
+  }
+  return grouped;
+}
 
 const MatchesPage = () => {
-  const { user } = useAuth();
-  const [matchedProfiles, setMatchedProfiles] = useState<ResonanceProfile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [matchData, setMatchData] = useState<Record<string, MatchData>>({});
-  const [activeProfile, setActiveProfile] = useState<ResonanceProfile | null>(null);
+  const { data: matches = [], isLoading } = useMatches();
+  const updateMatch = useUpdateMatch();
+  const [activeMatch, setActiveMatch] = useState<MatchWithProfile | null>(null);
   const [viewingResonance, setViewingResonance] = useState<ResonanceProfile | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [dismissedNudges, setDismissedNudges] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    const fetchMatches = async () => {
-      if (!user) return;
-      // Get matches where I'm user1 or user2
-      const { data: matchRows } = await supabase
-        .from("matches")
-        .select("user1_id, user2_id")
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-
-      if (!matchRows || matchRows.length === 0) {
-        setMatchedProfiles([]);
-        setLoading(false);
-        return;
-      }
-
-      // Get the other user's ID from each match
-      const otherIds = matchRows.map((m: any) =>
-        m.user1_id === user.id ? m.user2_id : m.user1_id
-      );
-
-      // Fetch their profiles
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age")
-        .in("id", otherIds);
-
-      if (profiles) {
-        setMatchedProfiles(profiles.map(dbToProfile));
-      }
-      setLoading(false);
-    };
-    fetchMatches();
-  }, [user]);
-
-  const getMatchData = (id: string): MatchData => matchData[id] || { tags: [], notes: "" };
-
-  const toggleTag = (profileId: string, tag: string) => {
-    setMatchData((prev) => {
-      const current = prev[profileId] || { tags: [], notes: "" };
-      const tags = current.tags.includes(tag)
-        ? current.tags.filter((t) => t !== tag)
-        : [...current.tags, tag];
-      return { ...prev, [profileId]: { ...current, tags } };
-    });
-  };
-
-  const saveNote = (profileId: string, note: string) => {
-    setMatchData((prev) => {
-      const current = prev[profileId] || { tags: [], notes: "" };
-      return { ...prev, [profileId]: { ...current, notes: note } };
-    });
-  };
-
-  const openProfile = (profile: ResonanceProfile) => {
-    touchInteraction(profile.id);
-    setActiveProfile(profile);
-  };
-
-  const filteredProfiles = matchedProfiles.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMatches = matches.filter((m) =>
+    m.profile.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const tieredGroups = useMemo(() => groupByTier(filteredProfiles), [filteredProfiles]);
-  const nudges = useMemo(
-    () => getNudges(matchedProfiles).filter((n) => !dismissedNudges.has(n.profile.id)),
-    [matchedProfiles, dismissedNudges]
-  );
+  const tieredGroups = useMemo(() => groupMatchesByTier(filteredMatches), [filteredMatches]);
+
+  const openMatch = (m: MatchWithProfile) => {
+    updateMatch.mutate({
+      matchId: m.match.id,
+      updates: { last_interaction_at: new Date().toISOString() },
+    });
+    setActiveMatch(m);
+  };
+
+  const toggleTag = (matchId: string, currentTags: string[], tag: string) => {
+    const tags = currentTags.includes(tag)
+      ? currentTags.filter((t) => t !== tag)
+      : [...currentTags, tag];
+    updateMatch.mutate({ matchId, updates: { tags } });
+  };
+
+  const saveNote = (matchId: string, note: string) => {
+    updateMatch.mutate({ matchId, updates: { notes: note } });
+  };
+
+  // Build nudges from cold/warming matches
+  const nudges = useMemo(() => {
+    const DAY_MS = 86400000;
+    return matches
+      .map((m) => {
+        const daysSince = Math.floor(
+          (Date.now() - new Date(m.match.last_interaction_at).getTime()) / DAY_MS
+        );
+        if (daysSince < 3) return null;
+        const message =
+          daysSince < 5
+            ? `You matched with ${m.profile.name} ${daysSince} days ago — don't let this one fade!`
+            : daysSince < 10
+            ? `${m.profile.name} is going cold... maybe schedule a fumble?`
+            : `Remember ${m.profile.name}? It's been ${daysSince} days. Rediscover or let go?`;
+        return { profile: m.profile, daysSince, message, matchWithProfile: m };
+      })
+      .filter((n): n is NonNullable<typeof n> => n !== null && !dismissedNudges.has(n.profile.id))
+      .sort((a, b) => b.daysSince - a.daysSince);
+  }, [matches, dismissedNudges]);
 
   const tierOrder: MatchTier[] = ["hot", "warming", "cold"];
 
@@ -161,87 +129,91 @@ const MatchesPage = () => {
       <MatchNudges
         nudges={nudges}
         onDismiss={(id) => setDismissedNudges((prev) => new Set([...prev, id]))}
-        onSchedule={(p) => openProfile(p)}
-        onOpen={(p) => openProfile(p)}
+        onSchedule={(p) => {
+          const m = matches.find((x) => x.profile.id === p.id);
+          if (m) openMatch(m);
+        }}
+        onOpen={(p) => {
+          const m = matches.find((x) => x.profile.id === p.id);
+          if (m) openMatch(m);
+        }}
       />
+
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex justify-center py-12">
+          <div className="animate-pulse text-muted-foreground text-sm">Loading matches...</div>
+        </div>
+      )}
 
       {/* Map View */}
       <AnimatePresence mode="wait">
         {viewMode === "map" ? (
-          <motion.div
-            key="map"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-          >
-            <MatchMapView profiles={filteredProfiles} onSelect={openProfile} />
+          <motion.div key="map" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+            <MatchMapView
+              profiles={filteredMatches.map((m) => m.profile)}
+              onSelect={(p) => {
+                const m = matches.find((x) => x.profile.id === p.id);
+                if (m) openMatch(m);
+              }}
+            />
           </motion.div>
         ) : (
-          <motion.div
-            key="list"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {/* Tier-grouped list */}
+          <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             {tierOrder.map((tier) => {
-              const profiles = tieredGroups[tier];
-              if (profiles.length === 0) return null;
+              const tierMatches = tieredGroups[tier];
+              if (tierMatches.length === 0) return null;
 
               return (
                 <div key={tier} className="mb-4">
                   <h2 className="px-4 mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     {tierLabel(tier)}
-                    <span className="ml-1.5 text-[10px] font-normal">({profiles.length})</span>
+                    <span className="ml-1.5 text-[10px] font-normal">({tierMatches.length})</span>
                   </h2>
                   <div className="px-4 space-y-2">
-                    {profiles.map((profile, i) => {
-                      const data = getMatchData(profile.id);
-                      const fadeOpacity = getFadeOpacity(profile.lastInteraction);
-                      const timeSince = getTimeSinceLabel(profile.lastInteraction);
+                    {tierMatches.map((mwp, i) => {
+                      const { match, profile } = mwp;
+                      const lastTs = new Date(match.last_interaction_at).getTime();
+                      const fadeOpacity = getFadeOpacity(lastTs);
+                      const timeSince = getTimeSinceLabel(lastTs);
 
                       return (
                         <motion.div
-                          key={profile.id}
+                          key={match.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: fadeOpacity, y: 0 }}
                           transition={{ delay: i * 0.05 }}
                           className="flex items-center gap-3 rounded-2xl bg-card border border-border p-3 group relative overflow-hidden"
                         >
-                          {/* Cold overlay */}
                           {tier === "cold" && (
                             <div className="absolute inset-0 bg-background/30 backdrop-blur-[1px] rounded-2xl pointer-events-none z-[1]" />
                           )}
 
-                          {/* Avatar */}
-                          <button onClick={() => openProfile(profile)} className="flex-shrink-0 relative z-[2]">
+                          <button onClick={() => openMatch(mwp)} className="flex-shrink-0 relative z-[2]">
                             <div className="relative">
                               <img
                                 src={profile.image}
                                 alt={profile.name}
                                 className={`h-12 w-12 rounded-full object-cover ring-1 ring-border ${tier === "cold" ? "grayscale-[40%]" : ""}`}
                               />
-                              {tier === "cold" && (
-                                <div className="absolute inset-0 rounded-full bg-muted/30" />
-                              )}
+                              {tier === "cold" && <div className="absolute inset-0 rounded-full bg-muted/30" />}
                             </div>
                           </button>
 
-                          {/* Info */}
-                          <button onClick={() => openProfile(profile)} className="flex-1 min-w-0 text-left relative z-[2]">
+                          <button onClick={() => openMatch(mwp)} className="flex-1 min-w-0 text-left relative z-[2]">
                             <div className="flex items-center gap-2">
                               <p className="font-display font-semibold text-foreground text-sm truncate">{profile.name}</p>
                               <span className="text-[10px] text-muted-foreground">{timeSince}</span>
                             </div>
-                            {data.tags.length > 0 ? (
+                            {match.tags.length > 0 ? (
                               <div className="flex gap-1 mt-1 overflow-hidden">
-                                {data.tags.slice(0, 3).map((tag) => (
+                                {match.tags.slice(0, 3).map((tag) => (
                                   <span key={tag} className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-foreground truncate">
                                     {tag}
                                   </span>
                                 ))}
-                                {data.tags.length > 3 && (
-                                  <span className="text-[10px] text-muted-foreground">+{data.tags.length - 3}</span>
+                                {match.tags.length > 3 && (
+                                  <span className="text-[10px] text-muted-foreground">+{match.tags.length - 3}</span>
                                 )}
                               </div>
                             ) : (
@@ -249,20 +221,18 @@ const MatchesPage = () => {
                             )}
                           </button>
 
-                          {/* Rediscover button for cold matches */}
                           {tier === "cold" && (
                             <button
-                              onClick={() => openProfile(profile)}
+                              onClick={() => openMatch(mwp)}
                               className="relative z-[2] rounded-full gradient-warm px-2.5 py-1 text-[10px] font-bold text-primary-foreground flex-shrink-0"
                             >
                               Rediscover
                             </button>
                           )}
 
-                          {/* Actions for non-cold */}
                           {tier !== "cold" && (
                             <div className="flex items-center gap-1.5 flex-shrink-0 relative z-[2]">
-                              {data.notes && <StickyNote className="h-3.5 w-3.5 text-primary/50" />}
+                              {match.notes && <StickyNote className="h-3.5 w-3.5 text-primary/50" />}
                               <button
                                 onClick={() => setViewingResonance(profile)}
                                 className="rounded-full bg-secondary p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -285,16 +255,19 @@ const MatchesPage = () => {
 
       {/* Match Detail Sheet */}
       <AnimatePresence>
-        {activeProfile && (
+        {activeMatch && (
           <MatchDetailSheet
-            profile={activeProfile}
-            matchData={getMatchData(activeProfile.id)}
-            onClose={() => setActiveProfile(null)}
-            onToggleTag={(tag) => toggleTag(activeProfile.id, tag)}
-            onSaveNote={(note) => saveNote(activeProfile.id, note)}
+            profile={activeMatch.profile}
+            match={activeMatch.match}
+            amUser1={activeMatch.amUser1}
+            onClose={() => setActiveMatch(null)}
+            onToggleTag={(tag) =>
+              toggleTag(activeMatch.match.id, activeMatch.match.tags, tag)
+            }
+            onSaveNote={(note) => saveNote(activeMatch.match.id, note)}
             onViewResonance={() => {
-              const p = activeProfile;
-              setActiveProfile(null);
+              const p = activeMatch.profile;
+              setActiveMatch(null);
               setTimeout(() => setViewingResonance(p), 200);
             }}
           />
