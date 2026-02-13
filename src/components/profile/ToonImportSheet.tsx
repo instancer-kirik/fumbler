@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeImportData } from "@/utils/resonance-normalizer";
 
 interface ToonImportSheetProps {
   open: boolean;
@@ -22,16 +23,35 @@ interface ToonImportSheetProps {
  * We parse into a plain JS object then merge into resonance_data.
  */
 async function decodeToon(input: string): Promise<Record<string, unknown>> {
+  const trimmed = input.trim();
+
+  // Try JSON first (most reliable)
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      // Fall through to TOON
+    }
+  }
+
+  // Try TOON library
   try {
     const toon = await import("@toon-format/toon");
-    return toon.decode(input) as Record<string, unknown>;
-  } catch {
-    // Fallback: attempt JSON parse (TOON encodes the JSON data model)
-    try {
-      return JSON.parse(input);
-    } catch {
-      throw new Error("Could not parse input. Please ensure it's valid TOON or JSON format.");
+    const result = toon.decode(trimmed);
+    if (result && typeof result === "object" && Object.keys(result as object).length > 0) {
+      return result as Record<string, unknown>;
     }
+  } catch (e: any) {
+    console.warn("TOON decode failed:", e.message);
+  }
+
+  // Last resort: try JSON parse even if it doesn't look like JSON
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    throw new Error(
+      "Could not parse input. The TOON compact syntax (e.g. vectors[3]{…}) may not be supported by the parser yet. Try importing the JSON version instead."
+    );
   }
 }
 
@@ -81,7 +101,8 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
         .single();
 
       const currentData = (existing?.resonance_data as Record<string, unknown>) || {};
-      const merged = deepMerge(currentData, preview);
+      const normalized = normalizeImportData(preview);
+      const merged = deepMerge(currentData, normalized);
 
       const { error: updateError } = await supabase
         .from("profiles")
