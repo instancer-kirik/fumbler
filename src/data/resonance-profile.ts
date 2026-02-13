@@ -64,12 +64,78 @@ export interface ExperientialProfile {
   };
 }
 
+// ============================================================================
+// NEW LAYERS — Attraction, Dynamics, Trust, Discovery media
+// ============================================================================
+
+export interface ArchetypePacket {
+  id: string;
+  label: string;
+  class: string;
+  aesthetic: string[];
+  energy: string;
+  dynamic: string;
+  tone: string;
+  performance: string;
+  isCustom: boolean;
+}
+
+export interface AttractionGradient {
+  slowBurn: boolean;
+  fastHook: boolean;
+  whatDrawsIn: string[];
+  timeline: string;
+}
+
+export interface EngagementCurve {
+  phase1: string;
+  phase2: string;
+  phase3: string;
+  cooperationStyle: string;
+}
+
+export interface PowerDynamics {
+  enabled: boolean;
+  expressionModes: string[];
+  exploration: string;
+}
+
+export interface PlayPreferences {
+  mode: string;
+  intensityProfile: {
+    emotional: number;
+    theatrical: number;
+    intellectual: number;
+  };
+}
+
+export interface RepulsionVectors {
+  hardStops: string[];
+  yellowFlags: string[];
+  patternConcerns: string[];
+}
+
+export interface TrustProfile {
+  harmHistory: string;
+  referencesAvailable: boolean;
+}
+
+export interface DiscoveryIntroduction {
+  audioIntro: string;
+  videoIntro: string;
+}
+
+// ============================================================================
+// Existing layers
+// ============================================================================
+
 export interface EconomicLayer {
   openToInvoicing: boolean;
   contexts: string[];
   rates: Record<string, string>;
   values: string[];
   boundaries: string[];
+  kinkAlignment: string[];
 }
 
 export interface SeekingProfile {
@@ -92,6 +158,8 @@ export interface SafetyProfile {
   accountability: string[];
   safeSexPractices: string;
   substanceClarity: string;
+  harmHistory: string;
+  referencesAvailable: boolean;
 }
 
 export interface ConnectionPreferences {
@@ -143,8 +211,11 @@ export interface DiscoveryMetadata {
   seekingStatus: string;
   privacyComfortLevel: "low" | "medium" | "high";
   willingToBeCompared: boolean;
+  willingToHaveCompatibilityShared: boolean;
   portfolioLinks: string[];
   writtenBio: string;
+  audioIntro: string;
+  videoIntro: string;
 }
 
 export const RESONANCE_SECTIONS = [
@@ -156,6 +227,11 @@ export const RESONANCE_SECTIONS = [
   { id: "languages", label: "Languages", icon: "💬", description: "Expression & reception" },
   { id: "kinks", label: "Desires", icon: "🔥", description: "Pleasure & power" },
   { id: "type", label: "Type", icon: "🪞", description: "Relational archetype" },
+  { id: "archetypes", label: "Archetypes", icon: "🎭", description: "Identity packets" },
+  { id: "attraction", label: "Attraction", icon: "🧲", description: "What draws you in" },
+  { id: "engagement", label: "Engagement", icon: "📈", description: "Connection phases" },
+  { id: "dynamics", label: "Dynamics", icon: "⚔️", description: "Power & play" },
+  { id: "repulsion", label: "Repulsion", icon: "🚧", description: "Hard stops & flags" },
   { id: "seeking", label: "Seeking", icon: "🧭", description: "What you're looking for" },
   { id: "safety", label: "Safety", icon: "🛡️", description: "Consent & boundaries" },
   { id: "economic", label: "Economic", icon: "💎", description: "Labor & exchange" },
@@ -163,6 +239,15 @@ export const RESONANCE_SECTIONS = [
   { id: "glossary", label: "Glossary", icon: "📖", description: "Your personal lexicon" },
   { id: "discovery", label: "Discovery", icon: "🔭", description: "How you want to be found" },
 ] as const;
+
+// Archetype presets
+export const ARCHETYPE_PRESETS: Omit<ArchetypePacket, "id" | "isCustom">[] = [
+  { label: "Pastel Goth", class: "aesthetic", aesthetic: ["soft", "dark", "layered"], energy: "low_simmer", dynamic: "receptive", tone: "melancholic_play", performance: "subtle" },
+  { label: "Maid Ritual", class: "service", aesthetic: ["precise", "devotional"], energy: "attentive", dynamic: "service_oriented", tone: "earnest", performance: "theatrical" },
+  { label: "Chaos Architect", class: "creative", aesthetic: ["maximalist", "kinetic"], energy: "high_spark", dynamic: "initiating", tone: "playful_serious", performance: "bold" },
+  { label: "Soft Dom Scholar", class: "power", aesthetic: ["refined", "warm"], energy: "steady", dynamic: "guiding", tone: "authoritative_gentle", performance: "controlled" },
+  { label: "Feral Tender", class: "wild", aesthetic: ["raw", "organic"], energy: "volatile", dynamic: "responsive", tone: "fierce_caring", performance: "instinctive" },
+];
 
 // ============================================================================
 // Mock resonance profiles for existing profiles
@@ -212,6 +297,7 @@ const defaultEconomic: EconomicLayer = {
   rates: {},
   values: ["explicit_beats_implicit", "labor_deserves_recognition"],
   boundaries: ["only_in_appropriate_contexts"],
+  kinkAlignment: [],
 };
 
 const defaultSafety: SafetyProfile = {
@@ -220,6 +306,8 @@ const defaultSafety: SafetyProfile = {
   accountability: ["willing_to_be_called_in", "repair_orientation"],
   safeSexPractices: "discussed_before_intimacy",
   substanceClarity: "occasional_alcohol",
+  harmHistory: "",
+  referencesAvailable: false,
 };
 
 const defaultConnection: ConnectionPreferences = {
