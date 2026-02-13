@@ -22,9 +22,9 @@ const Landing = () => {
             fumble
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
-            I built this to figure myself out.
+            Figure out what works on you.
             <br />
-            <span className="text-foreground font-medium">Then I thought — what if you could too?</span>
+            <span className="text-foreground font-medium">Then find someone who gets it.</span>
           </p>
         </motion.div>
 
@@ -36,8 +36,8 @@ const Landing = () => {
           className="mt-10 flex flex-col gap-3 w-full max-w-xs"
         >
           {[
-            { icon: Sparkles, text: "Know what works on you — share it" },
-            { icon: Handshake, text: "Say what you actually need upfront" },
+            { icon: Sparkles, text: "Know yourself — then share it" },
+            { icon: Handshake, text: "Set expectations together, not after" },
             { icon: MessageCircle, text: "Find the ones you almost met" },
             { icon: Zap, text: "Small stakes, real follow-through" },
           ].map((item, i) => (
@@ -60,7 +60,7 @@ const Landing = () => {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="mt-8 text-xs text-muted-foreground max-w-[260px] leading-relaxed"
         >
-          Not another app trying to sell you on connection. Just a tool for clarity — yours first, then shared.
+          No guessing games. No unspoken debts. Just two people who showed up clear.
         </motion.p>
       </div>
 
