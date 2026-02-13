@@ -22,7 +22,7 @@ const Landing = () => {
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
             Figure out what works on you.
             <br />
-            <span className="text-foreground font-medium">Then find someone who gets it.</span>
+            <span className="text-foreground font-medium">Share your context.</span>
           </p>
         </motion.div>
 
