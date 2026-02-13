@@ -485,22 +485,36 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
               ) : null
             ) : renderLocked("🚧", "Repulsion Vectors", "repulsion")}
 
-            {/* Viability */}
+            {/* Availability & Rhythm */}
             {canSee("viability") ? (
-              <SectionCard icon="⚡" label="Viability" description="Whether connection can work">
+              <SectionCard icon="🌱" label="Availability & Rhythm" description="Season, capacity & how they show up">
                 <div className="space-y-3">
                   <div className="space-y-1">
                     <LabelValue label="Season" value={viability?.availability?.currentSeason?.replace?.(/_/g, " ") || viability?.currentSeason?.replace?.(/_/g, " ")} />
-                    <LabelValue label="Frequency" value={viability?.availability?.engagementFrequency || viability?.engagementFrequency} />
-                    <LabelValue label="Hours/week" value={viability?.availability?.weeklyHours || viability?.weeklyHours} />
-                    <LabelValue label="Conflict style" value={viability?.conflictStyle?.replace?.(/_/g, " ")} />
-                    <LabelValue label="Reciprocity" value={viability?.reciprocityModel?.replace?.(/_/g, " ")} />
+                    <LabelValue label="Rhythm" value={viability?.availability?.engagementFrequency || viability?.engagementFrequency} />
+                    <LabelValue label="Energy budget" value={viability?.availability?.weeklyHours || viability?.weeklyHours} />
                   </div>
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Core values</p><TagList items={viability?.coreValues} variant="warm" /></div>
                   <div><p className="text-xs font-semibold text-foreground mb-1.5">Growth vectors</p><TagList items={viability?.growthVectors} variant="muted" /></div>
+                  {(viability?.conflictStyle || viability?.reciprocityModel) && (
+                    <div className="border-t border-border pt-3 space-y-2">
+                      {viability?.conflictStyle && (
+                        <div>
+                          <p className="text-xs font-semibold text-foreground mb-1">🔥 Conflict style</p>
+                          <p className="text-xs text-foreground/80">{viability.conflictStyle.replace?.(/_/g, " ")}</p>
+                        </div>
+                      )}
+                      {viability?.reciprocityModel && (
+                        <div>
+                          <p className="text-xs font-semibold text-foreground mb-1">🔄 Reciprocity</p>
+                          <p className="text-xs text-foreground/80">{viability.reciprocityModel.replace?.(/_/g, " ")}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </SectionCard>
-            ) : renderLocked("⚡", "Viability", "viability")}
+            ) : renderLocked("🌱", "Availability & Rhythm", "viability")}
 
             {/* Seeking */}
             {canSee("seeking") ? (
