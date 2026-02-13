@@ -2,13 +2,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Tag, StickyNote, Check, Eye, CalendarHeart } from "lucide-react";
 import type { ResonanceProfile } from "@/data/resonance-profile";
-import type { MatchData } from "@/utils/match-helpers";
-import { defaultTags, getTimeSinceLabel, getSimulatedLastInteraction } from "@/utils/match-helpers";
+import type { MatchRow } from "@/hooks/use-matches";
+import { defaultTags, getTimeSinceLabel } from "@/utils/match-helpers";
 import ScheduleFumble from "./ScheduleFumble";
+import ContactDisclosure from "./ContactDisclosure";
 
 interface MatchDetailSheetProps {
   profile: ResonanceProfile;
-  matchData: MatchData;
+  match: MatchRow;
+  amUser1: boolean;
   onClose: () => void;
   onToggleTag: (tag: string) => void;
   onSaveNote: (note: string) => void;
@@ -17,7 +19,8 @@ interface MatchDetailSheetProps {
 
 const MatchDetailSheet = ({
   profile,
-  matchData,
+  match,
+  amUser1,
   onClose,
   onToggleTag,
   onSaveNote,
@@ -25,7 +28,7 @@ const MatchDetailSheet = ({
 }: MatchDetailSheetProps) => {
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [editingNote, setEditingNote] = useState(false);
-  const [noteText, setNoteText] = useState(matchData.notes);
+  const [noteText, setNoteText] = useState(match.notes || "");
   const [customTag, setCustomTag] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
 
@@ -35,8 +38,7 @@ const MatchDetailSheet = ({
     setCustomTag("");
   };
 
-  const lastInteraction = getSimulatedLastInteraction(profile.id);
-  const timeSince = getTimeSinceLabel(lastInteraction);
+  const timeSince = getTimeSinceLabel(new Date(match.last_interaction_at).getTime());
 
   return (
     <motion.div
@@ -102,6 +104,15 @@ const MatchDetailSheet = ({
           </div>
         )}
 
+        {/* Contact Disclosure */}
+        <div className="mb-5">
+          <ContactDisclosure
+            match={match}
+            otherProfileId={amUser1 ? match.user2_id : match.user1_id}
+            amUser1={amUser1}
+          />
+        </div>
+
         {/* Tags section */}
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
@@ -114,12 +125,12 @@ const MatchDetailSheet = ({
           </div>
 
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {matchData.tags.map((tag) => (
+            {match.tags.map((tag) => (
               <button key={tag} onClick={() => onToggleTag(tag)} className="flex items-center gap-1 rounded-full gradient-warm px-2.5 py-1 text-[11px] font-medium text-primary-foreground">
                 {tag} <X className="h-3 w-3" />
               </button>
             ))}
-            {matchData.tags.length === 0 && <p className="text-xs text-muted-foreground italic">No tags yet</p>}
+            {match.tags.length === 0 && <p className="text-xs text-muted-foreground italic">No tags yet</p>}
           </div>
 
           <AnimatePresence>
@@ -128,7 +139,7 @@ const MatchDetailSheet = ({
                 <div className="rounded-2xl bg-secondary/50 p-3">
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {defaultTags.map((tag) => {
-                      const isActive = matchData.tags.includes(tag);
+                      const isActive = match.tags.includes(tag);
                       return (
                         <button
                           key={tag}
@@ -184,11 +195,11 @@ const MatchDetailSheet = ({
             </div>
           ) : (
             <button
-              onClick={() => { setNoteText(matchData.notes); setEditingNote(true); }}
+              onClick={() => { setNoteText(match.notes || ""); setEditingNote(true); }}
               className="w-full rounded-2xl bg-secondary/30 border border-border p-3 text-left text-sm hover:bg-secondary/50 transition-colors"
             >
-              {matchData.notes ? (
-                <p className="text-foreground whitespace-pre-wrap">{matchData.notes}</p>
+              {match.notes ? (
+                <p className="text-foreground whitespace-pre-wrap">{match.notes}</p>
               ) : (
                 <p className="italic text-muted-foreground">Tap to add notes...</p>
               )}
