@@ -163,7 +163,6 @@ interface ResonanceData {
   };
   glossary: Record<string, GlossaryEntry>;
   discovery: DiscoveryData;
-  // New layers
   archetypes: ArchetypeData[];
   attraction: AttractionData;
   engagement: EngagementData;
@@ -181,10 +180,10 @@ const emptyData: ResonanceData = {
   },
   viability: {
     currentSeason: "exploring",
-    engagementFrequency: "weekly",
+    engagementFrequency: "",
     weeklyHours: "",
-    conflictStyle: "dialogue",
-    reciprocityModel: "flexible",
+    conflictStyle: "",
+    reciprocityModel: "",
     relationshipTypes: [],
     coreValues: [],
     growthVectors: [],
@@ -236,7 +235,7 @@ const emptyData: ResonanceData = {
     preferredContactMethod: "",
     responseTimeExpectations: "",
     frequencyOfContact: "",
-    meetingModality: "hybrid",
+    meetingModality: "",
     location: "",
     willingToTravel: "",
   },
@@ -665,6 +664,85 @@ const GlossaryField = ({
   );
 };
 
+// ─── Custom Archetype Creator ────────────────────────────────────────────────
+
+const CustomArchetypeCreator = ({ onAdd }: { onAdd: (arch: ArchetypeData) => void }) => {
+  const [open, setOpen] = useState(false);
+  const [label, setLabel] = useState("");
+  const [archClass, setArchClass] = useState("");
+  const [aesthetic, setAesthetic] = useState<string[]>([]);
+  const [energy, setEnergy] = useState("");
+  const [dynamic, setDynamic] = useState("");
+  const [tone, setTone] = useState("");
+  const [performance, setPerformance] = useState("");
+
+  const reset = () => {
+    setLabel("");
+    setArchClass("");
+    setAesthetic([]);
+    setEnergy("");
+    setDynamic("");
+    setTone("");
+    setPerformance("");
+  };
+
+  const handleAdd = () => {
+    if (!label.trim()) return;
+    onAdd({
+      id: crypto.randomUUID(),
+      label: label.trim(),
+      class: archClass.trim() || "custom",
+      aesthetic,
+      energy: energy.trim(),
+      dynamic: dynamic.trim(),
+      tone: tone.trim(),
+      performance: performance.trim(),
+      isCustom: true,
+    });
+    reset();
+    setOpen(false);
+  };
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full rounded-xl border border-dashed border-border p-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all flex items-center justify-center gap-2"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        Create custom archetype
+      </button>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-2.5">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs font-semibold text-foreground">New Custom Archetype</p>
+        <button type="button" onClick={() => { reset(); setOpen(false); }} className="rounded-full p-1 hover:bg-destructive/20 transition-colors">
+          <X className="h-3 w-3 text-muted-foreground" />
+        </button>
+      </div>
+      <TextField label="Name" value={label} onChange={setLabel} placeholder="e.g. Velvet Strategist" />
+      <TextField label="Class" value={archClass} onChange={setArchClass} placeholder="e.g. aesthetic, power, service, creative, wild..." />
+      <TagField label="Aesthetic" tags={aesthetic} onChange={setAesthetic} placeholder="e.g. refined, warm, layered" />
+      <TextField label="Energy" value={energy} onChange={setEnergy} placeholder="e.g. steady, volatile, low_simmer, high_spark" />
+      <TextField label="Dynamic" value={dynamic} onChange={setDynamic} placeholder="e.g. guiding, responsive, initiating" />
+      <TextField label="Tone" value={tone} onChange={setTone} placeholder="e.g. playful_serious, fierce_caring" />
+      <TextField label="Performance" value={performance} onChange={setPerformance} placeholder="e.g. subtle, bold, theatrical, controlled" />
+      <button
+        type="button"
+        onClick={handleAdd}
+        disabled={!label.trim()}
+        className="w-full rounded-xl bg-primary/20 py-2 text-xs font-semibold text-primary hover:bg-primary/30 disabled:opacity-40 transition-all"
+      >
+        Add Archetype
+      </button>
+    </div>
+  );
+};
+
 // ─── Section wrapper ─────────────────────────────────────────────────────────
 
 const EditorSection = ({
@@ -786,7 +864,6 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     }
   };
 
-  // Helper to update nested paths
   const set = <T,>(path: string[], value: T) => {
     setData((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
@@ -804,7 +881,6 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
   const setVis = (section: string, v: Visibility) =>
     set(["sectionVisibility", section], v);
 
-  // Archetype helpers
   const togglePreset = (preset: typeof ARCHETYPE_PRESETS[0]) => {
     const existing = data.archetypes.find((a) => a.label === preset.label && !a.isCustom);
     if (existing) {
@@ -874,8 +950,23 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
 
                 {/* ═══ TAB 1: FOUNDATIONS ═══ */}
                 <TabsContent value="foundations" className="space-y-3">
+                  {/* Core */}
+                  <EditorSection icon="🎯" label="Core Resonance" description="How you engage" defaultOpen visibility={vis("core")} onVisibilityChange={(v) => setVis("core", v)}>
+                    <TextField label="Attention Model" value={data.core.attentionModel} onChange={(v) => set(["core", "attentionModel"], v)} placeholder="How you give and receive attention..." />
+                    <TagField label="✨ What activates you" tags={data.core.activationVectors.attracts} onChange={(v) => set(["core", "activationVectors", "attracts"], v)} placeholder="e.g. genuine humor" />
+                    <TagField label="🚫 What repels you" tags={data.core.activationVectors.repels} onChange={(v) => set(["core", "activationVectors", "repels"], v)} placeholder="e.g. performative confidence" />
+                    <TagField label="💘 Flirt style — attracts" tags={data.core.flirtInterface.attracts} onChange={(v) => set(["core", "flirtInterface", "attracts"], v)} />
+                    <TagField label="💔 Flirt style — fails when" tags={data.core.flirtInterface.failsWhen} onChange={(v) => set(["core", "flirtInterface", "failsWhen"], v)} />
+                  </EditorSection>
+
+                  {/* Consumer Interface */}
+                  <EditorSection icon="🔎" label="Consumer Interface" description="What works on you" visibility={vis("consumer")} onVisibilityChange={(v) => setVis("consumer", v)}>
+                    <TagField label="🟢 Trust signals" tags={data.consumer.trustSignals} onChange={(v) => set(["consumer", "trustSignals"], v)} placeholder="e.g. artifact_built_tools" />
+                    <TagField label="🔴 Distrust signals" tags={data.consumer.distrustSignals} onChange={(v) => set(["consumer", "distrustSignals"], v)} placeholder="e.g. over_polished_emptiness" />
+                  </EditorSection>
+
                   {/* Loops & Lessons */}
-                  <EditorSection icon="🔄" label="Loops & Lessons" description="Patterns and wisdom" defaultOpen visibility={vis("loops")} onVisibilityChange={(v) => setVis("loops", v)}>
+                  <EditorSection icon="🔄" label="Loops & Lessons" description="Patterns and wisdom" visibility={vis("loops")} onVisibilityChange={(v) => setVis("loops", v)}>
                     <ListField label="🔄 Behavioral loops" items={data.experiential.loops} onChange={(v) => set(["experiential", "loops"], v)} placeholder="A recurring pattern you've noticed..." />
                     <ListField label="💡 Hard-won lessons" items={data.experiential.lessons} onChange={(v) => set(["experiential", "lessons"], v)} placeholder="Something you've learned the hard way..." />
                   </EditorSection>
@@ -910,7 +1001,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                 {/* ═══ TAB 2: ATTRACTION ═══ */}
                 <TabsContent value="attraction" className="space-y-3">
                   {/* Archetypes */}
-                  <EditorSection icon="🎭" label="Archetypes" description="Identity packets" defaultOpen visibility={vis("archetypes")} onVisibilityChange={(v) => setVis("archetypes", v)}>
+                  <EditorSection icon="🎭" label="Archetypes" description="Identity packets — presets or your own" defaultOpen visibility={vis("archetypes")} onVisibilityChange={(v) => setVis("archetypes", v)}>
                     <label className="text-xs font-medium text-muted-foreground mb-2 block">Presets</label>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {ARCHETYPE_PRESETS.map((preset) => {
@@ -930,14 +1021,18 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       })}
                     </div>
 
-                    {/* Selected archetypes display */}
+                    {/* Selected archetypes */}
                     {data.archetypes.length > 0 && (
-                      <div className="space-y-2">
+                      <div className="space-y-2 mb-4">
                         {data.archetypes.map((arch) => (
                           <div key={arch.id} className="rounded-xl bg-secondary/50 p-3 flex items-start justify-between group">
                             <div>
-                              <p className="text-sm font-medium text-foreground">{arch.label}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-medium text-foreground">{arch.label}</p>
+                                {arch.isCustom && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-accent-foreground">custom</span>}
+                              </div>
                               <p className="text-xs text-muted-foreground">{arch.class} · {arch.energy.replace(/_/g, " ")}</p>
+                              {arch.tone && <p className="text-xs text-muted-foreground">{arch.tone.replace(/_/g, " ")} · {arch.performance}</p>}
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {arch.aesthetic.map((a) => (
                                   <span key={a} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{a}</span>
@@ -955,6 +1050,9 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                         ))}
                       </div>
                     )}
+
+                    {/* Custom archetype creator */}
+                    <CustomArchetypeCreator onAdd={(arch) => set(["archetypes"], [...data.archetypes, arch])} />
                   </EditorSection>
 
                   {/* Attraction Gradient */}
@@ -964,13 +1062,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       <ToggleButton label="Fast Hook" value={data.attraction.fastHook} onChange={(v) => set(["attraction", "fastHook"], v)} />
                     </div>
                     <TagField label="What draws you in" tags={data.attraction.whatDrawsIn} onChange={(v) => set(["attraction", "whatDrawsIn"], v)} placeholder="e.g. quiet_competence" />
-                    <SelectField label="Timeline" value={data.attraction.timeline} onChange={(v) => set(["attraction", "timeline"], v)} options={[
-                      { value: "", label: "Select..." },
-                      { value: "instant", label: "Instant recognition" },
-                      { value: "weeks", label: "Weeks to feel it" },
-                      { value: "months", label: "Months of proximity" },
-                      { value: "variable", label: "Depends entirely on context" },
-                    ]} />
+                    <TextField label="Timeline" value={data.attraction.timeline} onChange={(v) => set(["attraction", "timeline"], v)} placeholder="How long it takes you to feel it — in your own words..." />
                   </EditorSection>
 
                   {/* Engagement Curve */}
@@ -978,13 +1070,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     <TextField label="Phase 1 — Initial contact" value={data.engagement.phase1} onChange={(v) => set(["engagement", "phase1"], v)} placeholder="How you show up at first..." multiline />
                     <TextField label="Phase 2 — Building" value={data.engagement.phase2} onChange={(v) => set(["engagement", "phase2"], v)} placeholder="How connection deepens..." multiline />
                     <TextField label="Phase 3 — Established" value={data.engagement.phase3} onChange={(v) => set(["engagement", "phase3"], v)} placeholder="What sustained connection looks like..." multiline />
-                    <SelectField label="Cooperation style" value={data.engagement.cooperationStyle} onChange={(v) => set(["engagement", "cooperationStyle"], v)} options={[
-                      { value: "", label: "Select..." },
-                      { value: "collaborative", label: "Collaborative" },
-                      { value: "parallel", label: "Parallel" },
-                      { value: "leader_follower", label: "Leader / Follower" },
-                      { value: "fluid", label: "Fluid / Context-dependent" },
-                    ]} />
+                    <TextField label="Cooperation style" value={data.engagement.cooperationStyle} onChange={(v) => set(["engagement", "cooperationStyle"], v)} placeholder="How you collaborate — parallel, fluid, leading, following..." />
                   </EditorSection>
                 </TabsContent>
 
@@ -1008,14 +1094,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
 
                   {/* Play Preferences */}
                   <EditorSection icon="🎲" label="Play Preferences" description="Mode & intensity" visibility={vis("dynamics")} onVisibilityChange={(v) => setVis("dynamics", v)}>
-                    <SelectField label="Play mode" value={data.playPreferences.mode} onChange={(v) => set(["playPreferences", "mode"], v)} options={[
-                      { value: "", label: "Select..." },
-                      { value: "light", label: "Light & playful" },
-                      { value: "intense", label: "Intense & immersive" },
-                      { value: "ritual", label: "Ritualistic & structured" },
-                      { value: "improvisational", label: "Improvisational" },
-                      { value: "meta", label: "Meta-aware" },
-                    ]} />
+                    <TextField label="Play mode" value={data.playPreferences.mode} onChange={(v) => set(["playPreferences", "mode"], v)} placeholder="How you play — light, ritualistic, improvisational, meta..." />
                     <SliderField label="Emotional intensity" value={data.playPreferences.intensityProfile.emotional} onChange={(v) => set(["playPreferences", "intensityProfile", "emotional"], v)} />
                     <SliderField label="Theatrical intensity" value={data.playPreferences.intensityProfile.theatrical} onChange={(v) => set(["playPreferences", "intensityProfile", "theatrical"], v)} />
                     <SliderField label="Intellectual intensity" value={data.playPreferences.intensityProfile.intellectual} onChange={(v) => set(["playPreferences", "intensityProfile", "intellectual"], v)} />
@@ -1031,26 +1110,11 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
 
                 {/* ═══ TAB 4: SEEKING & SAFETY ═══ */}
                 <TabsContent value="seeking" className="space-y-3">
-                  {/* Core */}
-                  <EditorSection icon="🎯" label="Core Resonance" description="How you engage" defaultOpen visibility={vis("core")} onVisibilityChange={(v) => setVis("core", v)}>
-                    <TextField label="Attention Model" value={data.core.attentionModel} onChange={(v) => set(["core", "attentionModel"], v)} placeholder="How you give and receive attention..." />
-                    <TagField label="✨ What activates you" tags={data.core.activationVectors.attracts} onChange={(v) => set(["core", "activationVectors", "attracts"], v)} placeholder="e.g. genuine humor" />
-                    <TagField label="🚫 What repels you" tags={data.core.activationVectors.repels} onChange={(v) => set(["core", "activationVectors", "repels"], v)} placeholder="e.g. performative confidence" />
-                    <TagField label="💘 Flirt style — attracts" tags={data.core.flirtInterface.attracts} onChange={(v) => set(["core", "flirtInterface", "attracts"], v)} />
-                    <TagField label="💔 Flirt style — fails when" tags={data.core.flirtInterface.failsWhen} onChange={(v) => set(["core", "flirtInterface", "failsWhen"], v)} />
-                  </EditorSection>
-
-                  {/* Consumer Interface */}
-                  <EditorSection icon="🔎" label="Consumer Interface" description="What works on you — your compendium" visibility={vis("consumer")} onVisibilityChange={(v) => setVis("consumer", v)}>
-                    <TagField label="🟢 Trust signals" tags={data.consumer.trustSignals} onChange={(v) => set(["consumer", "trustSignals"], v)} placeholder="e.g. artifact_built_tools" />
-                    <TagField label="🔴 Distrust signals" tags={data.consumer.distrustSignals} onChange={(v) => set(["consumer", "distrustSignals"], v)} placeholder="e.g. over_polished_emptiness" />
-                  </EditorSection>
-
                   {/* Seeking */}
-                  <EditorSection icon="🧭" label="Seeking" description="What you're looking for" visibility={vis("seeking")} onVisibilityChange={(v) => setVis("seeking", v)}>
+                  <EditorSection icon="🧭" label="Seeking" description="What you're looking for" defaultOpen visibility={vis("seeking")} onVisibilityChange={(v) => setVis("seeking", v)}>
                     <TextField label="Seeking archetype" value={data.seeking.seekingArchetype} onChange={(v) => set(["seeking", "seekingArchetype"], v)} placeholder="Who you're drawn to..." />
-                    <TextField label="Seeking loops" value={data.seeking.seekingLoops} onChange={(v) => set(["seeking", "seekingLoops"], v)} multiline />
-                    <TextField label="Seeking lessons" value={data.seeking.seekingLessons} onChange={(v) => set(["seeking", "seekingLessons"], v)} multiline />
+                    <TextField label="Seeking loops" value={data.seeking.seekingLoops} onChange={(v) => set(["seeking", "seekingLoops"], v)} placeholder="What patterns do you want them to be aware of..." multiline />
+                    <TextField label="Seeking lessons" value={data.seeking.seekingLessons} onChange={(v) => set(["seeking", "seekingLessons"], v)} placeholder="What wisdom should they carry..." multiline />
                     <TagField label="Seeking kinks" tags={data.seeking.seekingKinks} onChange={(v) => set(["seeking", "seekingKinks"], v)} />
                     <TagField label="Non-negotiables" tags={data.seeking.nonNegotiables} onChange={(v) => set(["seeking", "nonNegotiables"], v)} placeholder="What you require..." />
                     <TagField label="Nice to haves" tags={data.seeking.niceToHaves} onChange={(v) => set(["seeking", "niceToHaves"], v)} />
@@ -1070,34 +1134,25 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
 
                 {/* ═══ TAB 5: META ═══ */}
                 <TabsContent value="meta" className="space-y-3">
-                  {/* Viability */}
-                  <EditorSection icon="⚡" label="Viability" description="Whether it can work" defaultOpen visibility={vis("viability")} onVisibilityChange={(v) => setVis("viability", v)}>
+                  {/* Availability & Rhythm — replaces "Viability" */}
+                  <EditorSection icon="🌱" label="Availability & Rhythm" description="Your season, capacity, and how you show up" defaultOpen visibility={vis("viability")} onVisibilityChange={(v) => setVis("viability", v)}>
                     <SelectField label="Current season" value={data.viability.currentSeason} onChange={(v) => set(["viability", "currentSeason"], v)} options={[
                       { value: "available_and_seeking", label: "Available & Seeking" },
                       { value: "exploring", label: "Exploring" },
                       { value: "healing", label: "Healing" },
                       { value: "closed", label: "Closed" },
                     ]} />
-                    <SelectField label="Engagement frequency" value={data.viability.engagementFrequency} onChange={(v) => set(["viability", "engagementFrequency"], v)} options={[
-                      { value: "daily", label: "Daily" },
-                      { value: "weekly", label: "Weekly" },
-                      { value: "monthly", label: "Monthly" },
-                    ]} />
-                    <TextField label="Weekly hours" value={data.viability.weeklyHours} onChange={(v) => set(["viability", "weeklyHours"], v)} placeholder="e.g. 5-10" />
-                    <SelectField label="Conflict style" value={data.viability.conflictStyle} onChange={(v) => set(["viability", "conflictStyle"], v)} options={[
-                      { value: "dialogue", label: "Dialogue" },
-                      { value: "use_for_understanding", label: "Use for understanding" },
-                      { value: "avoidance", label: "Avoidance" },
-                      { value: "confrontation", label: "Confrontation" },
-                    ]} />
-                    <SelectField label="Reciprocity model" value={data.viability.reciprocityModel} onChange={(v) => set(["viability", "reciprocityModel"], v)} options={[
-                      { value: "symmetric_preferred", label: "Symmetric preferred" },
-                      { value: "asymmetric_ok", label: "Asymmetric OK" },
-                      { value: "flexible", label: "Flexible" },
-                    ]} />
-                    <TagField label="Relationship types" tags={data.viability.relationshipTypes} onChange={(v) => set(["viability", "relationshipTypes"], v)} placeholder="e.g. romantic" />
-                    <TagField label="Core values" tags={data.viability.coreValues} onChange={(v) => set(["viability", "coreValues"], v)} placeholder="e.g. autonomy" />
-                    <TagField label="Growth vectors" tags={data.viability.growthVectors} onChange={(v) => set(["viability", "growthVectors"], v)} />
+                    <TextField label="Engagement rhythm" value={data.viability.engagementFrequency} onChange={(v) => set(["viability", "engagementFrequency"], v)} placeholder="Daily check-ins, weekly deep dives, bursts then silence..." />
+                    <TextField label="Time / energy budget" value={data.viability.weeklyHours} onChange={(v) => set(["viability", "weeklyHours"], v)} placeholder="e.g. 5-10 hours, or 'depends on the week'" />
+                    <TagField label="Relationship types" tags={data.viability.relationshipTypes} onChange={(v) => set(["viability", "relationshipTypes"], v)} placeholder="e.g. romantic, creative_collaboration" />
+                    <TagField label="Core values" tags={data.viability.coreValues} onChange={(v) => set(["viability", "coreValues"], v)} placeholder="e.g. autonomy, authenticity" />
+                    <TagField label="Growth vectors" tags={data.viability.growthVectors} onChange={(v) => set(["viability", "growthVectors"], v)} placeholder="Where you're actively growing..." />
+                  </EditorSection>
+
+                  {/* Conflict & Reciprocity — broken out of viability, freeform */}
+                  <EditorSection icon="🔥" label="Conflict & Reciprocity" description="How you fight, repair, and exchange" visibility={vis("viability")} onVisibilityChange={(v) => setVis("viability", v)}>
+                    <TextField label="Conflict style" value={data.viability.conflictStyle} onChange={(v) => set(["viability", "conflictStyle"], v)} placeholder="How you handle friction — tone, sources, what escalates vs resolves, the theater of it..." multiline />
+                    <TextField label="Reciprocity model" value={data.viability.reciprocityModel} onChange={(v) => set(["viability", "reciprocityModel"], v)} placeholder="Symmetric, asymmetric, fluid — how do you think about give and take..." multiline />
                   </EditorSection>
 
                   {/* Economic */}
@@ -1111,16 +1166,12 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
 
                   {/* Connection */}
                   <EditorSection icon="📡" label="Connection" description="Logistics & preferences" visibility={vis("connection")} onVisibilityChange={(v) => setVis("connection", v)}>
-                    <TextField label="Preferred contact method" value={data.connection.preferredContactMethod} onChange={(v) => set(["connection", "preferredContactMethod"], v)} />
-                    <TextField label="Response time expectations" value={data.connection.responseTimeExpectations} onChange={(v) => set(["connection", "responseTimeExpectations"], v)} placeholder="e.g. 24-48 hours" />
-                    <TextField label="Frequency of contact" value={data.connection.frequencyOfContact} onChange={(v) => set(["connection", "frequencyOfContact"], v)} />
-                    <SelectField label="Meeting modality" value={data.connection.meetingModality} onChange={(v) => set(["connection", "meetingModality"], v)} options={[
-                      { value: "online", label: "Online" },
-                      { value: "in_person", label: "In person" },
-                      { value: "hybrid", label: "Hybrid" },
-                    ]} />
+                    <TextField label="Preferred contact method" value={data.connection.preferredContactMethod} onChange={(v) => set(["connection", "preferredContactMethod"], v)} placeholder="Text, voice, carrier pigeon..." />
+                    <TextField label="Response time expectations" value={data.connection.responseTimeExpectations} onChange={(v) => set(["connection", "responseTimeExpectations"], v)} placeholder="Same day, 24-48 hours, when I have the bandwidth..." />
+                    <TextField label="Frequency of contact" value={data.connection.frequencyOfContact} onChange={(v) => set(["connection", "frequencyOfContact"], v)} placeholder="Daily async, weekly calls, spontaneous bursts..." />
+                    <TextField label="Meeting modality" value={data.connection.meetingModality} onChange={(v) => set(["connection", "meetingModality"], v)} placeholder="Online, in person, hybrid, context-dependent..." />
                     <TextField label="Location" value={data.connection.location} onChange={(v) => set(["connection", "location"], v)} />
-                    <TextField label="Willing to travel" value={data.connection.willingToTravel} onChange={(v) => set(["connection", "willingToTravel"], v)} />
+                    <TextField label="Willing to travel" value={data.connection.willingToTravel} onChange={(v) => set(["connection", "willingToTravel"], v)} placeholder="For the right person, for the right reason..." />
                   </EditorSection>
 
                   {/* Glossary */}
