@@ -4204,20 +4204,44 @@ export type Database = {
       }
       matches: {
         Row: {
+          contact_shared_by_user1: boolean | null
+          contact_shared_by_user2: boolean | null
           created_at: string
           id: string
+          last_interaction_at: string | null
+          notes: string | null
+          scheduled_date: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string | null
           user1_id: string
           user2_id: string
         }
         Insert: {
+          contact_shared_by_user1?: boolean | null
+          contact_shared_by_user2?: boolean | null
           created_at?: string
           id?: string
+          last_interaction_at?: string | null
+          notes?: string | null
+          scheduled_date?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string | null
           user1_id: string
           user2_id: string
         }
         Update: {
+          contact_shared_by_user1?: boolean | null
+          contact_shared_by_user2?: boolean | null
           created_at?: string
           id?: string
+          last_interaction_at?: string | null
+          notes?: string | null
+          scheduled_date?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string | null
           user1_id?: string
           user2_id?: string
         }
@@ -5272,6 +5296,7 @@ export type Database = {
           age: number | null
           avatar_url: string | null
           bio: string | null
+          contact_methods: Json | null
           created_at: string
           full_name: string | null
           id: string
@@ -5287,6 +5312,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
           id: string
@@ -5302,6 +5328,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
           id?: string

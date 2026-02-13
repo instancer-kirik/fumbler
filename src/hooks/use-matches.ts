@@ -56,7 +56,7 @@ export function useMatches() {
 
       const { data: matchRows, error: matchError } = await supabase
         .from("matches")
-        .select("*")
+        .select("*" as any)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
 
       if (matchError || !matchRows?.length) return [];
@@ -67,7 +67,7 @@ export function useMatches() {
 
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age, contact_methods, resonance_data")
+        .select("id, full_name, username, avatar_url, bio, age, contact_methods, resonance_data" as any)
         .in("id", otherIds);
 
       if (!profiles) return [];
@@ -106,9 +106,9 @@ export function useUpdateMatch() {
       matchId: string;
       updates: Partial<Pick<MatchRow, "tags" | "notes" | "scheduled_date" | "status" | "last_interaction_at" | "contact_shared_by_user1" | "contact_shared_by_user2">>;
     }) => {
-      const { error } = await supabase
-        .from("matches")
-        .update(updates as any)
+      const { error } = await (supabase
+        .from("matches") as any)
+        .update(updates)
         .eq("id", matchId);
       if (error) throw error;
     },
