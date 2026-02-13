@@ -1,0 +1,266 @@
+meta:
+  version: 0.5
+  mode: fumble_resonance_profile
+  author: kirik
+  created_at: 2026-02-11T00:00:00Z
+
+# ============================================================================
+# CORE RESONANCE — How you engage
+# ============================================================================
+
+name: "Your Name / Handle"
+description: "Brief intro to who you are"
+
+attention_model:
+  type: resonance_not_persuasion
+  description: >
+    Engagement occurs through emergent alignment,
+    not direct convincing.
+
+activation_vectors:
+  - competent_weirdness
+  - layered_meaning
+  - curiosity_invitation
+
+repulsion_vectors:
+  - performative_confidence
+  - over_explanation
+  - extractive_attention
+
+flirt_interface:
+  attracts:
+    - calm_curiosity
+    - subtle_mastery
+    - specific_noticing
+  fails_when:
+    - intensity_too_early
+    - emotional_oversharing_without_context
+    - mirroring_too_aggressively
+
+consumer_interface:
+  trust_signals:
+    - artifact_built_tools
+    - intentional_rough_edges
+    - depth_discoverable_over_time
+  distrust_signals:
+    - over_polished_emptiness
+    - hidden_complexity
+
+glossary:
+  leethia:
+    meaning: misunderstanding resolving into clarity
+    state: emergent_insight
+  pattern_emergence:
+    meaning: when disparate signals suddenly cohere into shape
+    state: recognition
+
+# ============================================================================
+# VIABILITY — Whether connection can actually work
+# ============================================================================
+
+viability_profile:
+  availability:
+    engagement_frequency: "daily" # daily, weekly, monthly
+    weekly_hours: 5-10
+    timezone: "US/Pacific"
+    async_preferred: true
+    current_season: "available_and_seeking" # or: closed, healing, exploring
+
+  relationship_types_available:
+    - romantic
+    - creative_collaboration
+    - mentorship
+
+  conflict_style: "use_for_understanding" # or: avoidance, confrontation, dialogue
+
+  reciprocity_model: "symmetric_preferred" # or: asymmetric_ok, flexible
+
+  communication_modalities:
+    primary: "async_text"
+    secondary: "voice_calls"
+    frequency_preference: "whenever_feels_right"
+
+  growth_vectors:
+    - deepening_craft
+    - emotional_resilience
+
+  core_values:
+    - autonomy
+    - authenticity
+    - emergence_over_control
+
+# ============================================================================
+# EXPERIENTIAL — What you actually do and have learned
+# ============================================================================
+
+experiential_profile:
+  loops:
+    - "withdraw-seek-withdraw when triggered"
+    - "intellectualize before feeling"
+    - "need full resolution before moving on"
+    - "escalate quickly then recover slowly"
+
+  lessons:
+    - "caretaking is control; stop saving people"
+    - "my intensity scares people away; I need to slow down"
+    - "I can't demand reciprocity; I can only choose alignment"
+    - "vulnerability is a strength, not a burden"
+
+  languages:
+    receive_love_through:
+      - acts_of_service
+      - quality_time
+      - physical_presence
+    express_love_through:
+      - creation
+      - words
+      - acts
+    communication_style: "poetic_with_metaphor"
+    creative_expression:
+      - writing
+      - code
+      - conversation
+    vulnerability_language: "metaphor_first_then_direct"
+
+  kinks:
+    intellectual: "being_challenged_and_pushed_intellectually"
+    relational: "full_attention_and_presence"
+    intensity: "high_but_safe"
+    play: "exploring_edges_together"
+    avoid: "performance_without_authenticity"
+
+  type:
+    archetype: "guide_and_witness"
+    attraction_pattern: "people_learning_to_think_for_themselves"
+    role_in_relationship: "usually_the_one_who_sees"
+    recurring_pattern: "intensity_then_distance_then_depth"
+
+# ============================================================================
+# ECONOMIC — What labor costs and how exchange works
+# ============================================================================
+
+economic_layer:
+  open_to_invoicing: true
+
+  contexts:
+    - mentorship_and_guidance
+    - emotional_labor_and_processing
+    - time_and_attention
+    - creative_collaboration
+    - specific_expertise_sharing
+
+  rates:
+    mentorship: "negotiable"
+    emotional_labor: "negotiable"
+    base_philosophy: "time_has_value"
+
+  values_around_this:
+    - "explicit_beats_implicit"
+    - "labor_deserves_payment"
+    - "clarity_is_intimate"
+
+  boundaries:
+    - "only_in_appropriate_contexts"
+    - "not_required_for_connection"
+    - "opt_in_only"
+
+  kink_alignment:
+    - "power_exchange"
+    - "transactional_intimacy"
+    - "financial_asymmetry_as_play"
+
+# ============================================================================
+# SEEKING — What you're looking for in others
+# ============================================================================
+
+seeking_profile:
+  actively_seeking: true
+
+  seeking_archetype: "other_guides, learners, challengers"
+
+  seeking_loops: "people_who_iterate_not_stagnate"
+
+  seeking_languages:
+    compatible_with:
+      - acts_of_service
+      - quality_time
+    mismatch_tolerance: "low"
+
+  seeking_lessons: "people_learning_to_trust_themselves"
+
+  seeking_kinks:
+    - intellectual_challenge
+    - authentic_presence
+    - high_intensity
+
+  non_negotiables:
+    - "must_be_doing_their_own_work"
+    - "no_playing_victim"
+    - "authenticity_required"
+
+  nice_to_haves:
+    - "creative_expression"
+    - "philosophical_depth"
+    - "comfort_with_silence"
+
+# ============================================================================
+# SAFETY — Consent, boundaries, accountability
+# ============================================================================
+
+safety_profile:
+  consent_frameworks:
+    - "enthusiastic_consent_required"
+    - "sober_only_preferred"
+    - "check_in_during_intensity"
+
+  hard_boundaries:
+    - "no_untruth"
+    - "no_emotional_manipulation"
+    - "no_unilateral_decisions_about_us"
+
+  harm_history: "none_to_disclose" # or: "I've caused X, accountability Y"
+
+  accountability:
+    - "willing_to_be_called_in"
+    - "repair_orientation"
+    - "transparent_about_failures"
+
+  references_available: false # or: true with contact info
+
+  safe_sex_practices: "discussed_before_intimacy"
+
+  substance_clarity: "occasional_alcohol, no_other_substances"
+
+# ============================================================================
+# CONNECTION — Logistics and preferences
+# ============================================================================
+
+connection_preferences:
+  preferred_contact_method: "text_first_then_call"
+  response_time_expectations: "24-48_hours"
+  frequency_of_contact: "daily_async_or_less_frequent_sync"
+  meeting_modality: "hybrid" # online, in_person, hybrid
+  location: "remote_ok"
+  willing_to_travel: "occasionally_for_right_person"
+
+# ============================================================================
+# DISCOVERY — How you want to be found
+# ============================================================================
+
+discovery_metadata:
+  visibility: "visible_to_authenticated_users" # public, private, invite_only
+  seeking_status: "actively_looking"
+  privacy_comfort_level: "high"
+  willing_to_be_compared: true
+  willing_to_have_compatibility_shared: false
+
+  # Optional media
+  introduction:
+    written_bio: "I'm a guide, witness, and builder..."
+    audio_intro: null # or: url_to_audio
+    video_intro: null # or: url_to_video
+
+  portfolio_links:
+    - "github.com/yourname"
+    - "yourwriting.com"
+    - "yourmusic.com"
