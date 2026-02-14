@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2}"],
       },
       manifest: {
-        name: "fumble — resonance dating",
-        short_name: "fumble",
+        name: "fumbler — resonance dating",
+        short_name: "fumbler",
         description: "No guessing games. Just clarity, consent & a little chaos.",
         theme_color: "#d4a017",
         background_color: "#faf6f0",
