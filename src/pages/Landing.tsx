@@ -18,7 +18,7 @@ const Landing = () => {
             <Heart className="h-10 w-10 text-primary-foreground" fill="currentColor" />
           </div>
 
-          <h1 className="font-display text-5xl font-bold text-foreground mb-3">fumble</h1>
+          <h1 className="font-display text-5xl font-bold text-foreground mb-3">fumbler</h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xs mx-auto">
             Figure out what works on you.
             <br />
