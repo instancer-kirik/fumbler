@@ -72,6 +72,12 @@ const Landing = () => {
         >
           Welcome
         </button>
+        <button
+          onClick={() => navigate("/u/coryseib")}
+          className="w-full rounded-2xl py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          peek at an example profile ↗
+        </button>
       </motion.div>
     </div>
   );
