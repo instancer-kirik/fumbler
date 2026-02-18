@@ -64,8 +64,6 @@ const App = () => (
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
-            {/* Legacy redirect */}
-            <Route path="/app" element={<Navigate to="/discover" replace />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,9 +1,18 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Heart, Sparkles, MessageCircle, Handshake, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/discover", { replace: true });
+    }
+  }, [user, loading, navigate]);
 
   return (
     <div className="mx-auto max-w-lg min-h-screen bg-background flex flex-col">
