@@ -881,6 +881,14 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
   const setVis = (section: string, v: Visibility) =>
     set(["sectionVisibility", section], v);
 
+  const setAllPublic = () => {
+    const sections = ["core","consumer","loops","languages","relationalType","archetypes","attraction","engagement","powerDynamics","playPreferences","kinkAlignment","repulsion","seeking","safety","availability","economic","connection","discovery","glossary"];
+    setData((prev) => ({
+      ...prev,
+      sectionVisibility: Object.fromEntries(sections.map((s) => [s, "public" as Visibility])),
+    }));
+  };
+
   const togglePreset = (preset: typeof ARCHETYPE_PRESETS[0]) => {
     const existing = data.archetypes.find((a) => a.label === preset.label && !a.isCustom);
     if (existing) {
@@ -922,7 +930,15 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                 <h3 className="font-display text-xl font-bold text-foreground">Resonance Profile</h3>
                 <p className="text-xs text-muted-foreground">Define how you connect</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <button
+                  type="button"
+                  onClick={setAllPublic}
+                  className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                  title="Set all sections to public visibility"
+                >
+                  🌍 All public
+                </button>
                 <button
                   onClick={() => onOpenChange(false)}
                   className="rounded-full bg-secondary p-2"
