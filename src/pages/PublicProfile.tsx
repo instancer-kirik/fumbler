@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ArrowLeft, ChevronRight } from "lucide-react";
+import { Heart, ArrowLeft, ChevronRight, Share2, Link2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PublicProfileData {
@@ -121,6 +121,19 @@ const PublicProfile = () => {
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const profileUrl = `https://fumbler.lovable.app/u/${username}`;
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      await navigator.share({ title: `${username}'s fumbler profile`, url: profileUrl });
+    } else {
+      await navigator.clipboard.writeText(profileUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -184,13 +197,22 @@ const PublicProfile = () => {
 
   return (
     <div className="mx-auto max-w-lg min-h-screen bg-background px-4 pt-6 pb-10">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </button>
+      <div className="mb-4 flex items-center justify-between">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </button>
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-1.5 rounded-xl gradient-warm px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+        >
+          {copied ? <Check className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
+          {copied ? "Copied!" : "Share profile"}
+        </button>
+      </div>
 
       {/* Profile header */}
       <motion.div
