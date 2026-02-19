@@ -82,7 +82,7 @@ const Landing = () => {
           Welcome
         </button>
         <button
-          onClick={() => navigate("/u/baon")}
+          onClick={() => navigate("/")}
           className="w-full rounded-2xl border-2 border-primary/30 bg-primary/5 py-3.5 text-sm font-semibold text-primary hover:bg-primary/10 hover:border-primary/50 transition-all"
         >
           👀 peek at an example profile
