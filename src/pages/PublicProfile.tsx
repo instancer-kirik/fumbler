@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ArrowLeft, ChevronRight, Share2, Link2, Check } from "lucide-react";
+import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeImportData } from "@/utils/resonance-normalizer";
 
 interface PublicProfileData {
   id: string;
@@ -147,7 +148,11 @@ const PublicProfile = () => {
       if (!data || error) {
         setNotFound(true);
       } else {
-        setProfile(data as any);
+        const profileData = { ...data } as any;
+        if (profileData.resonance_data) {
+          profileData.resonance_data = normalizeImportData(profileData.resonance_data as Record<string, unknown>);
+        }
+        setProfile(profileData);
       }
       setLoading(false);
     };
@@ -182,16 +187,10 @@ const PublicProfile = () => {
     );
   }
 
+  // rd is now normalized v0.9 flat format
   const rd = profile.resonance_data as any;
   const sv = rd?.sectionVisibility as Record<string, Visibility> | undefined;
   const canSee = (id: string) => isSectionVisible(id, sv);
-
-  const core = rd?.core;
-  const exp = rd?.experiential;
-  const viability = rd?.viability;
-  const seeking = rd?.seeking;
-  const safety = rd?.safety;
-  const connection = rd?.connection;
 
   const hasAnyPublicSection = rd && sv && Object.values(sv).some((v) => v === "public");
 
@@ -238,7 +237,7 @@ const PublicProfile = () => {
         )}
       </motion.div>
 
-      {/* Resonance sections */}
+      {/* Resonance sections — all using v0.9 flat keys */}
       {!rd || !hasAnyPublicSection ? (
         <div className="rounded-2xl bg-card border border-border p-6 text-center">
           <p className="text-sm text-muted-foreground">No public resonance sections yet.</p>
@@ -246,33 +245,58 @@ const PublicProfile = () => {
       ) : (
         <div className="space-y-3">
           {/* Bio from discovery */}
-          {canSee("discovery") && rd?.discovery?.writtenBio && (
+          {canSee("discovery") && rd?.discovery?.introduction?.writtenBio && (
             <div className="rounded-2xl gradient-warm p-4">
-              <p className="text-sm text-primary-foreground/90">{rd.discovery.writtenBio}</p>
+              <p className="text-sm text-primary-foreground/90">{rd.discovery.introduction.writtenBio}</p>
             </div>
           )}
 
-          {/* Core Resonance */}
-          {canSee("core") && core && (
-            <SectionCard icon="🎯" label="Core Resonance" description="How they engage" defaultOpen>
-              <p className="text-xs text-muted-foreground mb-3">{core?.attentionModel}</p>
+          {/* Get to Know Me */}
+          {canSee("gtky") && rd?.getToKnowMe && (rd.getToKnowMe.build || rd.getToKnowMe.currentObsession || rd.getToKnowMe.idealWeekend) && (
+            <SectionCard icon="👤" label="Get to Know Me" description="Surface texture & anchors" defaultOpen>
               <div className="space-y-3">
-                {core?.activationVectors?.attracts?.length > 0 && (
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">✨ Activates</p><TagList items={core.activationVectors.attracts} variant="warm" /></div>
-                )}
-                {core?.activationVectors?.repels?.length > 0 && (
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">🚫 Repels</p><TagList items={core.activationVectors.repels} variant="muted" /></div>
-                )}
-                {core?.flirtInterface?.attracts?.length > 0 && (
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">💘 Flirt Interface</p><TagList items={core.flirtInterface.attracts} /></div>
+                <LabelValue label="Build" value={rd.getToKnowMe.build} />
+                <LabelValue label="Current obsession" value={rd.getToKnowMe.currentObsession} />
+                <LabelValue label="Ideal weekend" value={rd.getToKnowMe.idealWeekend} />
+                {rd.getToKnowMe.favoriteMedia?.length > 0 && (
+                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Favorite media</p><TagList items={rd.getToKnowMe.favoriteMedia} /></div>
                 )}
               </div>
             </SectionCard>
           )}
 
-          {/* Consumer Interface */}
-          {canSee("consumer") && rd?.consumer && (rd.consumer.trustSignals?.length || rd.consumer.distrustSignals?.length) && (
-            <SectionCard icon="🔎" label="Consumer Interface" description="What works on them">
+          {/* Aura */}
+          {canSee("aura") && rd?.aura && (rd.aura.descriptors?.length > 0 || rd.aura.toneTag) && (
+            <SectionCard icon="🌀" label="Aura" description="How they land before context">
+              <div className="space-y-3">
+                {rd.aura.descriptors?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Descriptors</p><TagList items={rd.aura.descriptors} variant="warm" /></div>}
+                {rd.aura.misreadAs?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Misread as</p><TagList items={rd.aura.misreadAs} variant="muted" /></div>}
+                {rd.aura.revealsOverTime?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Reveals over time</p><TagList items={rd.aura.revealsOverTime} /></div>}
+                <LabelValue label="Tone tag" value={rd.aura.toneTag} />
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Core Resonance — flat activationVectors + flirtInterface */}
+          {canSee("core") && (rd?.activationVectors?.length > 0 || rd?.flirtInterface?.attracts?.length > 0) && (
+            <SectionCard icon="🎯" label="Core Resonance" description="How they engage" defaultOpen>
+              <div className="space-y-3">
+                {rd.activationVectors?.length > 0 && (
+                  <div><p className="text-xs font-semibold text-foreground mb-1.5">✨ Activates</p><TagList items={rd.activationVectors} variant="warm" /></div>
+                )}
+                {rd.flirtInterface?.attracts?.length > 0 && (
+                  <div><p className="text-xs font-semibold text-foreground mb-1.5">💘 Flirt Interface</p><TagList items={rd.flirtInterface.attracts} /></div>
+                )}
+                {rd.flirtInterface?.failsWhen?.length > 0 && (
+                  <div><p className="text-xs font-semibold text-foreground mb-1.5">💔 Fails when</p><TagList items={rd.flirtInterface.failsWhen} variant="muted" /></div>
+                )}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Signal Field */}
+          {canSee("signals") && rd?.consumer && (rd.consumer.trustSignals?.length > 0 || rd.consumer.distrustSignals?.length > 0) && (
+            <SectionCard icon="🔎" label="Signal Field" description="Trust & distrust signals">
               <div className="space-y-3">
                 {rd.consumer.trustSignals?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🟢 Trust signals</p><TagList items={rd.consumer.trustSignals} variant="warm" /></div>}
                 {rd.consumer.distrustSignals?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🔴 Distrust signals</p><TagList items={rd.consumer.distrustSignals} variant="muted" /></div>}
@@ -280,46 +304,67 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
+          {/* Qualities */}
+          {canSee("qualities") && (rd?.qualities?.length > 0 || rd?.values?.length > 0 || rd?.introspections?.length > 0) && (
+            <SectionCard icon="✨" label="Qualities" description="Character traits">
+              <div className="space-y-3">
+                {rd.qualities?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Qualities</p><TagList items={rd.qualities} variant="warm" /></div>}
+                {rd.values?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Values</p><TagList items={rd.values} /></div>}
+                {rd.introspections?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Introspections</p><QuoteList items={rd.introspections} /></div>}
+              </div>
+            </SectionCard>
+          )}
+
           {/* Loops */}
-          {canSee("loops") && exp?.loops?.length > 0 && (
+          {canSee("loops") && rd?.loops?.length > 0 && (
             <SectionCard icon="🔄" label="Loops" description="Behavioral recursion">
-              <QuoteList items={exp.loops} />
+              <QuoteList items={rd.loops} />
+            </SectionCard>
+          )}
+
+          {/* Lessons */}
+          {canSee("lessons") && rd?.lessons?.length > 0 && (
+            <SectionCard icon="💡" label="Lessons" description="Integrated wisdom">
+              <QuoteList items={rd.lessons} />
             </SectionCard>
           )}
 
           {/* Languages */}
-          {canSee("languages") && exp?.languages && (
+          {canSee("languages") && rd?.languages && (
             <SectionCard icon="💬" label="Languages" description="Expression & reception">
               <div className="space-y-3">
-                <div><p className="text-xs font-semibold text-foreground mb-1.5">Receives love through</p><TagList items={exp.languages.receiveLoveThrough} variant="warm" /></div>
-                <div><p className="text-xs font-semibold text-foreground mb-1.5">Expresses love through</p><TagList items={exp.languages.expressLoveThrough} /></div>
-                <LabelValue label="Communication" value={exp.languages.communicationStyle} />
-                <LabelValue label="Vulnerability" value={exp.languages.vulnerabilityLanguage} />
-                <div><p className="text-xs font-semibold text-foreground mb-1.5">Creative expression</p><TagList items={exp.languages.creativeExpression} variant="muted" /></div>
+                {rd.languages.natural?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Natural languages</p><TagList items={rd.languages.natural} /></div>}
+                {rd.languages.receiveLoveThrough?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Receives love through</p><TagList items={rd.languages.receiveLoveThrough} variant="warm" /></div>}
+                {rd.languages.expressLoveThrough?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Expresses love through</p><TagList items={rd.languages.expressLoveThrough} /></div>}
+                <LabelValue label="Communication" value={rd.languages.communicationStyle} />
+                <LabelValue label="Vulnerability" value={rd.languages.vulnerabilityLanguage} />
+                {rd.languages.creativeExpression?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Creative expression</p><TagList items={rd.languages.creativeExpression} variant="muted" /></div>}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Kinks / Desires */}
+          {canSee("kinks") && rd?.kinks && (rd.kinks.intellectual || rd.kinks.relational || rd.kinks.play) && (
+            <SectionCard icon="🔥" label="Desires" description="Pleasure & power">
+              <div className="space-y-3">
+                <LabelValue label="Intellectual" value={rd.kinks.intellectual} />
+                <LabelValue label="Relational" value={rd.kinks.relational} />
+                <LabelValue label="Intensity" value={rd.kinks.intensity} />
+                <LabelValue label="Play" value={rd.kinks.play} />
+                <LabelValue label="Avoids" value={rd.kinks.avoid} />
               </div>
             </SectionCard>
           )}
 
           {/* Archetypes */}
           {canSee("archetypes") && rd?.archetypes?.length > 0 && (
-            <SectionCard icon="🎭" label="Archetypes" description="Identity packets">
+            <SectionCard icon="🎭" label="Archetypes" description="Who they are by context">
               <div className="space-y-2">
-                {rd.archetypes.map((arch: any) => (
-                  <div key={arch.id || arch.label} className="rounded-xl bg-secondary/50 p-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{arch.label}</p>
-                        <p className="text-xs text-muted-foreground">{arch.class} · {arch.energy?.replace(/_/g, " ")}</p>
-                      </div>
-                      {arch.isCustom && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-accent-foreground">custom</span>}
-                    </div>
-                    {arch.aesthetic?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {arch.aesthetic.map((a: string) => (
-                          <span key={a} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{a}</span>
-                        ))}
-                      </div>
-                    )}
+                {rd.archetypes.map((arch: any, i: number) => (
+                  <div key={arch.name || i} className="rounded-xl bg-secondary/50 p-3">
+                    <p className="text-sm font-medium text-foreground">{arch.name}</p>
+                    {arch.definition && <p className="text-xs text-muted-foreground mt-0.5">{arch.definition}</p>}
+                    {arch.activationContext && <p className="text-xs text-primary/70 mt-0.5">→ {arch.activationContext}</p>}
                   </div>
                 ))}
               </div>
@@ -373,65 +418,123 @@ const PublicProfile = () => {
           )}
 
           {/* Repulsion Vectors */}
-          {canSee("repulsion") && rd?.repulsion && (rd.repulsion.hardStops?.length || rd.repulsion.yellowFlags?.length || rd.repulsion.patternConcerns?.length) && (
+          {canSee("repulsion") && (rd?.repulsionVectors?.length > 0 || rd?.repulsion?.hardStops?.length > 0) && (
             <SectionCard icon="🚧" label="Repulsion Vectors" description="Hard stops & flags">
               <div className="space-y-3">
-                {rd.repulsion.hardStops?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🛑 Hard stops</p><TagList items={rd.repulsion.hardStops} variant="muted" /></div>}
-                {rd.repulsion.yellowFlags?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">⚠️ Yellow flags</p><TagList items={rd.repulsion.yellowFlags} /></div>}
-                {rd.repulsion.patternConcerns?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🔍 Pattern concerns</p><TagList items={rd.repulsion.patternConcerns} /></div>}
+                {rd.repulsionVectors?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🚫 Repels</p><TagList items={rd.repulsionVectors} variant="muted" /></div>}
+                {rd.repulsion?.hardStops?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🛑 Hard stops</p><TagList items={rd.repulsion.hardStops} variant="muted" /></div>}
+                {rd.repulsion?.yellowFlags?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">⚠️ Yellow flags</p><TagList items={rd.repulsion.yellowFlags} /></div>}
+                {rd.repulsion?.patternConcerns?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">🔍 Pattern concerns</p><TagList items={rd.repulsion.patternConcerns} /></div>}
               </div>
             </SectionCard>
           )}
 
           {/* Availability */}
-          {canSee("viability") && viability && (
+          {canSee("viability") && rd?.viability && (
             <SectionCard icon="🌱" label="Availability & Rhythm" description="Season, capacity & how they show up">
               <div className="space-y-3">
-                <LabelValue label="Season" value={viability?.availability?.currentSeason?.replace?.(/_/g, " ") || viability?.currentSeason?.replace?.(/_/g, " ")} />
-                <LabelValue label="Rhythm" value={viability?.availability?.engagementFrequency || viability?.engagementFrequency} />
-                <LabelValue label="Energy budget" value={viability?.availability?.weeklyHours || viability?.weeklyHours} />
-                {viability?.coreValues?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Core values</p><TagList items={viability.coreValues} variant="warm" /></div>}
-                {viability?.growthVectors?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Growth vectors</p><TagList items={viability.growthVectors} variant="muted" /></div>}
+                <LabelValue label="Season" value={rd.viability.availability?.currentSeason} />
+                <LabelValue label="Energy budget" value={rd.viability.availability?.weeklyHours} />
+                <LabelValue label="Timezone" value={rd.viability.availability?.timezone} />
+                {rd.viability.relationshipTypesAvailable?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Relationship types</p><TagList items={rd.viability.relationshipTypesAvailable} variant="warm" /></div>}
+                <LabelValue label="Conflict style" value={rd.conflictStyle} />
+                <LabelValue label="Reciprocity" value={rd.reciprocityModel} />
+                {rd.growthVectors?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Growth vectors</p><TagList items={rd.growthVectors} variant="muted" /></div>}
               </div>
             </SectionCard>
           )}
 
           {/* Seeking */}
-          {canSee("seeking") && seeking && (
+          {canSee("seeking") && rd?.seeking && (
             <SectionCard icon="🧭" label="Seeking" description="What they're looking for">
               <div className="space-y-3">
-                <LabelValue label="Archetype" value={seeking?.seekingArchetype} />
-                <LabelValue label="Loops" value={seeking?.seekingLoops} />
-                <LabelValue label="Lessons" value={seeking?.seekingLessons} />
-                {seeking?.nonNegotiables?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Non-negotiables</p><TagList items={seeking.nonNegotiables} variant="warm" /></div>}
-                {seeking?.niceToHaves?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Nice to haves</p><TagList items={seeking.niceToHaves} variant="muted" /></div>}
+                {rd.seeking.archetypes?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Seeking archetypes</p><TagList items={rd.seeking.archetypes} variant="warm" /></div>}
+                {rd.seeking.kinks?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Seeking kinks</p><TagList items={rd.seeking.kinks} /></div>}
+                {rd.seeking.nonNegotiables?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Non-negotiables</p><TagList items={rd.seeking.nonNegotiables} variant="warm" /></div>}
+                {rd.seeking.niceToHaves?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Nice to haves</p><TagList items={rd.seeking.niceToHaves} variant="muted" /></div>}
               </div>
             </SectionCard>
           )}
 
           {/* Safety */}
-          {canSee("safety") && safety && (
+          {canSee("safety") && rd?.safety && (
             <SectionCard icon="🛡️" label="Safety & Trust" description="Consent, boundaries & accountability">
               <div className="space-y-3">
-                {safety.consentFrameworks?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Consent frameworks</p><TagList items={safety.consentFrameworks} variant="warm" /></div>}
-                {safety.hardBoundaries?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Hard boundaries</p><TagList items={safety.hardBoundaries} variant="muted" /></div>}
-                {safety.accountability?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Accountability</p><TagList items={safety.accountability} /></div>}
-                <LabelValue label="Safe sex" value={safety?.safeSexPractices} />
-                <LabelValue label="Substances" value={safety?.substanceClarity} />
-                {safety?.referencesAvailable && (
+                {rd.safety.consentFrameworks?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Consent frameworks</p><TagList items={rd.safety.consentFrameworks} variant="warm" /></div>}
+                {rd.safety.hardBoundaries?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Hard boundaries</p><TagList items={rd.safety.hardBoundaries} variant="muted" /></div>}
+                {rd.safety.accountability?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Accountability</p><TagList items={rd.safety.accountability} /></div>}
+                <LabelValue label="Safe sex" value={rd.safety.safeSexPractices} />
+                <LabelValue label="Substances" value={rd.safety.substanceClarity} />
+                {rd.safety.referencesAvailable && (
                   <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">✅ References available</span>
                 )}
               </div>
             </SectionCard>
           )}
 
-          {/* Connection */}
-          {canSee("connection") && connection && (
-            <SectionCard icon="🤝" label="Connection Style" description="How they bond">
+          {/* Economic */}
+          {canSee("economic") && rd?.economic && (rd.economic.contexts?.length > 0 || rd.economic.principles?.length > 0) && (
+            <SectionCard icon="💎" label="Economic" description="Labor & exchange">
               <div className="space-y-3">
-                <LabelValue label="Depth preference" value={connection?.depthPreference} />
-                <LabelValue label="Commitment style" value={connection?.commitmentStyle} />
-                {connection?.dealbreakers?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Dealbreakers</p><TagList items={connection.dealbreakers} variant="muted" /></div>}
+                {rd.economic.openToInvoicing && <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">Open to invoicing</span>}
+                {rd.economic.contexts?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Contexts</p><TagList items={rd.economic.contexts} /></div>}
+                {rd.economic.principles?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Principles</p><TagList items={rd.economic.principles} variant="warm" /></div>}
+                {rd.economic.limits?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Limits</p><TagList items={rd.economic.limits} variant="muted" /></div>}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Connection */}
+          {canSee("connection") && rd?.connection && (
+            <SectionCard icon="📡" label="Connection" description="Logistics & preferences">
+              <div className="space-y-3">
+                <LabelValue label="Primary channel" value={rd.connection.channelPrimary} />
+                <LabelValue label="Secondary channel" value={rd.connection.channelSecondary} />
+                <LabelValue label="Contact etiquette" value={rd.connection.contactEtiquette} />
+                <LabelValue label="Response time" value={rd.connection.responseTimeExpectations} />
+                <LabelValue label="Frequency" value={rd.connection.frequencyOfContact} />
+                <LabelValue label="Meeting" value={rd.connection.meetingModality} />
+                <LabelValue label="Location" value={rd.connection.location} />
+                <LabelValue label="Travel" value={rd.connection.willingToTravel} />
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Content */}
+          {canSee("content") && rd?.content && (rd.content.categories?.length > 0 || rd.content.style?.length > 0) && (
+            <SectionCard icon="📺" label="Content" description="What they make">
+              <div className="space-y-3">
+                {rd.content.categories?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Categories</p><TagList items={rd.content.categories} /></div>}
+                {rd.content.style?.length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1.5">Style</p><TagList items={rd.content.style} variant="muted" /></div>}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Glossary */}
+          {canSee("glossary") && rd?.glossary && Object.keys(rd.glossary).length > 0 && (
+            <SectionCard icon="📖" label="Glossary" description="Personal lexicon">
+              <div className="space-y-2">
+                {Object.entries(rd.glossary).map(([key, entry]: [string, any]) => (
+                  <div key={key} className="rounded-xl bg-secondary/50 p-3">
+                    <p className="text-sm font-medium text-foreground">{key.replace(/_/g, " ")}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{entry.meaning}</p>
+                    {entry.state && <span className="inline-block mt-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{entry.state.replace(/_/g, " ")}</span>}
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Discovery — platforms */}
+          {canSee("discovery") && rd?.discovery?.platforms?.length > 0 && (
+            <SectionCard icon="🔭" label="Discovery" description="How to find them">
+              <div className="space-y-2">
+                {rd.discovery.platforms.map((p: any, i: number) => (
+                  <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="block rounded-xl bg-secondary/50 p-3 hover:bg-secondary/70 transition-colors">
+                    <p className="text-sm font-medium text-foreground">{p.name || p.url}</p>
+                    {p.handle && <p className="text-xs text-muted-foreground">@{p.handle}</p>}
+                  </a>
+                ))}
               </div>
             </SectionCard>
           )}

@@ -1627,7 +1627,7 @@ const ResonanceProfileView = ({
                       <video
                         controls
                         className="w-full rounded-xl"
-                        src={rd.discovery.videoIntro}
+                        src={rd.discovery.introduction?.videoIntro ?? undefined}
                       />
                     </div>
                   )}
