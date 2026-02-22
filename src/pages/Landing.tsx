@@ -1,9 +1,18 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Heart, Sparkles, MessageCircle, Handshake, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/discover", { replace: true });
+    }
+  }, [user, loading, navigate]);
 
   return (
     <div className="mx-auto max-w-lg min-h-screen bg-background flex flex-col">
@@ -71,6 +80,12 @@ const Landing = () => {
           className="w-full rounded-2xl gradient-warm py-4 text-sm font-semibold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
         >
           Welcome
+        </button>
+        <button
+          onClick={() => navigate("/u/baon")}
+          className="w-full rounded-2xl border-2 border-primary/30 bg-primary/5 py-3.5 text-sm font-semibold text-primary hover:bg-primary/10 hover:border-primary/50 transition-all"
+        >
+          👀 peek at an example profile
         </button>
       </motion.div>
     </div>

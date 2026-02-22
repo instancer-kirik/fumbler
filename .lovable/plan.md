@@ -1,79 +1,65 @@
 
+# Shareable Profile Link — "Share your context"
 
-# Resonance Profile: Full Restructure and Gap Sync
+## What you're asking for
 
-## Overview
+You want a simple way to copy/share your `fumbler.lovable.app/u/baon` link so you can hand it to someone on another dating site as a "here's my context before we go further" gesture. The public profile page already exists and renders your resonance data — we just need to make that link easy to grab and frame it well.
 
-Restructure the Resonance Editor from a single scrollable accordion into a **5-tab layout**, and add the 6 missing layers from the unified spec. The viewer gets matching new sections. No database migration needed -- everything stores in the existing `resonance_data` JSONB column.
+## What we'll build
 
-## Tab Structure
+### 1. Share card on your Profile page
+A new card just below the avatar section in `/profile` showing:
+- Your public URL (`fumbler.lovable.app/u/baon`)
+- A **Copy link** button (uses `navigator.clipboard`)
+- A **Share** button (uses the native Web Share API on mobile — falls back to copy on desktop)
+- Small note: "Send this to someone before you meet"
 
-```text
-Tab 1: Foundations
-  Loops, Lessons, Languages, Desires/Kinks, Relational Type
+### 2. Share button on the Public Profile page (`/u/baon`)
+A sticky share button at the top of the public profile — so if someone opens your link, they can also easily share it further. Also useful when you're previewing your own profile: you can share directly from there.
 
-Tab 2: Attraction  [NEW]
-  Archetypes (presets + custom), Attraction Gradient, Engagement Curve
+### 3. Minor: "View my public profile" link in ProfilePage
+A small text link under the share card that opens `/u/baon` in a new tab so you can preview exactly what the other person will see before you send it.
 
-Tab 3: Dynamics  [NEW]
-  Power Exchange, Play Preferences, Kink Alignment, Repulsion Vectors
+## Technical details
 
-Tab 4: Seeking & Safety
-  Core Resonance, Consumer Interface, Seeking, Safety + Trust Profile
+**Files to edit:**
 
-Tab 5: Meta
-  Viability, Economic, Connection, Discovery (+ media URLs), Glossary
+- `src/components/ProfilePage.tsx` — Add share card below avatar block; add "view public profile" link. Reads `profile.username` which is already fetched.
+- `src/pages/PublicProfile.tsx` — Add a share/copy button row near the top (below the back arrow), using the same clipboard + Web Share API pattern.
+
+**Share logic (no new dependencies):**
+```typescript
+const url = `https://fumbler.lovable.app/u/${username}`;
+
+const handleShare = async () => {
+  if (navigator.share) {
+    await navigator.share({ title: "My Fumbler profile", url });
+  } else {
+    await navigator.clipboard.writeText(url);
+    toast.success("Link copied!");
+  }
+};
 ```
 
-## Technical Steps
+**No database changes needed** — username is already in the `profiles` table and fetched by both pages.
 
-### 1. Expand TypeScript types (`src/data/resonance-profile.ts`)
-Add interfaces for the missing layers:
-- `ArchetypePacket` (id, label, class, aesthetic, energy, dynamic, tone, performance, custom flag)
-- `AttractionGradient` (slow_burn, fast_hook, what_draws_in, timeline)
-- `EngagementCurve` (phase_1, phase_2, phase_3) + `CooperationStyle`
-- `PowerDynamics` (enabled, expression_modes, exploration text)
-- `PlayPreferences` (mode, intensity profile: emotional/theatrical/intellectual)
-- `RepulsionVectors` (hard_stops, yellow_flags, pattern_concerns)
-- `TrustProfile` (harm_history, references_available)
-- `DiscoveryIntroduction` (audio_intro, video_intro URLs)
+## What it will look like
 
-Update the main `ExperientialProfile` to include all new layers. Add `willing_to_have_compatibility_shared` to `DiscoveryMetadata`. Add `harm_history` and `references_available` to `SafetyProfile`.
+In `/profile`, below the avatar:
 
-### 2. Expand Editor data model (`src/components/profile/ResonanceEditor.tsx`)
-- Add all new fields to `ResonanceData` with sparse defaults (empty arrays, false booleans, empty strings)
-- No existing data breaks -- missing keys get defaults on load
+```text
+┌─────────────────────────────────────┐
+│  🔗 fumbler.lovable.app/u/baon      │
+│  Send this to someone before you    │
+│  meet — they'll see your public     │
+│  resonance sections.                │
+│                                     │
+│  [ 📋 Copy link ]  [ ↗ Share ]      │
+│  [ 👁 Preview my public profile ]   │
+└─────────────────────────────────────┘
+```
 
-### 3. Restructure Editor into 5 tabs
-- Wrap existing accordion sections in the Tabs component
-- Move sections into their respective tab groups
-- Build new form sections:
-  - **Archetypes**: Preset checkboxes (Pastel Goth, Maid Ritual, etc.) + custom archetype form with label, aesthetic tags, energy select
-  - **Attraction Gradient**: Slow burn / fast hook toggle, tag inputs for signals, timeline select
-  - **Engagement Curve**: 3 phase textareas + cooperation style select
-  - **Power Exchange**: Enabled switch, expression mode checkboxes (performative power play, ironic submission, theatrical absurdity, symbolic transaction, meta-aware dynamics), exploration textarea
-  - **Play Preferences**: Mode select, 3 intensity sliders (emotional, theatrical, intellectual)
-  - **Repulsion Vectors**: 3 separate tag-input lists (hard stops, yellow flags, pattern concerns)
-  - **Trust Profile**: Harm history textarea, references available checkbox
-  - **Discovery media**: Audio/video URL text inputs
-
-### 4. Update Profile Viewer (`src/components/ResonanceProfileView.tsx`)
-Add rendering sections for each new layer:
-- Archetype cards with aesthetic tags and energy badges
-- Attraction gradient display (slow burn vs fast hook)
-- Engagement curve as phased timeline
-- Dynamic preferences with expression mode tags and intensity bars
-- Repulsion vectors categorized by severity
-- Trust profile (harm history text, references badge)
-- Media players for audio/video intro URLs
-- Apply existing visibility gating to new sections
-
-### 5. Update mock data (`src/data/resonance-profile.ts`)
-Add example data for all new layers across the 4 existing mock profiles so the UI has something to render during development.
-
-## Not Included (Future Work)
-- File upload for audio/video (URLs only for now)
-- Matching algorithm using new layers
-- Archetype preset library with visual previews
-- Relationship-depth visibility gating
-
+In `/u/baon`, near the top:
+```text
+[ ↗ Share this profile ]
+```

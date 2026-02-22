@@ -56,12 +56,12 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl bg-background max-h-[85vh]">
-        <SheetHeader>
+      <SheetContent side="bottom" className="rounded-t-3xl bg-background max-h-[85vh] flex flex-col">
+        <SheetHeader className="shrink-0">
           <SheetTitle className="font-display text-lg">Edit Profile</SheetTitle>
         </SheetHeader>
 
-        <div className="mt-4 space-y-4 pb-6">
+        <div className="mt-4 space-y-4 pb-6 overflow-y-auto flex-1">
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Name</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className={inputClass} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X, LogOut, Upload } from "lucide-react";
+import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X, LogOut, Upload, Link2, Share2, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +28,29 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const profileUrl = profile?.username
+    ? `https://fumbler.lovable.app/u/${profile.username}`
+    : null;
+
+  const handleShare = async () => {
+    if (!profileUrl) return;
+    if (navigator.share) {
+      await navigator.share({ title: "My fumbler profile", url: profileUrl });
+    } else {
+      await navigator.clipboard.writeText(profileUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!profileUrl) return;
+    await navigator.clipboard.writeText(profileUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -107,7 +130,46 @@ const ProfilePage = () => {
         <p className="text-sm text-muted-foreground">@{profile?.username || "unknown"}</p>
       </motion.div>
 
-      <div className="mt-8 grid grid-cols-3 gap-3 text-center">
+      {/* Share card */}
+      {profileUrl && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mt-5 rounded-2xl bg-card shadow-card p-4 space-y-3"
+        >
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-xs text-muted-foreground truncate flex-1">{profileUrl}</span>
+          </div>
+          <p className="text-xs text-muted-foreground">Send this before you meet — they'll see your public resonance sections.</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCopy}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-colors"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Link2 className="h-3.5 w-3.5" />}
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+            <button
+              onClick={handleShare}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl gradient-warm py-2.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              Share
+            </button>
+          </div>
+          <button
+            onClick={() => window.open(profileUrl, "_blank")}
+            className="flex w-full items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors pt-0.5"
+          >
+            <Eye className="h-3.5 w-3.5" />
+            Preview my public profile
+          </button>
+        </motion.div>
+      )}
+
+      <div className="mt-6 grid grid-cols-3 gap-3 text-center">
         {[
           { label: "Photos", value: String(photoCount) },
           { label: "Matches", value: "—" },

@@ -881,6 +881,23 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
   const setVis = (section: string, v: Visibility) =>
     set(["sectionVisibility", section], v);
 
+  const setAllPublic = async () => {
+    if (!user) return;
+    const sections = ["core","consumer","loops","languages","relationalType","archetypes","attraction","engagement","powerDynamics","playPreferences","kinkAlignment","repulsion","seeking","safety","availability","economic","connection","discovery","glossary"];
+    const newVisibility = Object.fromEntries(sections.map((s) => [s, "public" as Visibility]));
+    const updatedData = { ...data, sectionVisibility: newVisibility };
+    setData(updatedData);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ resonance_data: updatedData as any })
+      .eq("id", user.id);
+    if (error) {
+      toast.error("Failed to save visibility: " + error.message);
+    } else {
+      toast.success("All sections set to public!");
+    }
+  };
+
   const togglePreset = (preset: typeof ARCHETYPE_PRESETS[0]) => {
     const existing = data.archetypes.find((a) => a.label === preset.label && !a.isCustom);
     if (existing) {
@@ -922,7 +939,15 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                 <h3 className="font-display text-xl font-bold text-foreground">Resonance Profile</h3>
                 <p className="text-xs text-muted-foreground">Define how you connect</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <button
+                  type="button"
+                  onClick={setAllPublic}
+                  className="rounded-full gradient-warm px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+                  title="Set all sections to public visibility"
+                >
+                  🌍 Set all public
+                </button>
                 <button
                   onClick={() => onOpenChange(false)}
                   className="rounded-full bg-secondary p-2"
