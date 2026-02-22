@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "version": 0.8,
+    "mode": "fumbler_resonance_profile",
+    "author": "baon",
+    "created_at": "2026-02-21T22:14:00Z",
+    "readAs": "current_state_not_permanent_truth"
+  },
+  "profile": {
+    "name": "baon.jpg",
+    "description": "Works construction, hits the gym, builds systems that accumulate meaning. Turns practical things into meaning-containers without trying to."
+  },
+  "aura": {
+    "descriptors": ["ominous", "nerdy", "volchaic", "confusing"],
+    "energyProfile": "contained_heat_with_controlled_current",
+    "misreadAs": ["intimidating", "aloof", "hyper-competent"],
+    "revealsOverTime": [
+      "observant",
+      "curious",
+      "dry-humored",
+      "warmer_than_initial_read"
+    ],
+    "toneTag": "vawy.scawy"
+  },
+  "aesthetics": [
+    "workwear",
+    "gym-built frame",
+    "black truck energy",
+    "functional hardware",
+    "industrial textures",
+    "minimal polish",
+    "tool-forward"
+  ],
+  "aliases": ["baon", "instance.select", "fumbler", "post_historic"],
+  "archetypes": [
+    {
+      "name": "mythrogito",
+      "definition": "practical builder who unintentionally encodes meaning into systems",
+      "activationContext": "long-term creative systems"
+    },
+    {
+      "name": "constructor",
+      "definition": "material worker; grounded, effort-based",
+      "activationContext": "physical world / work / gym / fabrication"
+    },
+    {
+      "name": "signal-curator",
+      "definition": "selects, filters, and refines attention",
+      "activationContext": "online presence / relationships"
+    }
+  ],
+  "cognitiveStyle": {
+    "attention": "selective_deep_focus_when_pattern_emergence_begins",
+    "patternOriented": true,
+    "manualCountingTolerance": "low",
+    "systemDelegationPreference": "high",
+    "worksBestWith": "external_structure_that_does_the_bookkeeping"
+  },
+  "values": [
+    "sovereignty",
+    "competence",
+    "authentic_signal",
+    "sexy_as_precision"
+  ],
+  "loops": [
+    "build_many_systems_then_consolidate",
+    "myth_then_tool_then_platform",
+    "garage_density_threshold"
+  ],
+  "lessons": [
+    "consolidation_is_force_multiplier",
+    "myth_requires_working_infrastructure",
+    "attention_is_currency"
+  ],
+  "languages": {
+    "receiveLoveThrough": [
+      "acts_of_service",
+      "quality_time",
+      "physical_presence",
+      "gifts_that_are_tools"
+    ],
+    "expressLoveThrough": [
+      "creation",
+      "precision_words",
+      "acts",
+      "custom_built_objects"
+    ],
+    "communicationStyle": "poetic_with_metaphor_then_clarity",
+    "creativeExpression": [
+      "writing",
+      "code",
+      "conversation",
+      "video",
+      "music",
+      "physical_fabrication"
+    ],
+    "vulnerabilityLanguage": "metaphor_first_then_direct"
+  },
+  "kinks": {
+    "intellectual": "competence_play",
+    "relational": "earned_gravity",
+    "intensity": "controlled_voltage",
+    "play": "role_fluid_rivalry",
+    "avoid": "chaotic_unbounded_dependency"
+  },
+  "activationVectors": [
+    "competent_weirdness",
+    "curiosity_with_followthrough",
+    "subtle_mastery",
+    "pattern_emergence",
+    "co-built_artifacts"
+  ],
+  "repulsionVectors": [
+    "tradition_for_its_own_sake",
+    "exclusive_nonconsensual_ownership_of_me",
+    "extractive_attention",
+    "performative_depth",
+    "over_polished_emptiness"
+  ],
+  "flirtInterface": {
+    "attracts": [
+      "calm_curiosity",
+      "specific_noticing",
+      "technical_or_symbolic_competence",
+      "low_drama_intensity"
+    ],
+    "failsWhen": [
+      "bitchvent",
+      "emotional_oversharing_without_context",
+      "mirroring_too_aggressively",
+      "identity_claim_without_artifact"
+    ]
+  },
+  "consumerInterface": {
+    "trustSignals": [
+      "artifact_built_tools",
+      "visible_iteration",
+      "depth_discoverable_over_time",
+      "working_prototypes"
+    ],
+    "distrustSignals": [
+      "hidden_complexity",
+      "sales_funnel_energy",
+      "aesthetic_without_function"
+    ]
+  },
+  "glossary": {
+    "leethia": {
+      "meaning": "misunderstanding resolving into clarity",
+      "state": "emergent_insight"
+    },
+    "pattern_emergence": {
+      "meaning": "disparate signals suddenly cohere into shape",
+      "state": "recognition"
+    },
+    "post_historic": {
+      "meaning": "object no longer bound to original context; now myth-bearing",
+      "state": "time_active"
+    },
+    "volchaic": {
+      "meaning": "volcanic x voltaic — contained magma plus controlled current; pressure and charge",
+      "state": "field_effect"
+    },
+    "mythrogito": {
+      "meaning": "a person who unintentionally turns practical systems into narrative artifacts",
+      "state": "archetype"
+    }
+  },
+  "seeking": {
+    "activelySeeking": true,
+    "seekingArchetype": "grounded_curiosity_with_self_direction",
+    "seekingLanguages": {
+      "compatibleWith": [
+        "acts_of_service",
+        "intellectual_presence",
+        "creative_collaboration"
+      ],
+      "mismatchTolerance": "low_for_chaos_high_for_difference"
+    },
+    "seekingKinks": [
+      "competence",
+      "subtle_power_exchange",
+      "creative_conspiracy"
+    ],
+    "nonNegotiables": ["no_untruth", "no_ultimatums", "authenticity_required"],
+    "niceToHaves": [
+      "creative_expression",
+      "physical_build_projects",
+      "shared_r_and_d"
+    ]
+  },
+  "reciprocityModel": "evolving_toward_sovereignty",
+  "conflictStyle": "clarify_pattern_then_address",
+  "economic": {
+    "openToInvoicing": true,
+    "contexts": [
+      "creative_collaboration",
+      "mentorship",
+      "technical_consulting",
+      "infrastructure_design"
+    ],
+    "rates": {
+      "mentorship": "negotiable",
+      "emotional_labor": "bounded_and_contextual",
+      "basePhilosophy": "independence_in_progress"
+    },
+    "valuesAroundThis": [
+      "sovereignty_over_dependency",
+      "mutual_gain",
+      "transparent_exchange"
+    ],
+    "boundaries": [
+      "no_uncompensated_extractive_labor",
+      "clarity_before_commitment",
+      "no_financial_entanglement_without_structure"
+    ],
+    "kinkAlignment": ["financial_asymmetry_as_play", "earned_patronage_model"]
+  },
+  "viability": {
+    "availability": {
+      "engagementFrequency": "daily",
+      "weeklyHours": "5-10",
+      "timezone": "US/Pacific",
+      "asyncPreferred": true,
+      "currentSeason": "available_and_seeking_but_building"
+    },
+    "relationshipTypesAvailable": [
+      "romantic",
+      "creative_collaboration",
+      "mentorship",
+      "rival",
+      "professional",
+      "artist"
+    ],
+    "communicationModalities": {
+      "primary": "async_voice_text",
+      "secondary": "voice_calls",
+      "frequencyPreference": "organic_but_consistent"
+    },
+    "growthVectors": [
+      "deepening_craft",
+      "r_and_d",
+      "gym_and_cooking",
+      "reading",
+      "infrastructure_consolidation"
+    ]
+  },
+  "safety": {
+    "consentFrameworks": [
+      "explicit_yes",
+      "scope_definition",
+      "check_in_during_intensity"
+    ],
+    "hardBoundaries": [
+      "no_untruth",
+      "no_ultimatums",
+      "no_unilateral_decisions_about_us"
+    ],
+    "harmHistory": "none_to_disclose",
+    "accountability": ["repair_orientation", "transparent_about_failures"],
+    "referencesAvailable": false,
+    "safeSexPractices": "discussion_before_engagement",
+    "substanceClarity": "moderate_social_use_only"
+  },
+  "connection": {
+    "preferredContactMethod": "text_first_then_call",
+    "responseTimeExpectations": "24-48_hours",
+    "frequencyOfContact": "daily_async_or_less_frequent_sync",
+    "meetingModality": "hybrid",
+    "location": "remote_ok",
+    "willingToTravel": "yes"
+  },
+  "discovery": {
+    "visibility": "artifact_first_identity_second",
+    "seekingStatus": "actively_looking",
+    "privacyComfortLevel": "high",
+    "willingToBeCompared": true,
+    "willingToHaveCompatibilityShared": false,
+    "introduction": {
+      "writtenBio": "I build myth-bearing infrastructure. If you want something real, build something with me.",
+      "audioIntro": null,
+      "videoIntro": null
+    },
+    "portfolioLinks": ["github.com/instancer-kirik", "instance.select"]
+  }
+}

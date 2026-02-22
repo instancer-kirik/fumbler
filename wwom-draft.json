@@ -1,37 +1,33 @@
 {
   "meta": {
     "version": 0.5,
-    "mode": "fumble_resonance_profile",
-    "author": "kirik",
+    "mode": "fumbler_resonance_profile",
+    "author": "baon",
     "created_at": "2026-02-11T00:00:10Z"
   },
   "profile": {
-    "name": "Your Name / Handle",
+    "name": "baon.jpg",
     "description": "Brief intro to who you are"
   },
   "coreResonance": {
     "attention": {
-      "type": "resonance_not_persuasion",
-      "description": "Engagement occurs through emergent alignment, not direct convincing."
+      "type": "unknown",
+      "description": "d"
     },
     "activationVectors": [
       "competent_weirdness",
-      "layered_meaning",
-      "curiosity_invitation"
+      "clever_and_interesting, what of interest",
+      "curiosity"
     ],
     "repulsionVectors": [
-      "performative_confidence",
-      "over_explanation",
+      "tradition",
+      "exclusive_nonconsensual_ownership_of_me",
       "extractive_attention"
     ],
     "flirtInterface": {
-      "attracts": [
-        "calm_curiosity",
-        "subtle_mastery",
-        "specific_noticing"
-      ],
+      "attracts": ["calm_curiosity", "subtle_mastery", "specific_noticing"],
       "failsWhen": [
-        "intensity_too_early",
+        "bitchvent",
         "emotional_oversharing_without_context",
         "mirroring_too_aggressively"
       ]
@@ -39,16 +35,13 @@
     "consumerInterface": {
       "trustSignals": [
         "artifact_built_tools",
-        "intentional_rough_edges",
+        "",
         "depth_discoverable_over_time"
       ],
-      "distrustSignals": [
-        "over_polished_emptiness",
-        "hidden_complexity"
-      ]
+      "distrustSignals": ["over_polished_emptiness", "hidden_complexity"]
     },
     "glossary": {
-      "leethia": {
+      "leethia/aleathia/alethia/alethea": {
         "meaning": "misunderstanding resolving into clarity",
         "state": "emergent_insight"
       },
@@ -69,149 +62,101 @@
     "relationshipTypesAvailable": [
       "romantic",
       "creative_collaboration",
-      "mentorship"
+      "mentorship",
+      "leash",
+      "clown",
+      "rival",
+      "professional",
+      "artist"
     ],
-    "conflictStyle": "use_for_understanding",
-    "reciprocityModel": "symmetric_preferred",
+    "conflictStyle": "use_for_understanding??",
+    "reciprocityModel": "power_dynamic_or_symmetric",
     "communicationModalities": {
-      "primary": "async_text",
+      "primary": "async_voice_text",
       "secondary": "voice_calls",
       "frequencyPreference": "whenever_feels_right"
     },
     "growthVectors": [
       "deepening_craft",
-      "emotional_resilience"
+      "r_and_d",
+      "gym_and_cooking",
+      "reading"
     ],
-    "coreValues": [
-      "autonomy",
-      "authenticity",
-      "emergence_over_control"
-    ]
+    "coreValues": ["sexy"]
   },
   "experiential": {
-    "loops": [
-      "withdraw-seek-withdraw when triggered",
-      "intellectualize before feeling",
-      "need full resolution before moving on",
-      "escalate quickly then recover slowly"
-    ],
-    "lessons": [
-      "caretaking is control; stop saving people",
-      "my intensity scares people away; I need to slow down",
-      "I can't demand reciprocity; I can only choose alignment",
-      "vulnerability is a strength, not a burden"
-    ],
+    "loops": [],
+    "lessons": [],
     "languages": {
       "receiveLoveThrough": [
         "acts_of_service",
         "quality_time",
-        "physical_presence"
+        "physical_presence",
+        "gifts"
       ],
-      "expressLoveThrough": [
-        "creation",
-        "words",
-        "acts"
-      ],
+      "expressLoveThrough": ["creation", "words", "acts", "gifts"],
       "communicationStyle": "poetic_with_metaphor",
       "creativeExpression": [
         "writing",
         "code",
-        "conversation"
+        "conversation",
+        "video",
+        "music"
       ],
       "vulnerabilityLanguage": "metaphor_first_then_direct"
     },
     "kinks": {
-      "intellectual": "being_challenged_and_pushed_intellectually",
-      "relational": "full_attention_and_presence",
-      "intensity": "high_but_safe",
-      "play": "exploring_edges_together",
-      "avoid": "performance_without_authenticity"
+      "intellectual": "",
+      "relational": "",
+      "intensity": "",
+      "play": "",
+      "avoid": ""
     },
     "type": {
-      "archetype": "guide_and_witness",
-      "attractionPattern": "people_learning_to_think_for_themselves",
-      "roleInRelationship": "usually_the_one_who_sees",
-      "recurringPattern": "intensity_then_distance_then_depth"
+      "archetype": "",
+      "attractionPattern": "",
+      "roleInRelationship": "",
+      "recurringPattern": ""
     }
   },
   "economic": {
     "openToInvoicing": true,
-    "contexts": [
-      "mentorship_and_guidance",
-      "emotional_labor_and_processing",
-      "time_and_attention",
-      "creative_collaboration",
-      "specific_expertise_sharing"
-    ],
+    "contexts": ["", "", "", "creative_collaboration", ""],
     "rates": {
       "mentorship": "negotiable",
       "emotional_labor": "negotiable",
-      "basePhilosophy": "time_has_value"
+      "basePhilosophy": ""
     },
-    "valuesAroundThis": [
-      "explicit_beats_implicit",
-      "labor_deserves_payment",
-      "clarity_is_intimate"
-    ],
-    "boundaries": [
-      "only_in_appropriate_contexts",
-      "not_required_for_connection",
-      "opt_in_only"
-    ],
-    "kinkAlignment": [
-      "power_exchange",
-      "transactional_intimacy",
-      "financial_asymmetry_as_play"
-    ]
+    "valuesAroundThis": ["", "", ""],
+    "boundaries": ["", "", ""],
+    "kinkAlignment": ["", "", "financial_asymmetry_as_play"]
   },
   "seeking": {
     "activelySeking": true,
-    "seekingArchetype": "other_guides, learners, challengers",
-    "seekingLoops": "people_who_iterate_not_stagnate",
+    "seekingArchetype": "",
+    "seekingLoops": "",
     "seekingLanguages": {
-      "compatibleWith": [
-        "acts_of_service",
-        "quality_time"
-      ],
+      "compatibleWith": ["", ""],
       "mismatchTolerance": "low"
     },
-    "seekingLessons": "people_learning_to_trust_themselves",
-    "seekingKinks": [
-      "intellectual_challenge",
-      "authentic_presence",
-      "high_intensity"
-    ],
-    "nonNegotiables": [
-      "must_be_doing_their_own_work",
-      "no_playing_victim",
-      "authenticity_required"
-    ],
-    "niceToHaves": [
-      "creative_expression",
-      "philosophical_depth",
-      "comfort_with_silence"
-    ]
+    "seekingLessons": "",
+    "seekingKinks": ["", "", ""],
+    "nonNegotiables": ["", "", "authenticity_required"],
+    "niceToHaves": ["creative_expression", "", ""]
   },
   "safety": {
-    "consentFrameworks": [
-      "enthusiastic_consent_required",
-      "sober_only_preferred",
-      "check_in_during_intensity"
-    ],
+    "consentFrameworks": ["", "", "check_in_during_intensity"],
     "hardBoundaries": [
       "no_untruth",
-      "no_emotional_manipulation",
+      "no_ultimatums",
+      "",
       "no_unilateral_decisions_about_us"
     ],
     "harmHistory": "none_to_disclose",
-    "accountability": [
-      "willing_to_be_called_in",
-      "repair_orientation",
-      "transparent_about_failures"
-    ],
+    "accountability": ["", "repair_orientation", "transparent_about_failures"],
     "referencesAvailable": false,
-    "safeSexPractices": "discussed_before_intimacy",
-    "substanceClarity": "occasional_alcohol, no_other_substances"
+    "safeSexPractices": "",
+    "substanceClarity": ""
   },
   "connection": {
     "preferredContactMethod": "text_first_then_call",
@@ -219,23 +164,19 @@
     "frequencyOfContact": "daily_async_or_less_frequent_sync",
     "meetingModality": "hybrid",
     "location": "remote_ok",
-    "willingToTravel": "occasionally_for_right_person"
+    "willingToTravel": "yes"
   },
   "discovery": {
-    "visibility": "visible_to_authenticated_users",
+    "visibility": "",
     "seekingStatus": "actively_looking",
     "privacyComfortLevel": "high",
     "willingToBeCompared": true,
     "willingToHaveCompatibilityShared": false,
     "introduction": {
-      "writtenBio": "I'm a guide, witness, and builder...",
+      "writtenBio": "",
       "audioIntro": null,
       "videoIntro": null
     },
-    "portfolioLinks": [
-      "github.com/yourname",
-      "yourwriting.com",
-      "yourmusic.com"
-    ]
+    "portfolioLinks": ["github.com/instancer-kirik", "instance.select", ""]
   }
 }

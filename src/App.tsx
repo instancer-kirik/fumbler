@@ -31,7 +31,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
-  if (onboardingComplete === false) return <Navigate to="/onboarding" replace />;
+  if (onboardingComplete === false)
+    return <Navigate to="/onboarding" replace />;
 
   return <>{children}</>;
 };
@@ -41,7 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/fumbler">
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Landing />} />
