@@ -28,7 +28,11 @@ export interface ViabilityProfile {
     currentSeason: "available_and_seeking" | "closed" | "healing" | "exploring";
   };
   relationshipTypes: string[];
-  conflictStyle: "use_for_understanding" | "avoidance" | "confrontation" | "dialogue";
+  conflictStyle:
+    | "use_for_understanding"
+    | "avoidance"
+    | "confrontation"
+    | "dialogue";
   reciprocityModel: "symmetric_preferred" | "asymmetric_ok" | "flexible";
   communicationModalities: {
     primary: string;
@@ -219,34 +223,195 @@ export interface DiscoveryMetadata {
 }
 
 export const RESONANCE_SECTIONS = [
-  { id: "core", label: "Core", icon: "🎯", description: "How you engage" },
-  { id: "consumer", label: "Consumer", icon: "🔎", description: "What works on you" },
-  { id: "viability", label: "Viability", icon: "⚡", description: "Whether it can work" },
-  { id: "loops", label: "Loops", icon: "🔄", description: "Behavioral recursion" },
-  { id: "lessons", label: "Lessons", icon: "💡", description: "Integrated wisdom" },
-  { id: "languages", label: "Languages", icon: "💬", description: "Expression & reception" },
-  { id: "kinks", label: "Desires", icon: "🔥", description: "Pleasure & power" },
-  { id: "type", label: "Type", icon: "🪞", description: "Relational archetype" },
-  { id: "archetypes", label: "Archetypes", icon: "🎭", description: "Identity packets" },
-  { id: "attraction", label: "Attraction", icon: "🧲", description: "What draws you in" },
-  { id: "engagement", label: "Engagement", icon: "📈", description: "Connection phases" },
-  { id: "dynamics", label: "Dynamics", icon: "⚔️", description: "Power & play" },
-  { id: "repulsion", label: "Repulsion", icon: "🚧", description: "Hard stops & flags" },
-  { id: "seeking", label: "Seeking", icon: "🧭", description: "What you're looking for" },
-  { id: "safety", label: "Safety", icon: "🛡️", description: "Consent & boundaries" },
-  { id: "economic", label: "Economic", icon: "💎", description: "Labor & exchange" },
-  { id: "connection", label: "Connect", icon: "📡", description: "Logistics & preferences" },
-  { id: "glossary", label: "Glossary", icon: "📖", description: "Your personal lexicon" },
-  { id: "discovery", label: "Discovery", icon: "🔭", description: "How you want to be found" },
+  {
+    id: "gtky",
+    label: "Get to Know Me",
+    icon: "👤",
+    description: "Surface texture & anchors",
+  },
+  {
+    id: "aura",
+    label: "Aura",
+    icon: "🌀",
+    description: "How you land before context",
+  },
+  {
+    id: "core",
+    label: "Core Resonance",
+    icon: "🎯",
+    description: "Activation, repulsion & flirt interface",
+  },
+  {
+    id: "signals",
+    label: "Signal Field",
+    icon: "🔎",
+    description: "Trust & distrust signals you emit",
+  },
+  {
+    id: "qualities",
+    label: "Qualities",
+    icon: "✨",
+    description: "Character traits & live introspections",
+  },
+  {
+    id: "loops",
+    label: "Loops",
+    icon: "🔄",
+    description: "Behavioral recursion",
+  },
+  {
+    id: "lessons",
+    label: "Lessons",
+    icon: "💡",
+    description: "Integrated wisdom",
+  },
+  {
+    id: "languages",
+    label: "Languages",
+    icon: "💬",
+    description: "Expression & reception",
+  },
+  {
+    id: "kinks",
+    label: "Desires",
+    icon: "🔥",
+    description: "Pleasure & power",
+  },
+  {
+    id: "archetypes",
+    label: "Archetypes",
+    icon: "🎭",
+    description: "Who you are by context",
+  },
+  {
+    id: "attraction",
+    label: "Attraction",
+    icon: "🧲",
+    description: "What draws you in",
+  },
+  {
+    id: "engagement",
+    label: "Engagement",
+    icon: "📈",
+    description: "Connection phases",
+  },
+  {
+    id: "dynamics",
+    label: "Dynamics",
+    icon: "⚔️",
+    description: "Power & play",
+  },
+  {
+    id: "repulsion",
+    label: "Repulsion",
+    icon: "🚧",
+    description: "Hard stops & flags",
+  },
+  {
+    id: "viability",
+    label: "Viability",
+    icon: "⚡",
+    description: "Season, capacity & open types",
+  },
+  {
+    id: "seeking",
+    label: "Seeking",
+    icon: "🧭",
+    description: "What you're looking for",
+  },
+  {
+    id: "safety",
+    label: "Safety",
+    icon: "🛡️",
+    description: "Consent & boundaries",
+  },
+  {
+    id: "economic",
+    label: "Economic",
+    icon: "💎",
+    description: "Labor & exchange",
+  },
+  {
+    id: "connection",
+    label: "Connect",
+    icon: "📡",
+    description: "Logistics & preferences",
+  },
+  { id: "content", label: "Content", icon: "📺", description: "What you make" },
+  {
+    id: "glossary",
+    label: "Glossary",
+    icon: "📖",
+    description: "Your personal lexicon",
+  },
+  {
+    id: "discovery",
+    label: "Discovery",
+    icon: "🔭",
+    description: "How you want to be found",
+  },
+  // legacy — kept for backward compat with stored visibility settings
+  {
+    id: "consumer",
+    label: "Consumer (legacy)",
+    icon: "🔎",
+    description: "Legacy signal field",
+  },
+  {
+    id: "type",
+    label: "Type (legacy)",
+    icon: "🪞",
+    description: "Legacy relational archetype",
+  },
 ] as const;
 
 // Archetype presets
 export const ARCHETYPE_PRESETS: Omit<ArchetypePacket, "id" | "isCustom">[] = [
-  { label: "Pastel Goth", class: "aesthetic", aesthetic: ["soft", "dark", "layered"], energy: "low_simmer", dynamic: "receptive", tone: "melancholic_play", performance: "subtle" },
-  { label: "Maid Ritual", class: "service", aesthetic: ["precise", "devotional"], energy: "attentive", dynamic: "service_oriented", tone: "earnest", performance: "theatrical" },
-  { label: "Chaos Architect", class: "creative", aesthetic: ["maximalist", "kinetic"], energy: "high_spark", dynamic: "initiating", tone: "playful_serious", performance: "bold" },
-  { label: "Soft Dom Scholar", class: "power", aesthetic: ["refined", "warm"], energy: "steady", dynamic: "guiding", tone: "authoritative_gentle", performance: "controlled" },
-  { label: "Feral Tender", class: "wild", aesthetic: ["raw", "organic"], energy: "volatile", dynamic: "responsive", tone: "fierce_caring", performance: "instinctive" },
+  {
+    label: "Pastel Goth",
+    class: "aesthetic",
+    aesthetic: ["soft", "dark", "layered"],
+    energy: "low_simmer",
+    dynamic: "receptive",
+    tone: "melancholic_play",
+    performance: "subtle",
+  },
+  {
+    label: "Maid Ritual",
+    class: "service",
+    aesthetic: ["precise", "devotional"],
+    energy: "attentive",
+    dynamic: "service_oriented",
+    tone: "earnest",
+    performance: "theatrical",
+  },
+  {
+    label: "Chaos Architect",
+    class: "creative",
+    aesthetic: ["maximalist", "kinetic"],
+    energy: "high_spark",
+    dynamic: "initiating",
+    tone: "playful_serious",
+    performance: "bold",
+  },
+  {
+    label: "Soft Dom Scholar",
+    class: "power",
+    aesthetic: ["refined", "warm"],
+    energy: "steady",
+    dynamic: "guiding",
+    tone: "authoritative_gentle",
+    performance: "controlled",
+  },
+  {
+    label: "Feral Tender",
+    class: "wild",
+    aesthetic: ["raw", "organic"],
+    energy: "volatile",
+    dynamic: "responsive",
+    tone: "fierce_caring",
+    performance: "instinctive",
+  },
 ];
 
 // ============================================================================
@@ -261,8 +426,16 @@ import profile4 from "@/assets/profile-4.jpg";
 const defaultCore: CoreResonance = {
   attentionModel: "Engagement through emergent alignment, not persuasion",
   activationVectors: {
-    attracts: ["competent_weirdness", "layered_meaning", "curiosity_invitation"],
-    repels: ["performative_confidence", "over_explanation", "extractive_attention"],
+    attracts: [
+      "competent_weirdness",
+      "layered_meaning",
+      "curiosity_invitation",
+    ],
+    repels: [
+      "performative_confidence",
+      "over_explanation",
+      "extractive_attention",
+    ],
   },
   flirtInterface: {
     attracts: ["calm_curiosity", "subtle_mastery", "specific_noticing"],
@@ -301,7 +474,10 @@ const defaultEconomic: EconomicLayer = {
 };
 
 const defaultSafety: SafetyProfile = {
-  consentFrameworks: ["enthusiastic_consent_required", "check_in_during_intensity"],
+  consentFrameworks: [
+    "enthusiastic_consent_required",
+    "check_in_during_intensity",
+  ],
   hardBoundaries: ["no_untruth", "no_emotional_manipulation"],
   accountability: ["willing_to_be_called_in", "repair_orientation"],
   safeSexPractices: "discussed_before_intimacy",
@@ -331,7 +507,8 @@ export const resonanceProfiles: ResonanceProfile[] = [
     bio: "Dog mom • Coffee addict • Will laugh at your jokes even if they're bad",
     interests: ["Hiking", "Coffee", "Dogs", "Photography"],
     prompt: "My biggest fumble was...",
-    promptAnswer: "Waving back at someone who wasn't waving at me. For 30 seconds.",
+    promptAnswer:
+      "Waving back at someone who wasn't waving at me. For 30 seconds.",
     core: {
       ...defaultCore,
       activationVectors: {
@@ -339,7 +516,11 @@ export const resonanceProfiles: ResonanceProfile[] = [
         repels: ["try_hard_energy", "negging", "emotional_unavailability"],
       },
       flirtInterface: {
-        attracts: ["making_me_laugh", "remembering_details", "comfortable_silence"],
+        attracts: [
+          "making_me_laugh",
+          "remembering_details",
+          "comfortable_silence",
+        ],
         failsWhen: ["love_bombing", "too_much_too_soon"],
       },
     },
@@ -361,9 +542,18 @@ export const resonanceProfiles: ResonanceProfile[] = [
         "The right person won't need me to perform happiness",
       ],
       languages: {
-        receiveLoveThrough: ["quality_time", "physical_touch", "acts_of_service"],
-        expressLoveThrough: ["acts_of_service", "words_of_affirmation", "gifts"],
-        communicationStyle: "warm and direct with a layer of self-deprecating humor",
+        receiveLoveThrough: [
+          "quality_time",
+          "physical_touch",
+          "acts_of_service",
+        ],
+        expressLoveThrough: [
+          "acts_of_service",
+          "words_of_affirmation",
+          "gifts",
+        ],
+        communicationStyle:
+          "warm and direct with a layer of self-deprecating humor",
         creativeExpression: ["photography", "cooking", "journaling"],
         vulnerabilityLanguage: "humor first, then raw honesty when safe",
       },
@@ -390,8 +580,13 @@ export const resonanceProfiles: ResonanceProfile[] = [
         compatibleWith: ["quality_time", "physical_touch"],
         mismatchTolerance: "medium",
       },
-      seekingLessons: "someone who's done their inner work but doesn't make it their personality",
-      seekingKinks: ["intellectual_challenge", "emotional_safety", "playful_intensity"],
+      seekingLessons:
+        "someone who's done their inner work but doesn't make it their personality",
+      seekingKinks: [
+        "intellectual_challenge",
+        "emotional_safety",
+        "playful_intensity",
+      ],
       nonNegotiables: ["emotional_availability", "humor", "growth_mindset"],
       niceToHaves: ["loves_dogs", "can_cook", "reads_books"],
     },
@@ -413,8 +608,16 @@ export const resonanceProfiles: ResonanceProfile[] = [
     core: {
       ...defaultCore,
       activationVectors: {
-        attracts: ["playful_confidence", "creative_energy", "depth_under_humor"],
-        repels: ["passive_aggression", "entitlement", "performative_vulnerability"],
+        attracts: [
+          "playful_confidence",
+          "creative_energy",
+          "depth_under_humor",
+        ],
+        repels: [
+          "passive_aggression",
+          "entitlement",
+          "performative_vulnerability",
+        ],
       },
     },
     viability: {
@@ -457,14 +660,20 @@ export const resonanceProfiles: ResonanceProfile[] = [
     economic: defaultEconomic,
     seeking: {
       activelySeeking: true,
-      seekingArchetype: "someone real who also doesn't take themselves too seriously",
+      seekingArchetype:
+        "someone real who also doesn't take themselves too seriously",
       seekingLoops: "people who can call me on my shit lovingly",
       seekingLanguages: {
         compatibleWith: ["words_of_affirmation", "quality_time"],
         mismatchTolerance: "medium",
       },
-      seekingLessons: "someone who's learned that being chill isn't the same as being unavailable",
-      seekingKinks: ["intellectual_banter", "authentic_presence", "playful_edge"],
+      seekingLessons:
+        "someone who's learned that being chill isn't the same as being unavailable",
+      seekingKinks: [
+        "intellectual_banter",
+        "authentic_presence",
+        "playful_edge",
+      ],
       nonNegotiables: ["honesty", "sense_of_humor", "self_awareness"],
       niceToHaves: ["active_lifestyle", "musical", "foodie"],
     },
@@ -487,7 +696,11 @@ export const resonanceProfiles: ResonanceProfile[] = [
       ...defaultCore,
       activationVectors: {
         attracts: ["quiet_competence", "emotional_depth", "intentional_living"],
-        repels: ["inconsistency", "surface_level_conversation", "chaos_for_chaos_sake"],
+        repels: [
+          "inconsistency",
+          "surface_level_conversation",
+          "chaos_for_chaos_sake",
+        ],
       },
     },
     viability: {
@@ -510,7 +723,11 @@ export const resonanceProfiles: ResonanceProfile[] = [
         "I learned to let people surprise me instead of pre-judging",
       ],
       languages: {
-        receiveLoveThrough: ["quality_time", "physical_touch", "words_of_affirmation"],
+        receiveLoveThrough: [
+          "quality_time",
+          "physical_touch",
+          "words_of_affirmation",
+        ],
         expressLoveThrough: ["quality_time", "gifts", "acts_of_service"],
         communicationStyle: "thoughtful and precise, poetic when comfortable",
         creativeExpression: ["writing", "art", "movement"],
@@ -525,9 +742,11 @@ export const resonanceProfiles: ResonanceProfile[] = [
       },
       type: {
         archetype: "the discerning heart learning to soften",
-        attractionPattern: "drawn to people who match her depth but bring lightness",
+        attractionPattern:
+          "drawn to people who match her depth but bring lightness",
         roleInRelationship: "the anchor — steady, reliable, deep",
-        recurringPattern: "evaluate → invest slowly → all in → devastated if betrayed",
+        recurringPattern:
+          "evaluate → invest slowly → all in → devastated if betrayed",
       },
     },
     economic: defaultEconomic,
@@ -539,9 +758,18 @@ export const resonanceProfiles: ResonanceProfile[] = [
         compatibleWith: ["quality_time", "words_of_affirmation"],
         mismatchTolerance: "low",
       },
-      seekingLessons: "someone who's learned that vulnerability isn't a transaction",
-      seekingKinks: ["intellectual_depth", "emotional_presence", "gentle_intensity"],
-      nonNegotiables: ["consistency", "intellectual_curiosity", "emotional_maturity"],
+      seekingLessons:
+        "someone who's learned that vulnerability isn't a transaction",
+      seekingKinks: [
+        "intellectual_depth",
+        "emotional_presence",
+        "gentle_intensity",
+      ],
+      nonNegotiables: [
+        "consistency",
+        "intellectual_curiosity",
+        "emotional_maturity",
+      ],
       niceToHaves: ["reads", "active", "appreciates_art"],
     },
     safety: defaultSafety,
@@ -558,12 +786,21 @@ export const resonanceProfiles: ResonanceProfile[] = [
     bio: "Design nerd • Plant dad • Will remember your coffee order after one date",
     interests: ["Design", "Plants", "Gaming", "Yoga"],
     prompt: "On a Sunday you'll find me...",
-    promptAnswer: "Talking to my plants like they understand relationship advice.",
+    promptAnswer:
+      "Talking to my plants like they understand relationship advice.",
     core: {
       ...defaultCore,
       activationVectors: {
-        attracts: ["creative_sensitivity", "gentle_observation", "quiet_confidence"],
-        repels: ["aggressive_energy", "dismissiveness", "emotional_carelessness"],
+        attracts: [
+          "creative_sensitivity",
+          "gentle_observation",
+          "quiet_confidence",
+        ],
+        repels: [
+          "aggressive_energy",
+          "dismissiveness",
+          "emotional_carelessness",
+        ],
       },
     },
     viability: {
@@ -583,7 +820,11 @@ export const resonanceProfiles: ResonanceProfile[] = [
         "Saying no is an act of love, not rejection",
       ],
       languages: {
-        receiveLoveThrough: ["acts_of_service", "quality_time", "physical_touch"],
+        receiveLoveThrough: [
+          "acts_of_service",
+          "quality_time",
+          "physical_touch",
+        ],
         expressLoveThrough: ["creation", "quality_time", "small_gestures"],
         communicationStyle: "gentle and observant, visual metaphors",
         creativeExpression: ["design", "gardening", "gaming", "yoga"],

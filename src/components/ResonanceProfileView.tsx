@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import type { ResonanceProfile } from "@/data/resonance-profile";
+import { normalizeImportData } from "@/utils/resonance-normalizer";
 
 type Visibility = "public" | "matches" | "express";
 
@@ -14,22 +15,177 @@ interface SectionVisibility {
 
 interface ResonanceData {
   sectionVisibility?: SectionVisibility;
-  consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
+
+  // ── Identity surface ──────────────────────────────────────────────────────
+  aura?: {
+    descriptors?: string[];
+    misreadAs?: string[];
+    revealsOverTime?: string[];
+    toneTag?: string;
+  };
+  aesthetics?: string[];
+  aliases?: string[];
+  persona?: { name?: string; description?: string } | null;
+  archetypes?: Array<{
+    name: string;
+    definition: string;
+    activationContext: string;
+  }>;
+
+  // ── Cognitive / character ─────────────────────────────────────────────────
+  cognitiveStyle?: {
+    attention?: string;
+    patternOriented?: boolean;
+    manualCountingTolerance?: string;
+    systemDelegationPreference?: string;
+    worksBestWith?: string;
+  };
+  values?: string[];
+  qualities?: string[];
+  introspections?: string[];
+  loops?: string[];
+  lessons?: string[];
+  growthVectors?: string[];
+
+  // ── Expression ────────────────────────────────────────────────────────────
+  languages?: {
+    natural?: string[];
+    receiveLoveThrough?: string[];
+    expressLoveThrough?: string[];
+    communicationStyle?: string;
+    creativeExpression?: string[];
+    vulnerabilityLanguage?: string;
+  };
+  kinks?: {
+    intellectual?: string;
+    relational?: string;
+    intensity?: string;
+    play?: string;
+    avoid?: string;
+  };
+
+  // ── Interpersonal ─────────────────────────────────────────────────────────
+  activationVectors?: string[];
+  repulsionVectors?: string[];
+  flirtInterface?: { attracts?: string[]; failsWhen?: string[] };
+  trustSignals?: string[];
+  distrustSignals?: string[];
   glossary?: Record<string, { meaning: string; state: string }>;
-  economic?: { openToInvoicing?: boolean; contexts?: string[]; values?: string[]; boundaries?: string[]; kinkAlignment?: string[] };
-  discovery?: { visibility?: string; seekingStatus?: string; privacyComfortLevel?: string; willingToBeCompared?: boolean; willingToHaveCompatibilityShared?: boolean; portfolioLinks?: string[]; writtenBio?: string; audioIntro?: string; videoIntro?: string };
+
+  // ── Creator ───────────────────────────────────────────────────────────────
+  content?: {
+    categories?: string[];
+    style?: string[];
+    schedule?: string | null;
+  };
+
+  // ── Seeking ───────────────────────────────────────────────────────────────
+  seeking?: {
+    active?: boolean;
+    archetypes?: string[];
+    aesthetics?: string[];
+    languages?: { compatibleWith?: string[]; mismatchTolerance?: string };
+    qualities?: string[];
+    intents?: string[];
+    kinks?: string[];
+    nonNegotiables?: string[];
+    niceToHaves?: string[];
+  };
+  reciprocityModel?: string;
+  conflictStyle?: string;
+
+  // ── Practical ────────────────────────────────────────────────────────────
+  economic?: {
+    openToInvoicing?: boolean;
+    contexts?: string[];
+    principles?: string[];
+    limits?: string[];
+    kinkAlignment?: string[];
+  };
+  viability?: {
+    availability?: {
+      weeklyHours?: string;
+      timezone?: string;
+      asyncPreferred?: boolean;
+      currentSeason?: string;
+    };
+    relationshipTypesAvailable?: string[];
+  };
+  safety?: {
+    consentFrameworks?: string[];
+    hardBoundaries?: string[];
+    harmHistory?: string;
+    accountability?: string[];
+    referencesAvailable?: boolean;
+    safeSexPractices?: string;
+    substanceClarity?: string;
+  };
+  connection?: {
+    channelPrimary?: string;
+    channelSecondary?: string;
+    contactEtiquette?: string;
+    responseTimeExpectations?: string;
+    frequencyOfContact?: string;
+    meetingModality?: string;
+    location?: string;
+    willingToTravel?: string;
+  };
+  discovery?: {
+    visibility?: string;
+    contentRating?: string;
+    privacyComfortLevel?: string;
+    willingToBeCompared?: boolean;
+    willingToHaveCompatibilityShared?: boolean;
+    introduction?: {
+      writtenBio?: string;
+      audioIntro?: string | null;
+      videoIntro?: string | null;
+    };
+    platforms?: Array<{ name: string; handle: string; url: string }>;
+  };
+  getToKnowMe?: {
+    height?: string | null;
+    build?: string;
+    favoriteMedia?: string[];
+    currentObsession?: string;
+    idealWeekend?: string;
+  };
+
+  // ── Legacy extended fields (backward compat) ──────────────────────────────
+  consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
   core?: any;
-  viability?: any;
   experiential?: any;
-  seeking?: any;
-  safety?: any;
-  connection?: any;
-  archetypes?: any[];
-  attraction?: { slowBurn?: boolean; fastHook?: boolean; whatDrawsIn?: string[]; timeline?: string };
-  engagement?: { phase1?: string; phase2?: string; phase3?: string; cooperationStyle?: string };
-  powerDynamics?: { enabled?: boolean; expressionModes?: string[]; exploration?: string };
-  playPreferences?: { mode?: string; intensityProfile?: { emotional?: number; theatrical?: number; intellectual?: number } };
-  repulsion?: { hardStops?: string[]; yellowFlags?: string[]; patternConcerns?: string[] };
+  attraction?: {
+    slowBurn?: boolean;
+    fastHook?: boolean;
+    whatDrawsIn?: string[];
+    timeline?: string;
+  };
+  engagement?: {
+    phase1?: string;
+    phase2?: string;
+    phase3?: string;
+    cooperationStyle?: string;
+  };
+  powerDynamics?: {
+    enabled?: boolean;
+    expressionModes?: string[];
+    exploration?: string;
+  };
+  playPreferences?: {
+    mode?: string;
+    intensityProfile?: {
+      emotional?: number;
+      theatrical?: number;
+      intellectual?: number;
+    };
+  };
+  repulsion?: {
+    hardStops?: string[];
+    yellowFlags?: string[];
+    patternConcerns?: string[];
+  };
+
   [key: string]: any;
 }
 
@@ -43,11 +199,15 @@ interface Props {
 const isSectionVisible = (
   sectionId: string,
   sectionVisibility: SectionVisibility | undefined,
-  viewerRelationship: "public" | "match" | "express"
+  viewerRelationship: "public" | "match" | "express",
 ): boolean => {
   const vis = sectionVisibility?.[sectionId] || "matches";
   if (vis === "public") return true;
-  if (vis === "matches" && (viewerRelationship === "match" || viewerRelationship === "express")) return true;
+  if (
+    vis === "matches" &&
+    (viewerRelationship === "match" || viewerRelationship === "express")
+  )
+    return true;
   if (vis === "express" && viewerRelationship === "express") return true;
   return false;
 };
@@ -68,18 +228,33 @@ const SectionCard = ({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <motion.div layout className="rounded-2xl bg-card border border-border overflow-hidden">
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-4 text-left">
+    <motion.div
+      layout
+      className="rounded-2xl bg-card border border-border overflow-hidden"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-3 p-4 text-left"
+      >
         <span className="text-xl">{icon}</span>
         <div className="flex-1 min-w-0">
-          <p className="font-display font-semibold text-foreground text-sm">{label}</p>
+          <p className="font-display font-semibold text-foreground text-sm">
+            {label}
+          </p>
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
-        <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`} />
+        <ChevronRight
+          className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
+        />
       </button>
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
             <div className="px-4 pb-4 pt-0">{children}</div>
           </motion.div>
         )}
@@ -106,13 +281,15 @@ const LockedSection = ({
   <div className="rounded-2xl bg-card/50 border border-border p-4 flex items-center gap-3 opacity-60">
     <span className="text-xl">{icon}</span>
     <div className="flex-1">
-      <p className="font-display font-semibold text-foreground text-sm">{label}</p>
+      <p className="font-display font-semibold text-foreground text-sm">
+        {label}
+      </p>
       <p className="text-xs text-muted-foreground">
         {requestStatus === "pending"
           ? "Access requested — waiting for response"
           : requestStatus === "denied"
-          ? "Access request was declined"
-          : "Request access to view"}
+            ? "Access request was declined"
+            : "Request access to view"}
       </p>
     </div>
     {requestStatus === "pending" ? (
@@ -134,13 +311,28 @@ const LockedSection = ({
   </div>
 );
 
-const TagList = ({ items, variant = "default" }: { items: string[]; variant?: "default" | "warm" | "muted" }) => {
+const TagList = ({
+  items,
+  variant = "default",
+}: {
+  items: string[];
+  variant?: "default" | "warm" | "muted";
+}) => {
   if (!items?.length) return null;
-  const styles = { default: "bg-primary/10 text-foreground", warm: "gradient-warm text-primary-foreground", muted: "bg-secondary text-secondary-foreground" };
+  const styles = {
+    default: "bg-primary/10 text-foreground",
+    warm: "gradient-warm text-primary-foreground",
+    muted: "bg-secondary text-secondary-foreground",
+  };
   return (
     <div className="flex flex-wrap gap-1.5">
       {items.map((item) => (
-        <span key={item} className={`rounded-full px-2.5 py-1 text-xs font-medium ${styles[variant]}`}>{item.replace(/_/g, " ")}</span>
+        <span
+          key={item}
+          className={`rounded-full px-2.5 py-1 text-xs font-medium ${styles[variant]}`}
+        >
+          {item.replace(/_/g, " ")}
+        </span>
       ))}
     </div>
   );
@@ -164,8 +356,12 @@ const LabelValue = ({ label, value }: { label: string; value: string }) => {
   if (!value) return null;
   return (
     <div className="flex justify-between items-start gap-2 py-1.5">
-      <span className="text-xs text-muted-foreground font-medium flex-shrink-0">{label}</span>
-      <span className="text-xs text-foreground text-right">{value.replace(/_/g, " ")}</span>
+      <span className="text-xs text-muted-foreground font-medium flex-shrink-0">
+        {label}
+      </span>
+      <span className="text-xs text-foreground text-right">
+        {value.replace(/_/g, " ")}
+      </span>
     </div>
   );
 };
@@ -177,17 +373,29 @@ const IntensityBar = ({ label, value }: { label: string; value: number }) => (
       <span className="text-xs text-primary font-medium">{value}%</span>
     </div>
     <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
-      <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${value}%` }} />
+      <div
+        className="h-full rounded-full bg-primary transition-all"
+        style={{ width: `${value}%` }}
+      />
     </div>
   </div>
 );
 
-const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelationship, resonanceData: propData }: Props) => {
+const ResonanceProfileView = ({
+  profile,
+  onClose,
+  viewerRelationship: propRelationship,
+  resonanceData: propData,
+}: Props) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(!propData);
   const [dbData, setDbData] = useState<ResonanceData | null>(propData || null);
-  const [relationship, setRelationship] = useState<"public" | "match" | "express">(propRelationship || "public");
-  const [accessRequests, setAccessRequests] = useState<Record<string, string>>({});
+  const [relationship, setRelationship] = useState<
+    "public" | "match" | "express"
+  >(propRelationship || "public");
+  const [accessRequests, setAccessRequests] = useState<Record<string, string>>(
+    {},
+  );
 
   useEffect(() => {
     if (propData !== undefined) return;
@@ -196,17 +404,36 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
     const fetchAll = async () => {
       setLoading(true);
       const [profileRes, matchRes, accessRes] = await Promise.all([
-        supabase.from("profiles").select("resonance_data").eq("id", profile.id).single(),
-        supabase.from("matches").select("id").or(`and(user1_id.eq.${user.id},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${user.id})`).limit(1),
-        supabase.from("resonance_access_requests").select("section_id, status").eq("requester_id", user.id).eq("target_id", profile.id),
+        supabase
+          .from("profiles")
+          .select("resonance_data")
+          .eq("id", profile.id)
+          .single(),
+        supabase
+          .from("matches")
+          .select("id")
+          .or(
+            `and(user1_id.eq.${user.id},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${user.id})`,
+          )
+          .limit(1),
+        supabase
+          .from("resonance_access_requests")
+          .select("section_id, status")
+          .eq("requester_id", user.id)
+          .eq("target_id", profile.id),
       ]);
 
       if (profileRes.data?.resonance_data) {
-        setDbData(profileRes.data.resonance_data as any);
+        const normalized = normalizeImportData(
+          profileRes.data.resonance_data as Record<string, unknown>,
+        );
+        setDbData(normalized as ResonanceData);
       }
 
       const isMatch = (matchRes.data?.length ?? 0) > 0;
-      const approvedSections = (accessRes.data || []).filter((r: any) => r.status === "approved").map((r: any) => r.section_id);
+      const approvedSections = (accessRes.data || [])
+        .filter((r: any) => r.status === "approved")
+        .map((r: any) => r.section_id);
       const hasExpress = approvedSections.length > 0;
       setRelationship(hasExpress ? "express" : isMatch ? "match" : "public");
 
@@ -238,13 +465,6 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
 
   const rd = dbData;
   const sv = rd?.sectionVisibility;
-  const core = rd?.core || profile.core;
-  const viability = rd?.viability || profile.viability;
-  const exp = rd?.experiential || profile.experiential;
-  const seeking = rd?.seeking || profile.seeking;
-  const safety = rd?.safety || profile.safety;
-  const economic = rd?.economic || profile.economic;
-  const connection = rd?.connection || profile.connection;
 
   const canSee = (id: string) => isSectionVisible(id, sv, relationship);
 
@@ -260,9 +480,17 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
   );
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm" onClick={onClose}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
-        initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 28, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
         className="absolute bottom-0 left-0 right-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-background"
@@ -271,13 +499,26 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg pt-3 pb-2 px-5">
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-muted" />
           <div className="flex items-center gap-4">
-            <img src={profile.image} alt={profile.name} className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/20" />
+            <img
+              src={profile.image}
+              alt={profile.name}
+              className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/20"
+            />
             <div className="flex-1 min-w-0">
-              <h3 className="font-display text-xl font-bold text-foreground">{profile.name}, {profile.age}</h3>
-              <p className="text-sm text-muted-foreground">{profile.handle} · {profile.distance}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{profile.description}</p>
+              <h3 className="font-display text-xl font-bold text-foreground">
+                {profile.name}, {profile.age}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {profile.handle} · {profile.distance}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {profile.description}
+              </p>
             </div>
-            <button onClick={onClose} className="rounded-full bg-secondary p-2 flex-shrink-0">
+            <button
+              onClick={onClose}
+              className="rounded-full bg-secondary p-2 flex-shrink-0"
+            >
               <X className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
@@ -291,317 +532,1112 @@ const ResonanceProfileView = ({ profile, onClose, viewerRelationship: propRelati
           <div className="px-5 pb-8 space-y-3 mt-2">
             {/* Bio & Prompt — always visible */}
             <div className="rounded-2xl gradient-warm p-4">
-              <p className="text-sm font-medium text-primary-foreground mb-2">{profile.prompt}</p>
-              <p className="text-sm text-primary-foreground/90 italic">"{profile.promptAnswer}"</p>
+              <p className="text-sm font-medium text-primary-foreground mb-2">
+                {profile.prompt}
+              </p>
+              <p className="text-sm text-primary-foreground/90 italic">
+                "{profile.promptAnswer}"
+              </p>
             </div>
             <div className="rounded-2xl bg-card border border-border p-4">
-              <p className="text-sm text-foreground/80">{profile.bio}</p>
+              <p className="text-sm text-foreground/80">
+                {rd?.discovery?.introduction?.writtenBio || profile.bio}
+              </p>
               {profile.interests?.length > 0 && (
-                <div className="mt-3"><TagList items={profile.interests} variant="warm" /></div>
+                <div className="mt-3">
+                  <TagList items={profile.interests} variant="warm" />
+                </div>
               )}
             </div>
 
-            {/* Core */}
-            {canSee("core") ? (
-              <SectionCard icon="🎯" label="Core Resonance" description="How they engage" defaultOpen>
-                <p className="text-xs text-muted-foreground mb-3">{core?.attentionModel}</p>
-                <div className="space-y-3">
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">✨ Activates</p><TagList items={core?.activationVectors?.attracts} variant="warm" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">🚫 Repels</p><TagList items={core?.activationVectors?.repels} variant="muted" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">💘 Flirt Interface</p><TagList items={core?.flirtInterface?.attracts} /></div>
-                </div>
-              </SectionCard>
-            ) : renderLocked("🎯", "Core Resonance", "core")}
-
-            {/* Consumer */}
-            {canSee("consumer") ? (
-              rd?.consumer && (rd.consumer.trustSignals?.length || rd.consumer.distrustSignals?.length) ? (
-                <SectionCard icon="🔎" label="Consumer Interface" description="What works on them">
+            {/* Get to Know Me */}
+            {canSee("gtky") ? (
+              rd?.getToKnowMe &&
+              (rd.getToKnowMe.build ||
+                rd.getToKnowMe.currentObsession ||
+                rd.getToKnowMe.favoriteMedia?.length) ? (
+                <SectionCard
+                  icon="👤"
+                  label="Get to Know Me"
+                  description="Surface texture & anchors"
+                >
                   <div className="space-y-3">
-                    {rd.consumer.trustSignals?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🟢 Trust signals</p><TagList items={rd.consumer.trustSignals} variant="warm" /></div> : null}
-                    {rd.consumer.distrustSignals?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🔴 Distrust signals</p><TagList items={rd.consumer.distrustSignals} variant="muted" /></div> : null}
+                    <div className="grid grid-cols-2 gap-2">
+                      {rd.getToKnowMe.height && (
+                        <LabelValue
+                          label="Height"
+                          value={String(rd.getToKnowMe.height)}
+                        />
+                      )}
+                      {rd.getToKnowMe.build && (
+                        <LabelValue
+                          label="Build"
+                          value={rd.getToKnowMe.build}
+                        />
+                      )}
+                    </div>
+                    {rd.getToKnowMe.currentObsession && (
+                      <LabelValue
+                        label="Currently obsessed with"
+                        value={rd.getToKnowMe.currentObsession}
+                      />
+                    )}
+                    {rd.getToKnowMe.idealWeekend && (
+                      <LabelValue
+                        label="Ideal weekend"
+                        value={rd.getToKnowMe.idealWeekend}
+                      />
+                    )}
+                    {rd.getToKnowMe.favoriteMedia?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Favorite media
+                        </p>
+                        <TagList
+                          items={rd.getToKnowMe.favoriteMedia}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("🔎", "Consumer Interface", "consumer")}
+            ) : (
+              renderLocked("👤", "Get to Know Me", "gtky")
+            )}
+
+            {/* Aura */}
+            {canSee("aura") ? (
+              rd?.aura && (rd.aura.descriptors?.length || rd.aura.toneTag) ? (
+                <SectionCard
+                  icon="🌀"
+                  label="Aura"
+                  description="How they land before context"
+                >
+                  <div className="space-y-3">
+                    {rd.aura.descriptors?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Descriptors
+                        </p>
+                        <TagList items={rd.aura.descriptors} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd.aura.misreadAs?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Misread as
+                        </p>
+                        <TagList items={rd.aura.misreadAs} variant="muted" />
+                      </div>
+                    ) : null}
+                    {rd.aura.revealsOverTime?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Reveals over time
+                        </p>
+                        <TagList items={rd.aura.revealsOverTime} />
+                      </div>
+                    ) : null}
+                    {rd.aura.toneTag && (
+                      <p className="text-xs text-muted-foreground italic">
+                        "{rd.aura.toneTag}"
+                      </p>
+                    )}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🌀", "Aura", "aura")
+            )}
+
+            {/* Core Resonance */}
+            {canSee("core") ? (
+              <SectionCard
+                icon="🎯"
+                label="Core Resonance"
+                description="Activation, repulsion & flirt interface"
+                defaultOpen
+              >
+                {rd?.cognitiveStyle?.attention && (
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {rd.cognitiveStyle.attention.replace(/_/g, " ")}
+                  </p>
+                )}
+                <div className="space-y-3">
+                  {rd?.activationVectors?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        ✨ Activates
+                      </p>
+                      <TagList items={rd.activationVectors} variant="warm" />
+                    </div>
+                  ) : null}
+                  {rd?.repulsionVectors?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🚫 Repels
+                      </p>
+                      <TagList items={rd.repulsionVectors} variant="muted" />
+                    </div>
+                  ) : null}
+                  {rd?.flirtInterface?.attracts?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        💘 Draws in
+                      </p>
+                      <TagList items={rd.flirtInterface.attracts} />
+                    </div>
+                  ) : null}
+                  {rd?.flirtInterface?.failsWhen?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        💔 Fails when
+                      </p>
+                      <TagList
+                        items={rd.flirtInterface.failsWhen}
+                        variant="muted"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              </SectionCard>
+            ) : (
+              renderLocked("🎯", "Core Resonance", "core")
+            )}
+
+            {/* Signal Field */}
+            {canSee("signals") ? (
+              rd?.trustSignals?.length ||
+              rd?.distrustSignals?.length ||
+              rd?.consumer?.trustSignals?.length ||
+              rd?.consumer?.distrustSignals?.length ? (
+                <SectionCard
+                  icon="🔎"
+                  label="Signal Field"
+                  description="Trust & distrust signals they emit"
+                >
+                  <div className="space-y-3">
+                    {rd?.trustSignals?.length ||
+                    rd?.consumer?.trustSignals?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          🟢 Trust signals
+                        </p>
+                        <TagList
+                          items={
+                            rd?.trustSignals ?? rd?.consumer?.trustSignals ?? []
+                          }
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                    {rd?.distrustSignals?.length ||
+                    rd?.consumer?.distrustSignals?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          🔴 Distrust signals
+                        </p>
+                        <TagList
+                          items={
+                            rd?.distrustSignals ??
+                            rd?.consumer?.distrustSignals ??
+                            []
+                          }
+                          variant="muted"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🔎", "Signal Field", "signals")
+            )}
+
+            {/* Qualities & Introspections */}
+            {canSee("qualities") ? (
+              rd?.qualities?.length || rd?.introspections?.length ? (
+                <SectionCard
+                  icon="✨"
+                  label="Qualities"
+                  description="Character traits & live introspections"
+                >
+                  <div className="space-y-3">
+                    {rd?.qualities?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Character
+                        </p>
+                        <TagList items={rd.qualities} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd?.introspections?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Currently noticing
+                        </p>
+                        <QuoteList items={rd.introspections} />
+                      </div>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("✨", "Qualities", "qualities")
+            )}
 
             {/* Loops */}
             {canSee("loops") ? (
-              exp?.loops?.length ? <SectionCard icon="🔄" label="Loops" description="Behavioral recursion"><QuoteList items={exp.loops} /></SectionCard> : null
-            ) : renderLocked("🔄", "Loops", "loops")}
+              rd?.loops?.length ? (
+                <SectionCard
+                  icon="🔄"
+                  label="Loops"
+                  description="Behavioral recursion"
+                >
+                  <QuoteList items={rd.loops} />
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🔄", "Loops", "loops")
+            )}
 
             {/* Lessons */}
             {canSee("lessons") ? (
-              exp?.lessons?.length ? <SectionCard icon="💡" label="Lessons" description="Hard-won wisdom"><QuoteList items={exp.lessons} /></SectionCard> : null
-            ) : renderLocked("💡", "Lessons", "lessons")}
+              rd?.lessons?.length ? (
+                <SectionCard
+                  icon="💡"
+                  label="Lessons"
+                  description="Hard-won wisdom"
+                >
+                  <QuoteList items={rd.lessons} />
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("💡", "Lessons", "lessons")
+            )}
 
             {/* Languages */}
             {canSee("languages") ? (
-              <SectionCard icon="💬" label="Languages" description="Expression & reception">
+              <SectionCard
+                icon="💬"
+                label="Languages"
+                description="Expression & reception"
+              >
                 <div className="space-y-3">
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Receives love through</p><TagList items={exp?.languages?.receiveLoveThrough} variant="warm" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Expresses love through</p><TagList items={exp?.languages?.expressLoveThrough} /></div>
-                  <LabelValue label="Communication" value={exp?.languages?.communicationStyle} />
-                  <LabelValue label="Vulnerability" value={exp?.languages?.vulnerabilityLanguage} />
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Creative expression</p><TagList items={exp?.languages?.creativeExpression} variant="muted" /></div>
+                  {rd?.languages?.natural?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Spoken / written
+                      </p>
+                      <TagList items={rd.languages.natural} variant="muted" />
+                    </div>
+                  ) : null}
+                  {rd?.languages?.receiveLoveThrough?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Receives love through
+                      </p>
+                      <TagList
+                        items={rd.languages.receiveLoveThrough}
+                        variant="warm"
+                      />
+                    </div>
+                  ) : null}
+                  {rd?.languages?.expressLoveThrough?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Expresses love through
+                      </p>
+                      <TagList items={rd.languages.expressLoveThrough} />
+                    </div>
+                  ) : null}
+                  <LabelValue
+                    label="Communication"
+                    value={rd?.languages?.communicationStyle ?? ""}
+                  />
+                  <LabelValue
+                    label="Vulnerability"
+                    value={rd?.languages?.vulnerabilityLanguage ?? ""}
+                  />
+                  {rd?.languages?.creativeExpression?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Creative expression
+                      </p>
+                      <TagList
+                        items={rd.languages.creativeExpression}
+                        variant="muted"
+                      />
+                    </div>
+                  ) : null}
                 </div>
               </SectionCard>
-            ) : renderLocked("💬", "Languages", "languages")}
+            ) : (
+              renderLocked("💬", "Languages", "languages")
+            )}
 
             {/* Desires */}
             {canSee("kinks") ? (
-              <SectionCard icon="🔥" label="Desires" description="Pleasure, power & what they need">
-                <div className="space-y-1">
-                  <LabelValue label="Intellectual" value={exp?.kinks?.intellectual} />
-                  <LabelValue label="Relational" value={exp?.kinks?.relational} />
-                  <LabelValue label="Intensity" value={exp?.kinks?.intensity} />
-                  <LabelValue label="Play" value={exp?.kinks?.play} />
-                  <LabelValue label="Avoids" value={exp?.kinks?.avoid} />
-                </div>
-              </SectionCard>
-            ) : renderLocked("🔥", "Desires", "kinks")}
+              rd?.kinks && Object.values(rd.kinks).some(Boolean) ? (
+                <SectionCard
+                  icon="🔥"
+                  label="Desires"
+                  description="Pleasure, power & what they need"
+                >
+                  <div className="space-y-1">
+                    <LabelValue
+                      label="Intellectual"
+                      value={rd.kinks.intellectual ?? ""}
+                    />
+                    <LabelValue
+                      label="Relational"
+                      value={rd.kinks.relational ?? ""}
+                    />
+                    <LabelValue
+                      label="Intensity"
+                      value={rd.kinks.intensity ?? ""}
+                    />
+                    <LabelValue label="Play" value={rd.kinks.play ?? ""} />
+                    <LabelValue label="Avoids" value={rd.kinks.avoid ?? ""} />
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🔥", "Desires", "kinks")
+            )}
 
-            {/* Type */}
-            {canSee("type") ? (
-              <SectionCard icon="🪞" label="Relational Type" description="Archetype & pattern geometry">
-                <div className="space-y-1">
-                  <LabelValue label="Archetype" value={exp?.type?.archetype} />
-                  <LabelValue label="Attracts" value={exp?.type?.attractionPattern} />
-                  <LabelValue label="Role" value={exp?.type?.roleInRelationship} />
-                  <LabelValue label="Pattern" value={exp?.type?.recurringPattern} />
-                </div>
-              </SectionCard>
-            ) : renderLocked("🪞", "Relational Type", "type")}
-
-            {/* ═══ NEW: Archetypes ═══ */}
+            {/* Archetypes */}
             {canSee("archetypes") ? (
               rd?.archetypes?.length ? (
-                <SectionCard icon="🎭" label="Archetypes" description="Identity packets">
+                <SectionCard
+                  icon="🎭"
+                  label="Archetypes"
+                  description="Who they are by context"
+                >
                   <div className="space-y-2">
-                    {rd.archetypes.map((arch: any) => (
-                      <div key={arch.id || arch.label} className="rounded-xl bg-secondary/50 p-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{arch.label}</p>
-                            <p className="text-xs text-muted-foreground">{arch.class} · {arch.energy?.replace(/_/g, " ")}</p>
-                          </div>
-                          {arch.isCustom && <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-accent-foreground">custom</span>}
-                        </div>
-                        {arch.aesthetic?.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {arch.aesthetic.map((a: string) => (
-                              <span key={a} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{a}</span>
-                            ))}
-                          </div>
+                    {rd.archetypes.map((arch) => (
+                      <div
+                        key={arch.name}
+                        className="rounded-xl bg-secondary/50 p-3"
+                      >
+                        <p className="text-sm font-medium text-foreground">
+                          {arch.name.replace(/_/g, " ")}
+                        </p>
+                        {arch.definition && (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {arch.definition}
+                          </p>
+                        )}
+                        {arch.activationContext && (
+                          <span className="inline-block mt-1.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
+                            {arch.activationContext}
+                          </span>
                         )}
                       </div>
                     ))}
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("🎭", "Archetypes", "archetypes")}
+            ) : (
+              renderLocked("🎭", "Archetypes", "archetypes")
+            )}
 
             {/* ═══ NEW: Attraction Gradient ═══ */}
             {canSee("attraction") ? (
-              rd?.attraction && (rd.attraction.slowBurn || rd.attraction.fastHook || rd.attraction.whatDrawsIn?.length) ? (
-                <SectionCard icon="🧲" label="Attraction Gradient" description="What draws them in">
+              rd?.attraction &&
+              (rd.attraction.slowBurn ||
+                rd.attraction.fastHook ||
+                rd.attraction.whatDrawsIn?.length) ? (
+                <SectionCard
+                  icon="🧲"
+                  label="Attraction Gradient"
+                  description="What draws them in"
+                >
                   <div className="space-y-3">
                     <div className="flex gap-2">
-                      {rd.attraction.slowBurn && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">🕯️ Slow Burn</span>}
-                      {rd.attraction.fastHook && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">⚡ Fast Hook</span>}
+                      {rd.attraction.slowBurn && (
+                        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">
+                          🕯️ Slow Burn
+                        </span>
+                      )}
+                      {rd.attraction.fastHook && (
+                        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-foreground">
+                          ⚡ Fast Hook
+                        </span>
+                      )}
                     </div>
-                    {rd.attraction.whatDrawsIn?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">What draws in</p><TagList items={rd.attraction.whatDrawsIn} variant="warm" /></div> : null}
-                    <LabelValue label="Timeline" value={rd.attraction.timeline || ""} />
+                    {rd.attraction.whatDrawsIn?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          What draws in
+                        </p>
+                        <TagList
+                          items={rd.attraction.whatDrawsIn}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                    <LabelValue
+                      label="Timeline"
+                      value={rd.attraction.timeline || ""}
+                    />
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("🧲", "Attraction Gradient", "attraction")}
+            ) : (
+              renderLocked("🧲", "Attraction Gradient", "attraction")
+            )}
 
             {/* ═══ NEW: Engagement Curve ═══ */}
             {canSee("engagement") ? (
-              rd?.engagement && (rd.engagement.phase1 || rd.engagement.phase2 || rd.engagement.phase3) ? (
-                <SectionCard icon="📈" label="Engagement Curve" description="How connection develops">
+              rd?.engagement &&
+              (rd.engagement.phase1 ||
+                rd.engagement.phase2 ||
+                rd.engagement.phase3) ? (
+                <SectionCard
+                  icon="📈"
+                  label="Engagement Curve"
+                  description="How connection develops"
+                >
                   <div className="space-y-3">
                     {rd.engagement.phase1 && (
                       <div className="rounded-xl bg-secondary/50 p-3">
-                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 1 — Initial</p>
-                        <p className="text-xs text-foreground/80">{rd.engagement.phase1}</p>
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">
+                          Phase 1 — Initial
+                        </p>
+                        <p className="text-xs text-foreground/80">
+                          {rd.engagement.phase1}
+                        </p>
                       </div>
                     )}
                     {rd.engagement.phase2 && (
                       <div className="rounded-xl bg-secondary/50 p-3">
-                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 2 — Building</p>
-                        <p className="text-xs text-foreground/80">{rd.engagement.phase2}</p>
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">
+                          Phase 2 — Building
+                        </p>
+                        <p className="text-xs text-foreground/80">
+                          {rd.engagement.phase2}
+                        </p>
                       </div>
                     )}
                     {rd.engagement.phase3 && (
                       <div className="rounded-xl bg-secondary/50 p-3">
-                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">Phase 3 — Established</p>
-                        <p className="text-xs text-foreground/80">{rd.engagement.phase3}</p>
+                        <p className="text-[10px] font-semibold text-primary uppercase mb-1">
+                          Phase 3 — Established
+                        </p>
+                        <p className="text-xs text-foreground/80">
+                          {rd.engagement.phase3}
+                        </p>
                       </div>
                     )}
-                    <LabelValue label="Cooperation" value={rd.engagement.cooperationStyle || ""} />
+                    <LabelValue
+                      label="Cooperation"
+                      value={rd.engagement.cooperationStyle || ""}
+                    />
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("📈", "Engagement Curve", "engagement")}
+            ) : (
+              renderLocked("📈", "Engagement Curve", "engagement")
+            )}
 
             {/* ═══ NEW: Dynamics (Power + Play) ═══ */}
             {canSee("dynamics") ? (
-              (rd?.powerDynamics?.enabled || rd?.playPreferences?.mode) ? (
-                <SectionCard icon="⚔️" label="Dynamics" description="Power exchange & play">
+              rd?.powerDynamics?.enabled || rd?.playPreferences?.mode ? (
+                <SectionCard
+                  icon="⚔️"
+                  label="Dynamics"
+                  description="Power exchange & play"
+                >
                   <div className="space-y-3">
                     {rd?.powerDynamics?.enabled && (
                       <>
                         {rd.powerDynamics.expressionModes?.length ? (
-                          <div><p className="text-xs font-semibold text-foreground mb-1.5">Expression modes</p><TagList items={rd.powerDynamics.expressionModes} /></div>
+                          <div>
+                            <p className="text-xs font-semibold text-foreground mb-1.5">
+                              Expression modes
+                            </p>
+                            <TagList items={rd.powerDynamics.expressionModes} />
+                          </div>
                         ) : null}
-                        {rd.powerDynamics.exploration && <LabelValue label="Exploration" value={rd.powerDynamics.exploration} />}
+                        {rd.powerDynamics.exploration && (
+                          <LabelValue
+                            label="Exploration"
+                            value={rd.powerDynamics.exploration}
+                          />
+                        )}
                       </>
                     )}
-                    {rd?.playPreferences?.mode && <LabelValue label="Play mode" value={rd.playPreferences.mode} />}
+                    {rd?.playPreferences?.mode && (
+                      <LabelValue
+                        label="Play mode"
+                        value={rd.playPreferences.mode}
+                      />
+                    )}
                     {rd?.playPreferences?.intensityProfile && (
                       <div className="space-y-2">
-                        <IntensityBar label="Emotional" value={rd.playPreferences.intensityProfile.emotional ?? 50} />
-                        <IntensityBar label="Theatrical" value={rd.playPreferences.intensityProfile.theatrical ?? 50} />
-                        <IntensityBar label="Intellectual" value={rd.playPreferences.intensityProfile.intellectual ?? 50} />
+                        <IntensityBar
+                          label="Emotional"
+                          value={
+                            rd.playPreferences.intensityProfile.emotional ?? 50
+                          }
+                        />
+                        <IntensityBar
+                          label="Theatrical"
+                          value={
+                            rd.playPreferences.intensityProfile.theatrical ?? 50
+                          }
+                        />
+                        <IntensityBar
+                          label="Intellectual"
+                          value={
+                            rd.playPreferences.intensityProfile.intellectual ??
+                            50
+                          }
+                        />
                       </div>
                     )}
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("⚔️", "Dynamics", "dynamics")}
+            ) : (
+              renderLocked("⚔️", "Dynamics", "dynamics")
+            )}
 
             {/* ═══ NEW: Repulsion Vectors ═══ */}
             {canSee("repulsion") ? (
-              rd?.repulsion && (rd.repulsion.hardStops?.length || rd.repulsion.yellowFlags?.length || rd.repulsion.patternConcerns?.length) ? (
-                <SectionCard icon="🚧" label="Repulsion Vectors" description="Hard stops & flags">
+              rd?.repulsion &&
+              (rd.repulsion.hardStops?.length ||
+                rd.repulsion.yellowFlags?.length ||
+                rd.repulsion.patternConcerns?.length) ? (
+                <SectionCard
+                  icon="🚧"
+                  label="Repulsion Vectors"
+                  description="Hard stops & flags"
+                >
                   <div className="space-y-3">
-                    {rd.repulsion.hardStops?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🛑 Hard stops</p><TagList items={rd.repulsion.hardStops} variant="muted" /></div> : null}
-                    {rd.repulsion.yellowFlags?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">⚠️ Yellow flags</p><TagList items={rd.repulsion.yellowFlags} /></div> : null}
-                    {rd.repulsion.patternConcerns?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">🔍 Pattern concerns</p><TagList items={rd.repulsion.patternConcerns} /></div> : null}
+                    {rd.repulsion.hardStops?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          🛑 Hard stops
+                        </p>
+                        <TagList
+                          items={rd.repulsion.hardStops}
+                          variant="muted"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.repulsion.yellowFlags?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          ⚠️ Yellow flags
+                        </p>
+                        <TagList items={rd.repulsion.yellowFlags} />
+                      </div>
+                    ) : null}
+                    {rd.repulsion.patternConcerns?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          🔍 Pattern concerns
+                        </p>
+                        <TagList items={rd.repulsion.patternConcerns} />
+                      </div>
+                    ) : null}
                   </div>
                 </SectionCard>
               ) : null
-            ) : renderLocked("🚧", "Repulsion Vectors", "repulsion")}
+            ) : (
+              renderLocked("🚧", "Repulsion Vectors", "repulsion")
+            )}
 
-            {/* Availability & Rhythm */}
+            {/* Viability */}
             {canSee("viability") ? (
-              <SectionCard icon="🌱" label="Availability & Rhythm" description="Season, capacity & how they show up">
+              <SectionCard
+                icon="🌱"
+                label="Viability"
+                description="Season, capacity & open types"
+              >
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <LabelValue label="Season" value={viability?.availability?.currentSeason?.replace?.(/_/g, " ") || viability?.currentSeason?.replace?.(/_/g, " ")} />
-                    <LabelValue label="Rhythm" value={viability?.availability?.engagementFrequency || viability?.engagementFrequency} />
-                    <LabelValue label="Energy budget" value={viability?.availability?.weeklyHours || viability?.weeklyHours} />
+                    <LabelValue
+                      label="Season"
+                      value={
+                        rd?.viability?.availability?.currentSeason?.replace?.(
+                          /_/g,
+                          " ",
+                        ) ?? ""
+                      }
+                    />
+                    <LabelValue
+                      label="Energy budget"
+                      value={rd?.viability?.availability?.weeklyHours ?? ""}
+                    />
+                    <LabelValue
+                      label="Timezone"
+                      value={rd?.viability?.availability?.timezone ?? ""}
+                    />
                   </div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Core values</p><TagList items={viability?.coreValues} variant="warm" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Growth vectors</p><TagList items={viability?.growthVectors} variant="muted" /></div>
-                  {(viability?.conflictStyle || viability?.reciprocityModel) && (
+                  {rd?.values?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Core values
+                      </p>
+                      <TagList items={rd.values} variant="warm" />
+                    </div>
+                  ) : null}
+                  {rd?.growthVectors?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Growth vectors
+                      </p>
+                      <TagList items={rd.growthVectors} variant="muted" />
+                    </div>
+                  ) : null}
+                  {rd?.viability?.relationshipTypesAvailable?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Open to
+                      </p>
+                      <TagList
+                        items={rd.viability.relationshipTypesAvailable}
+                      />
+                    </div>
+                  ) : null}
+                  {(rd?.conflictStyle || rd?.reciprocityModel) && (
                     <div className="border-t border-border pt-3 space-y-2">
-                      {viability?.conflictStyle && (
+                      {rd?.conflictStyle && (
                         <div>
-                          <p className="text-xs font-semibold text-foreground mb-1">🔥 Conflict style</p>
-                          <p className="text-xs text-foreground/80">{viability.conflictStyle.replace?.(/_/g, " ")}</p>
+                          <p className="text-xs font-semibold text-foreground mb-1">
+                            🔥 Conflict style
+                          </p>
+                          <p className="text-xs text-foreground/80">
+                            {rd.conflictStyle.replace(/_/g, " ")}
+                          </p>
                         </div>
                       )}
-                      {viability?.reciprocityModel && (
+                      {rd?.reciprocityModel && (
                         <div>
-                          <p className="text-xs font-semibold text-foreground mb-1">🔄 Reciprocity</p>
-                          <p className="text-xs text-foreground/80">{viability.reciprocityModel.replace?.(/_/g, " ")}</p>
+                          <p className="text-xs font-semibold text-foreground mb-1">
+                            🔄 Reciprocity
+                          </p>
+                          <p className="text-xs text-foreground/80">
+                            {rd.reciprocityModel.replace(/_/g, " ")}
+                          </p>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
               </SectionCard>
-            ) : renderLocked("🌱", "Availability & Rhythm", "viability")}
+            ) : (
+              renderLocked("🌱", "Viability", "viability")
+            )}
 
             {/* Seeking */}
             {canSee("seeking") ? (
-              <SectionCard icon="🧭" label="Seeking" description="What they're looking for">
-                <div className="space-y-3">
-                  <LabelValue label="Archetype" value={seeking?.seekingArchetype} />
-                  <LabelValue label="Loops" value={seeking?.seekingLoops} />
-                  <LabelValue label="Lessons" value={seeking?.seekingLessons} />
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Non-negotiables</p><TagList items={seeking?.nonNegotiables} variant="warm" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Nice to haves</p><TagList items={seeking?.niceToHaves} variant="muted" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Seeking kinks</p><TagList items={seeking?.seekingKinks} /></div>
-                </div>
-              </SectionCard>
-            ) : renderLocked("🧭", "Seeking", "seeking")}
+              rd?.seeking &&
+              (rd.seeking.active ||
+                rd.seeking.archetypes?.length ||
+                rd.seeking.intents?.length) ? (
+                <SectionCard
+                  icon="🧭"
+                  label="Seeking"
+                  description="What they're looking for"
+                >
+                  <div className="space-y-3">
+                    {rd.seeking.archetypes?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Seeking archetype
+                        </p>
+                        <TagList items={rd.seeking.archetypes} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd.seeking.intents?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Looking for
+                        </p>
+                        <TagList items={rd.seeking.intents} />
+                      </div>
+                    ) : null}
+                    {rd.seeking.qualities?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Seeking qualities
+                        </p>
+                        <TagList items={rd.seeking.qualities} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd.seeking.aesthetics?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Seeking aesthetic
+                        </p>
+                        <TagList
+                          items={rd.seeking.aesthetics}
+                          variant="muted"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.seeking.kinks?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Seeking dynamic
+                        </p>
+                        <TagList items={rd.seeking.kinks} />
+                      </div>
+                    ) : null}
+                    {rd.seeking.nonNegotiables?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Non-negotiables
+                        </p>
+                        <TagList
+                          items={rd.seeking.nonNegotiables}
+                          variant="muted"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.seeking.niceToHaves?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Nice to haves
+                        </p>
+                        <TagList items={rd.seeking.niceToHaves} />
+                      </div>
+                    ) : null}
+                    {rd.seeking.languages?.compatibleWith?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Love language compatibility
+                        </p>
+                        <TagList
+                          items={rd.seeking.languages.compatibleWith}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🧭", "Seeking", "seeking")
+            )}
 
             {/* Safety + Trust */}
             {canSee("safety") ? (
-              <SectionCard icon="🛡️" label="Safety & Trust" description="Consent, boundaries & accountability">
+              <SectionCard
+                icon="🛡️"
+                label="Safety & Trust"
+                description="Consent, boundaries & accountability"
+              >
                 <div className="space-y-3">
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Consent frameworks</p><TagList items={safety?.consentFrameworks} variant="warm" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Hard boundaries</p><TagList items={safety?.hardBoundaries} variant="muted" /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Accountability</p><TagList items={safety?.accountability} /></div>
-                  <LabelValue label="Safe sex" value={safety?.safeSexPractices} />
-                  <LabelValue label="Substances" value={safety?.substanceClarity} />
-                  {safety?.harmHistory && <LabelValue label="Harm history" value={safety.harmHistory} />}
-                  {safety?.referencesAvailable && (
-                    <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">✅ References available</span>
+                  {rd?.safety?.consentFrameworks?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Consent frameworks
+                      </p>
+                      <TagList
+                        items={rd.safety.consentFrameworks}
+                        variant="warm"
+                      />
+                    </div>
+                  ) : null}
+                  {rd?.safety?.hardBoundaries?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Hard boundaries
+                      </p>
+                      <TagList
+                        items={rd.safety.hardBoundaries}
+                        variant="muted"
+                      />
+                    </div>
+                  ) : null}
+                  {rd?.safety?.accountability?.length ? (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Accountability
+                      </p>
+                      <TagList items={rd.safety.accountability} />
+                    </div>
+                  ) : null}
+                  <LabelValue
+                    label="Safe sex"
+                    value={rd?.safety?.safeSexPractices ?? ""}
+                  />
+                  <LabelValue
+                    label="Substances"
+                    value={rd?.safety?.substanceClarity ?? ""}
+                  />
+                  {rd?.safety?.harmHistory && (
+                    <LabelValue
+                      label="Harm history"
+                      value={rd.safety.harmHistory}
+                    />
+                  )}
+                  {rd?.safety?.referencesAvailable && (
+                    <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                      ✅ References available
+                    </span>
                   )}
                 </div>
               </SectionCard>
-            ) : renderLocked("🛡️", "Safety & Trust", "safety")}
+            ) : (
+              renderLocked("🛡️", "Safety & Trust", "safety")
+            )}
 
             {/* Economic */}
             {canSee("economic") ? (
-              <SectionCard icon="💎" label="Economic" description="Labor, exchange & value">
-                <div className="space-y-3">
-                  <LabelValue label="Open to invoicing" value={economic?.openToInvoicing ? "Yes" : "No"} />
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Values</p><TagList items={economic?.values} /></div>
-                  <div><p className="text-xs font-semibold text-foreground mb-1.5">Boundaries</p><TagList items={economic?.boundaries} variant="muted" /></div>
-                  {economic?.kinkAlignment?.length ? <div><p className="text-xs font-semibold text-foreground mb-1.5">Kink alignment</p><TagList items={economic.kinkAlignment} variant="warm" /></div> : null}
-                </div>
-              </SectionCard>
-            ) : renderLocked("💎", "Economic", "economic")}
+              rd?.economic &&
+              (rd.economic.contexts?.length ||
+                rd.economic.principles?.length) ? (
+                <SectionCard
+                  icon="💎"
+                  label="Economic"
+                  description="Labor, exchange & value"
+                >
+                  <div className="space-y-3">
+                    <LabelValue
+                      label="Open to invoicing"
+                      value={rd.economic.openToInvoicing ? "Yes" : "No"}
+                    />
+                    {rd.economic.contexts?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Contexts
+                        </p>
+                        <TagList items={rd.economic.contexts} />
+                      </div>
+                    ) : null}
+                    {rd.economic.principles?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Principles
+                        </p>
+                        <TagList
+                          items={rd.economic.principles}
+                          variant="muted"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.economic.limits?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Limits
+                        </p>
+                        <TagList items={rd.economic.limits} variant="muted" />
+                      </div>
+                    ) : null}
+                    {rd.economic.kinkAlignment?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Kink alignment
+                        </p>
+                        <TagList
+                          items={rd.economic.kinkAlignment}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("💎", "Economic", "economic")
+            )}
 
             {/* Connection */}
             {canSee("connection") ? (
-              <SectionCard icon="📡" label="Connection" description="Logistics & preferences">
+              <SectionCard
+                icon="📡"
+                label="Connection"
+                description="Logistics & preferences"
+              >
                 <div className="space-y-1">
-                  <LabelValue label="Contact" value={connection?.preferredContactMethod} />
-                  <LabelValue label="Response time" value={connection?.responseTimeExpectations} />
-                  <LabelValue label="Frequency" value={connection?.frequencyOfContact} />
-                  <LabelValue label="Modality" value={connection?.meetingModality} />
-                  <LabelValue label="Location" value={connection?.location} />
-                  <LabelValue label="Travel" value={connection?.willingToTravel} />
+                  <LabelValue
+                    label="Primary channel"
+                    value={rd?.connection?.channelPrimary ?? ""}
+                  />
+                  <LabelValue
+                    label="Secondary channel"
+                    value={rd?.connection?.channelSecondary ?? ""}
+                  />
+                  <LabelValue
+                    label="Etiquette"
+                    value={rd?.connection?.contactEtiquette ?? ""}
+                  />
+                  <LabelValue
+                    label="Response time"
+                    value={rd?.connection?.responseTimeExpectations ?? ""}
+                  />
+                  <LabelValue
+                    label="Frequency"
+                    value={rd?.connection?.frequencyOfContact ?? ""}
+                  />
+                  <LabelValue
+                    label="Modality"
+                    value={rd?.connection?.meetingModality ?? ""}
+                  />
+                  <LabelValue
+                    label="Location"
+                    value={rd?.connection?.location ?? ""}
+                  />
+                  <LabelValue
+                    label="Travel"
+                    value={rd?.connection?.willingToTravel ?? ""}
+                  />
                 </div>
               </SectionCard>
-            ) : renderLocked("📡", "Connection", "connection")}
+            ) : (
+              renderLocked("📡", "Connection", "connection")
+            )}
+
+            {/* Content (creator) */}
+            {canSee("content") ? (
+              rd?.content &&
+              (rd.content.categories?.length || rd.content.style?.length) ? (
+                <SectionCard
+                  icon="📺"
+                  label="Content"
+                  description="What they make"
+                >
+                  <div className="space-y-3">
+                    {rd.content.categories?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Categories
+                        </p>
+                        <TagList items={rd.content.categories} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd.content.style?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Style
+                        </p>
+                        <TagList items={rd.content.style} variant="muted" />
+                      </div>
+                    ) : null}
+                    {rd.content.schedule && (
+                      <LabelValue
+                        label="Schedule"
+                        value={String(rd.content.schedule)}
+                      />
+                    )}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("📺", "Content", "content")
+            )}
 
             {/* Glossary */}
-            {canSee("glossary") && rd?.glossary && Object.keys(rd.glossary).length > 0 ? (
-              <SectionCard icon="📖" label="Glossary" description="Personal lexicon">
+            {canSee("glossary") &&
+            rd?.glossary &&
+            Object.keys(rd.glossary).length > 0 ? (
+              <SectionCard
+                icon="📖"
+                label="Glossary"
+                description="Personal lexicon"
+              >
                 <div className="space-y-2">
                   {Object.entries(rd.glossary).map(([key, entry]) => (
                     <div key={key} className="rounded-xl bg-secondary/50 p-3">
-                      <p className="text-sm font-medium text-foreground">{key.replace(/_/g, " ")}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{entry.meaning}</p>
-                      {entry.state && <span className="inline-block mt-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">{entry.state.replace(/_/g, " ")}</span>}
+                      <p className="text-sm font-medium text-foreground">
+                        {key.replace(/_/g, " ")}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {entry.meaning}
+                      </p>
+                      {entry.state && (
+                        <span className="inline-block mt-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
+                          {entry.state.replace(/_/g, " ")}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               </SectionCard>
-            ) : canSee("glossary") ? null : renderLocked("📖", "Glossary", "glossary")}
+            ) : canSee("glossary") ? null : (
+              renderLocked("📖", "Glossary", "glossary")
+            )}
 
-            {/* Discovery Media */}
-            {canSee("discovery") && rd?.discovery && (rd.discovery.audioIntro || rd.discovery.videoIntro) ? (
-              <SectionCard icon="🔭" label="Discovery" description="Introduction media">
+            {/* Discovery */}
+            {canSee("discovery") && rd?.discovery ? (
+              <SectionCard
+                icon="🔭"
+                label="Discovery"
+                description="How they want to be found"
+              >
                 <div className="space-y-3">
-                  {rd.discovery.audioIntro && (
+                  {rd.discovery.contentRating && (
+                    <LabelValue
+                      label="Content rating"
+                      value={rd.discovery.contentRating}
+                    />
+                  )}
+                  {rd.discovery.introduction?.writtenBio && (
                     <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">🎙️ Audio intro</p>
-                      <audio controls className="w-full" src={rd.discovery.audioIntro} />
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Bio
+                      </p>
+                      <p className="text-xs text-foreground/80 italic">
+                        "{rd.discovery.introduction.writtenBio}"
+                      </p>
                     </div>
                   )}
-                  {rd.discovery.videoIntro && (
+                  {rd.discovery.platforms?.length ? (
                     <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">🎬 Video intro</p>
-                      <video controls className="w-full rounded-xl" src={rd.discovery.videoIntro} />
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Platforms
+                      </p>
+                      <div className="space-y-1.5">
+                        {rd.discovery.platforms.map((p) => (
+                          <a
+                            key={p.url}
+                            href={p.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 rounded-lg bg-secondary/50 px-3 py-2 text-xs text-primary hover:bg-secondary transition-colors"
+                          >
+                            <span className="font-medium">
+                              {p.name || p.handle}
+                            </span>
+                            {p.handle && p.name && (
+                              <span className="text-muted-foreground">
+                                @{p.handle}
+                              </span>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  {rd.discovery.introduction?.audioIntro && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🎙️ Audio intro
+                      </p>
+                      <audio
+                        controls
+                        className="w-full"
+                        src={String(rd.discovery.introduction.audioIntro)}
+                      />
+                    </div>
+                  )}
+                  {rd.discovery.introduction?.videoIntro && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🎬 Video intro
+                      </p>
+                      <video
+                        controls
+                        className="w-full rounded-xl"
+                        src={rd.discovery.videoIntro}
+                      />
                     </div>
                   )}
                 </div>
