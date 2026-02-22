@@ -1,9 +1,10 @@
 {
   "meta": {
-    "version": 0.8,
+    "version": 0.9,
     "mode": "fumbler_resonance_profile",
     "author": "baon",
     "created_at": "2026-02-21T22:14:00Z",
+    "updated_at": "2026-02-21T22:14:00Z",
     "readAs": "current_state_not_permanent_truth"
   },
   "profile": {
@@ -31,6 +32,7 @@
     "tool-forward"
   ],
   "aliases": ["baon", "instance.select", "fumbler", "post_historic"],
+  "persona": null,
   "archetypes": [
     {
       "name": "mythrogito",
@@ -71,7 +73,22 @@
     "myth_requires_working_infrastructure",
     "attention_is_currency"
   ],
+  "qualities": ["kind", "stubborn", "curious", "loyal", "easily_absorbed"],
+  "introspections": [
+    "intellectualize_before_feeling",
+    "disappear_when_overwhelmed",
+    "more_empathetic_than_I_appear",
+    "hard_time_asking_for_help"
+  ],
+  "growthVectors": [
+    "deepening_craft",
+    "r_and_d",
+    "gym_and_cooking",
+    "reading",
+    "infrastructure_consolidation"
+  ],
   "languages": {
+    "natural": ["en", "es", "de"],
     "receiveLoveThrough": [
       "acts_of_service",
       "quality_time",
@@ -159,22 +176,27 @@
       "state": "field_effect"
     }
   },
+  "content": {
+    "categories": ["software", "music", "fabrication", "infrastructure"],
+    "style": ["slow_build", "artifact_oriented", "low_output_high_signal"],
+    "schedule": null
+  },
   "seeking": {
     "active": true,
     "archetypes": ["grounded_curiosity_with_self_direction"],
     "aesthetics": [],
     "languages": {
-      "compatibleWith": [
-        "acts_of_service",
-        "intellectual_presence",
-        "creative_collaboration"
-      ],
+      "compatibleWith": ["acts_of_service"],
       "mismatchTolerance": "low_for_chaos_high_for_difference"
     },
+    "qualities": [],
+    "intents": [],
     "kinks": ["competence", "subtle_power_exchange", "creative_conspiracy"],
     "nonNegotiables": [],
     "niceToHaves": [
       "creative_expression",
+      "intellectual_presence",
+      "creative_collaboration",
       "physical_build_projects",
       "shared_r_and_d"
     ]
@@ -189,12 +211,12 @@
       "technical_consulting",
       "infrastructure_design"
     ],
-    "valuesAroundThis": [
+    "principles": [
       "sovereignty_over_dependency",
       "mutual_gain",
       "transparent_exchange"
     ],
-    "boundaries": [
+    "limits": [
       "no_uncompensated_extractive_labor",
       "clarity_before_commitment",
       "no_financial_entanglement_without_structure"
@@ -203,7 +225,6 @@
   },
   "viability": {
     "availability": {
-      "engagementFrequency": "daily",
       "weeklyHours": "5-10",
       "timezone": "US/Pacific",
       "asyncPreferred": true,
@@ -215,14 +236,9 @@
       "mentorship",
       "rival",
       "professional",
-      "artist"
-    ],
-    "growthVectors": [
-      "deepening_craft",
-      "r_and_d",
-      "gym_and_cooking",
-      "reading",
-      "infrastructure_consolidation"
+      "artist",
+      "patron",
+      "fan"
     ]
   },
   "safety": {
@@ -254,7 +270,7 @@
   },
   "discovery": {
     "visibility": "artifact_first_identity_second",
-    "seekingStatus": "actively_looking",
+    "contentRating": "mature",
     "privacyComfortLevel": "high",
     "willingToBeCompared": true,
     "willingToHaveCompatibilityShared": false,
@@ -263,11 +279,22 @@
       "audioIntro": null,
       "videoIntro": null
     },
-    "portfolioLinks": ["github.com/instancer-kirik", "instance.select"]
+    "platforms": [
+      {
+        "name": "github",
+        "handle": "instancer-kirik",
+        "url": "https://github.com/instancer-kirik"
+      },
+      {
+        "name": "web",
+        "handle": "instance.select",
+        "url": "https://instance.select"
+      }
+    ]
   },
   "getToKnowMe": {
     "height": null,
-    "build": "fit",
+    "build": "gym_consistent",
     "favoriteMedia": [],
     "currentObsession": "consolidation_and_signal",
     "idealWeekend": "build_something_lift_cook_share_music"
