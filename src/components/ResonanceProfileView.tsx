@@ -68,8 +68,7 @@ interface ResonanceData {
   activationVectors?: string[];
   repulsionVectors?: string[];
   flirtInterface?: { attracts?: string[]; failsWhen?: string[] };
-  trustSignals?: string[];
-  distrustSignals?: string[];
+
   glossary?: Record<string, { meaning: string; state: string }>;
 
   // ── Creator ───────────────────────────────────────────────────────────────
@@ -151,8 +150,10 @@ interface ResonanceData {
     idealWeekend?: string;
   };
 
-  // ── Legacy extended fields (backward compat) ──────────────────────────────
+  // ── Consumer Interface ────────────────────────────────────────────────────
   consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
+
+  // ── Legacy extended fields (backward compat) ──────────────────────────────
   core?: any;
   experiential?: any;
   attraction?: {
@@ -706,44 +707,34 @@ const ResonanceProfileView = ({
               renderLocked("🎯", "Core Resonance", "core")
             )}
 
-            {/* Signal Field */}
+            {/* Consumer Interface */}
             {canSee("signals") ? (
-              rd?.trustSignals?.length ||
-              rd?.distrustSignals?.length ||
               rd?.consumer?.trustSignals?.length ||
               rd?.consumer?.distrustSignals?.length ? (
                 <SectionCard
                   icon="🔎"
-                  label="Signal Field"
+                  label="Consumer Interface"
                   description="Trust & distrust signals they emit"
                 >
                   <div className="space-y-3">
-                    {rd?.trustSignals?.length ||
-                    rd?.consumer?.trustSignals?.length ? (
+                    {rd?.consumer?.trustSignals?.length ? (
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-1.5">
                           🟢 Trust signals
                         </p>
                         <TagList
-                          items={
-                            rd?.trustSignals ?? rd?.consumer?.trustSignals ?? []
-                          }
+                          items={rd.consumer.trustSignals ?? []}
                           variant="warm"
                         />
                       </div>
                     ) : null}
-                    {rd?.distrustSignals?.length ||
-                    rd?.consumer?.distrustSignals?.length ? (
+                    {rd?.consumer?.distrustSignals?.length ? (
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-1.5">
                           🔴 Distrust signals
                         </p>
                         <TagList
-                          items={
-                            rd?.distrustSignals ??
-                            rd?.consumer?.distrustSignals ??
-                            []
-                          }
+                          items={rd.consumer.distrustSignals ?? []}
                           variant="muted"
                         />
                       </div>
@@ -752,7 +743,7 @@ const ResonanceProfileView = ({
                 </SectionCard>
               ) : null
             ) : (
-              renderLocked("🔎", "Signal Field", "signals")
+              renderLocked("🔎", "Consumer Interface", "signals")
             )}
 
             {/* Qualities & Introspections */}

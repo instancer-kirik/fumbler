@@ -424,75 +424,64 @@ import profile3 from "@/assets/profile-3.jpg";
 import profile4 from "@/assets/profile-4.jpg";
 
 const defaultCore: CoreResonance = {
-  attentionModel: "Engagement through emergent alignment, not persuasion",
+  attentionModel: "",
   activationVectors: {
-    attracts: [
-      "competent_weirdness",
-      "layered_meaning",
-      "curiosity_invitation",
-    ],
-    repels: [
-      "performative_confidence",
-      "over_explanation",
-      "extractive_attention",
-    ],
+    attracts: [],
+    repels: [],
   },
   flirtInterface: {
-    attracts: ["calm_curiosity", "subtle_mastery", "specific_noticing"],
-    failsWhen: ["intensity_too_early", "emotional_oversharing_without_context"],
+    attracts: [],
+    failsWhen: [],
   },
   glossary: {},
 };
 
 const defaultViability: ViabilityProfile = {
   availability: {
-    engagementFrequency: "daily",
-    weeklyHours: "5-10",
-    timezone: "US/Pacific",
-    asyncPreferred: true,
-    currentSeason: "available_and_seeking",
+    engagementFrequency: "weekly",
+    weeklyHours: "",
+    timezone: "",
+    asyncPreferred: false,
+    currentSeason: "exploring",
   },
-  relationshipTypes: ["romantic", "creative_collaboration"],
+  relationshipTypes: [],
   conflictStyle: "dialogue",
-  reciprocityModel: "symmetric_preferred",
+  reciprocityModel: "flexible",
   communicationModalities: {
-    primary: "async_text",
-    secondary: "voice_calls",
-    frequencyPreference: "whenever feels right",
+    primary: "",
+    secondary: "",
+    frequencyPreference: "",
   },
-  growthVectors: ["deepening_craft", "emotional_resilience"],
-  coreValues: ["autonomy", "authenticity", "emergence_over_control"],
+  growthVectors: [],
+  coreValues: [],
 };
 
 const defaultEconomic: EconomicLayer = {
   openToInvoicing: false,
   contexts: [],
   rates: {},
-  values: ["explicit_beats_implicit", "labor_deserves_recognition"],
-  boundaries: ["only_in_appropriate_contexts"],
+  values: [],
+  boundaries: [],
   kinkAlignment: [],
 };
 
 const defaultSafety: SafetyProfile = {
-  consentFrameworks: [
-    "enthusiastic_consent_required",
-    "check_in_during_intensity",
-  ],
-  hardBoundaries: ["no_untruth", "no_emotional_manipulation"],
-  accountability: ["willing_to_be_called_in", "repair_orientation"],
-  safeSexPractices: "discussed_before_intimacy",
-  substanceClarity: "occasional_alcohol",
+  consentFrameworks: [],
+  hardBoundaries: [],
+  accountability: [],
+  safeSexPractices: "",
+  substanceClarity: "",
   harmHistory: "",
   referencesAvailable: false,
 };
 
 const defaultConnection: ConnectionPreferences = {
-  preferredContactMethod: "text_first",
-  responseTimeExpectations: "24-48 hours",
-  frequencyOfContact: "daily async",
+  preferredContactMethod: "",
+  responseTimeExpectations: "",
+  frequencyOfContact: "",
   meetingModality: "hybrid",
-  location: "flexible",
-  willingToTravel: "for the right person",
+  location: "",
+  willingToTravel: "",
 };
 
 export const resonanceProfiles: ResonanceProfile[] = [

@@ -163,8 +163,12 @@ function normalizeV9Flat(raw: Obj): Obj {
       attracts: arr(flirt.attracts),
       failsWhen: arr(flirt.failsWhen),
     },
-    trustSignals: arr(raw.trustSignals),
-    distrustSignals: arr(raw.distrustSignals),
+    consumer: {
+      trustSignals: arr(raw.trustSignals ?? obj(raw.consumer).trustSignals),
+      distrustSignals: arr(
+        raw.distrustSignals ?? obj(raw.consumer).distrustSignals,
+      ),
+    },
     glossary:
       raw.glossary &&
       typeof raw.glossary === "object" &&
