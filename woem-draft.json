@@ -12,7 +12,6 @@
   },
   "aura": {
     "descriptors": ["ominous", "nerdy", "volchaic", "confusing"],
-    "energyProfile": "contained_heat_with_controlled_current",
     "misreadAs": ["intimidating", "aloof", "hyper-competent"],
     "revealsOverTime": [
       "observant",
@@ -131,19 +130,17 @@
       "identity_claim_without_artifact"
     ]
   },
-  "consumerInterface": {
-    "trustSignals": [
-      "artifact_built_tools",
-      "visible_iteration",
-      "depth_discoverable_over_time",
-      "working_prototypes"
-    ],
-    "distrustSignals": [
-      "hidden_complexity",
-      "sales_funnel_energy",
-      "aesthetic_without_function"
-    ]
-  },
+  "trustSignals": [
+    "artifact_built_tools",
+    "visible_iteration",
+    "depth_discoverable_over_time",
+    "working_prototypes"
+  ],
+  "distrustSignals": [
+    "hidden_complexity",
+    "sales_funnel_energy",
+    "aesthetic_without_function"
+  ],
   "glossary": {
     "leethia": {
       "meaning": "misunderstanding resolving into clarity",
@@ -160,16 +157,13 @@
     "volchaic": {
       "meaning": "volcanic x voltaic — contained magma plus controlled current; pressure and charge",
       "state": "field_effect"
-    },
-    "mythrogito": {
-      "meaning": "a person who unintentionally turns practical systems into narrative artifacts",
-      "state": "archetype"
     }
   },
   "seeking": {
-    "activelySeeking": true,
-    "seekingArchetype": "grounded_curiosity_with_self_direction",
-    "seekingLanguages": {
+    "active": true,
+    "archetypes": ["grounded_curiosity_with_self_direction"],
+    "aesthetics": [],
+    "languages": {
       "compatibleWith": [
         "acts_of_service",
         "intellectual_presence",
@@ -177,12 +171,8 @@
       ],
       "mismatchTolerance": "low_for_chaos_high_for_difference"
     },
-    "seekingKinks": [
-      "competence",
-      "subtle_power_exchange",
-      "creative_conspiracy"
-    ],
-    "nonNegotiables": ["no_untruth", "no_ultimatums", "authenticity_required"],
+    "kinks": ["competence", "subtle_power_exchange", "creative_conspiracy"],
+    "nonNegotiables": [],
     "niceToHaves": [
       "creative_expression",
       "physical_build_projects",
@@ -199,11 +189,6 @@
       "technical_consulting",
       "infrastructure_design"
     ],
-    "rates": {
-      "mentorship": "negotiable",
-      "emotional_labor": "bounded_and_contextual",
-      "basePhilosophy": "independence_in_progress"
-    },
     "valuesAroundThis": [
       "sovereignty_over_dependency",
       "mutual_gain",
@@ -232,11 +217,6 @@
       "professional",
       "artist"
     ],
-    "communicationModalities": {
-      "primary": "async_voice_text",
-      "secondary": "voice_calls",
-      "frequencyPreference": "organic_but_consistent"
-    },
     "growthVectors": [
       "deepening_craft",
       "r_and_d",
@@ -263,7 +243,9 @@
     "substanceClarity": "moderate_social_use_only"
   },
   "connection": {
-    "preferredContactMethod": "text_first_then_call",
+    "channelPrimary": "async_voice_text",
+    "channelSecondary": "voice_calls",
+    "contactEtiquette": "text_first_then_call",
     "responseTimeExpectations": "24-48_hours",
     "frequencyOfContact": "daily_async_or_less_frequent_sync",
     "meetingModality": "hybrid",
@@ -282,5 +264,12 @@
       "videoIntro": null
     },
     "portfolioLinks": ["github.com/instancer-kirik", "instance.select"]
+  },
+  "getToKnowMe": {
+    "height": null,
+    "build": "fit",
+    "favoriteMedia": [],
+    "currentObsession": "consolidation_and_signal",
+    "idealWeekend": "build_something_lift_cook_share_music"
   }
 }
