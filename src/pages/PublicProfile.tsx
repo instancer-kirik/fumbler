@@ -215,23 +215,16 @@ const PublicProfile = () => {
         return;
       }
 
-      // Then fetch resonance_data through the RPC which enforces visibility.
-      // Passing no viewer_id (anon) → only public sections are returned,
-      // unless a valid share_key is provided which can elevate visibility.
-      const rpcParams: { target_id: string; share_key?: string } = {
-        target_id: data.id,
-      };
-      if (shareKey) rpcParams.share_key = shareKey;
-      const { data: resonanceData } = await supabase.rpc(
-        "get_resonance",
-        rpcParams,
-      );
+      // Fetch resonance_data directly from the profile
+      const { data: resProfile } = await supabase
+        .from("profiles")
+        .select("resonance_data")
+        .eq("id", data.id)
+        .single();
 
       const profileData = { ...data } as any;
-      if (resonanceData) {
-        const rawRes = resonanceData as Record<string, unknown>;
-        // Capture which top-level keys the RPC returned BEFORE normalizing.
-        // These represent the sections the viewer is actually allowed to see.
+      if (resProfile?.resonance_data) {
+        const rawRes = resProfile.resonance_data as Record<string, unknown>;
         profileData.granted_keys = new Set(Object.keys(rawRes));
         profileData.resonance_data = normalizeImportData(rawRes);
       }
