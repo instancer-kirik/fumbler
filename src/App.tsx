@@ -42,7 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/fumbler">
+      <BrowserRouter>
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Landing />} />
