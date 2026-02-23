@@ -216,11 +216,12 @@ const PublicProfile = () => {
       }
 
       // Fetch resonance_data through the RPC which enforces visibility.
-      const rpcParams: Record<string, string> = { target_id: data.id };
-      if (shareKey) rpcParams.share_key = shareKey;
+      // Always pass all 3 params to avoid PostgREST PGRST203 overload ambiguity.
+      const { data: { session } } = await supabase.auth.getSession();
+      const viewerId = session?.user?.id ?? null;
       const { data: resonanceData } = await (supabase.rpc as any)(
         "get_resonance",
-        rpcParams,
+        { target_id: data.id, viewer_id: viewerId, share_key: shareKey ?? null },
       );
 
       const profileData = { ...data } as any;
@@ -280,7 +281,16 @@ const PublicProfile = () => {
     <div className="mx-auto max-w-lg min-h-screen bg-background px-4 pt-6 pb-10">
       <div className="mb-4 flex items-center justify-between">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            // If there's browser history, go back; otherwise go to discover (signed in) or landing
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              supabase.auth.getSession().then(({ data: { session } }) => {
+                navigate(session?.user ? "/discover" : "/");
+              });
+            }
+          }}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

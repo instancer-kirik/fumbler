@@ -406,7 +406,7 @@ const ResonanceProfileView = ({
       setLoading(true);
 
       const [resonanceRes, accessRes] = await Promise.all([
-        (supabase.rpc as any)("get_resonance", { target_id: profile.id }),
+        (supabase.rpc as any)("get_resonance", { target_id: profile.id, viewer_id: user.id, share_key: null }),
         supabase
           .from("resonance_access_requests")
           .select("section_id, status")
