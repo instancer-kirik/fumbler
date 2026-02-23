@@ -1,5 +1,21 @@
 import { useState, useEffect } from "react";
-import { Settings, Edit3, Shield, HelpCircle, Palette, Check, ChevronRight, Plus, X, LogOut, Upload, Link2, Share2, Eye } from "lucide-react";
+import {
+  Settings,
+  Edit3,
+  Shield,
+  HelpCircle,
+  Palette,
+  Check,
+  ChevronRight,
+  Plus,
+  X,
+  LogOut,
+  Upload,
+  Link2,
+  Share2,
+  Eye,
+  Key,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +24,7 @@ import ThemePalette from "@/components/profile/ThemePalette";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ResonanceEditor from "@/components/profile/ResonanceEditor";
 import ToonImportSheet from "@/components/profile/ToonImportSheet";
+import ShareKeysSheet from "@/components/profile/ShareKeysSheet";
 
 interface UserProfile {
   id: string;
@@ -29,6 +46,7 @@ const ProfilePage = () => {
   const [photoCount, setPhotoCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [showShareKeys, setShowShareKeys] = useState(false);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
@@ -55,8 +73,15 @@ const ProfilePage = () => {
   const fetchProfile = async () => {
     if (!user) return;
     const [profileRes, photosRes] = await Promise.all([
-      supabase.from("profiles").select("id, full_name, username, avatar_url, bio, age").eq("id", user.id).single(),
-      supabase.from("fumble_photos").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase
+        .from("profiles")
+        .select("id, full_name, username, avatar_url, bio, age")
+        .eq("id", user.id)
+        .single(),
+      supabase
+        .from("fumble_photos")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
     ]);
     if (profileRes.data) setProfile(profileRes.data);
     setPhotoCount(photosRes.count ?? 0);
@@ -83,23 +108,28 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-background px-4 pb-24 pt-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold text-foreground">Profile</h1>
+        <h1 className="font-display text-2xl font-bold text-foreground">
+          Profile
+        </h1>
         <div className="flex gap-2">
           <button
             onClick={() => setShowPalette(!showPalette)}
             className={`rounded-full p-2.5 transition-all ${showPalette ? "gradient-warm scale-105" : "bg-secondary"}`}
           >
-            <Palette className={`h-5 w-5 ${showPalette ? "text-primary-foreground" : "text-foreground"}`} />
+            <Palette
+              className={`h-5 w-5 ${showPalette ? "text-primary-foreground" : "text-foreground"}`}
+            />
           </button>
-          <button onClick={handleSignOut} className="rounded-full bg-secondary p-2.5">
+          <button
+            onClick={handleSignOut}
+            className="rounded-full bg-secondary p-2.5"
+          >
             <LogOut className="h-5 w-5 text-foreground" />
           </button>
         </div>
       </div>
 
-      <AnimatePresence>
-        {showPalette && <ThemePalette />}
-      </AnimatePresence>
+      <AnimatePresence>{showPalette && <ThemePalette />}</AnimatePresence>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -109,7 +139,11 @@ const ProfilePage = () => {
         <div className="relative mb-4">
           <div className="h-28 w-28 overflow-hidden rounded-full gradient-warm p-[3px]">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="Your profile" className="h-full w-full rounded-full object-cover" />
+              <img
+                src={profile.avatar_url}
+                alt="Your profile"
+                className="h-full w-full rounded-full object-cover"
+              />
             ) : (
               <div className="h-full w-full rounded-full bg-muted flex items-center justify-center text-3xl font-display text-muted-foreground">
                 {profile?.full_name?.[0]?.toUpperCase() || "?"}
@@ -125,9 +159,12 @@ const ProfilePage = () => {
         </div>
 
         <h2 className="font-display text-xl font-bold text-foreground">
-          {profile?.full_name || "Anonymous"}{profile?.age ? `, ${profile.age}` : ""}
+          {profile?.full_name || "Anonymous"}
+          {profile?.age ? `, ${profile.age}` : ""}
         </h2>
-        <p className="text-sm text-muted-foreground">@{profile?.username || "unknown"}</p>
+        <p className="text-sm text-muted-foreground">
+          @{profile?.username || "unknown"}
+        </p>
       </motion.div>
 
       {/* Share card */}
@@ -140,15 +177,24 @@ const ProfilePage = () => {
         >
           <div className="flex items-center gap-2">
             <Link2 className="h-4 w-4 text-primary shrink-0" />
-            <span className="text-xs text-muted-foreground truncate flex-1">{profileUrl}</span>
+            <span className="text-xs text-muted-foreground truncate flex-1">
+              {profileUrl}
+            </span>
           </div>
-          <p className="text-xs text-muted-foreground">Send this before you meet — they'll see your public resonance sections.</p>
+          <p className="text-xs text-muted-foreground">
+            Send this before you meet — they'll see your public resonance
+            sections.
+          </p>
           <div className="flex gap-2">
             <button
               onClick={handleCopy}
               className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-secondary py-2.5 text-xs font-semibold text-foreground hover:bg-secondary/80 transition-colors"
             >
-              {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Link2 className="h-3.5 w-3.5" />}
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              ) : (
+                <Link2 className="h-3.5 w-3.5" />
+              )}
               {copied ? "Copied!" : "Copy link"}
             </button>
             <button
@@ -176,7 +222,9 @@ const ProfilePage = () => {
           { label: "Fumbles", value: "∞" },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl bg-card p-4 shadow-card">
-            <p className="font-display text-xl font-bold text-primary">{stat.value}</p>
+            <p className="font-display text-xl font-bold text-primary">
+              {stat.value}
+            </p>
             <p className="text-xs text-muted-foreground">{stat.label}</p>
           </div>
         ))}
@@ -184,9 +232,26 @@ const ProfilePage = () => {
 
       <div className="mt-6 space-y-2">
         {[
-          { icon: Edit3, label: "Edit Profile", action: () => setShowEdit(true) },
-          { icon: Settings, label: "Resonance Profile", action: () => setShowResonance(true) },
-          { icon: Upload, label: "Import Resonance (TOON)", action: () => setShowImport(true) },
+          {
+            icon: Edit3,
+            label: "Edit Profile",
+            action: () => setShowEdit(true),
+          },
+          {
+            icon: Settings,
+            label: "Resonance Profile",
+            action: () => setShowResonance(true),
+          },
+          {
+            icon: Key,
+            label: "Share Links",
+            action: () => setShowShareKeys(true),
+          },
+          {
+            icon: Upload,
+            label: "Import Resonance (TOON)",
+            action: () => setShowImport(true),
+          },
           { icon: Shield, label: "Safety & Privacy" },
           { icon: HelpCircle, label: "Help & Support" },
         ].map((item) => (
@@ -209,14 +274,14 @@ const ProfilePage = () => {
         onSaved={fetchProfile}
       />
 
-      <ResonanceEditor
-        open={showResonance}
-        onOpenChange={setShowResonance}
-      />
+      <ResonanceEditor open={showResonance} onOpenChange={setShowResonance} />
 
-      <ToonImportSheet
-        open={showImport}
-        onOpenChange={setShowImport}
+      <ToonImportSheet open={showImport} onOpenChange={setShowImport} />
+
+      <ShareKeysSheet
+        open={showShareKeys}
+        onOpenChange={setShowShareKeys}
+        username={profile?.username}
       />
     </div>
   );
