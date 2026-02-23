@@ -405,11 +405,12 @@ const ResonanceProfileView = ({
     const fetchAll = async () => {
       setLoading(true);
 
-      // get_resonance() handles relationship detection + server-side visibility
-      // filtering in a single round-trip. It also returns the relationship level
-      // so we can show locked-section UI without a separate matches query.
-      const [resonanceRes, accessRes] = await Promise.all([
-        supabase.rpc("get_resonance", { target_id: profile.id }),
+      const [profileRes, accessRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("resonance_data")
+          .eq("id", profile.id)
+          .single(),
         supabase
           .from("resonance_access_requests")
           .select("section_id, status")
@@ -417,9 +418,9 @@ const ResonanceProfileView = ({
           .eq("target_id", profile.id),
       ]);
 
-      if (resonanceRes.data) {
+      if (profileRes.data?.resonance_data) {
         const normalized = normalizeImportData(
-          resonanceRes.data as Record<string, unknown>,
+          profileRes.data.resonance_data as Record<string, unknown>,
         );
         setDbData(normalized as ResonanceData);
       }
