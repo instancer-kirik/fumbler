@@ -117,11 +117,13 @@ function normalizeV9Flat(raw: Obj): Obj {
 
     // ── Archetypes — { name, definition, activationContext } ─────────────
     archetypes: Array.isArray(raw.archetypes)
-      ? (raw.archetypes as Obj[]).map((a) => ({
-          name: str(a.name ?? a.label),
-          definition: str(a.definition ?? a.class),
-          activationContext: str(a.activationContext ?? a.energy),
-        }))
+      ? (raw.archetypes as Obj[])
+          .filter((a) => a && typeof a === "object")
+          .map((a) => ({
+            name: str(a.name ?? a.label),
+            definition: str(a.definition ?? a.class),
+            activationContext: str(a.activationContext ?? a.energy),
+          }))
       : [],
 
     // ── Cognitive / character ─────────────────────────────────────────────
@@ -271,11 +273,13 @@ function normalizeV9Flat(raw: Obj): Obj {
         videoIntro: discIntro.videoIntro ?? null,
       },
       platforms: Array.isArray((disc as Obj).platforms)
-        ? ((disc as Obj).platforms as Obj[]).map((p) => ({
-            name: str(p.name),
-            handle: str(p.handle),
-            url: str(p.url),
-          }))
+        ? ((disc as Obj).platforms as Obj[])
+            .filter((p) => p && typeof p === "object")
+            .map((p) => ({
+              name: str(p.name),
+              handle: str(p.handle),
+              url: str(p.url),
+            }))
         : arr((disc as Obj).portfolioLinks).map((url) => ({
             name: "",
             handle: "",

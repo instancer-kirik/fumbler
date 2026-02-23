@@ -1,10 +1,16 @@
+import { decode as toonDecode } from "@toon-format/toon";
 import { useState, useRef } from "react";
 import { Upload, FileText, Check, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
@@ -22,40 +28,40 @@ interface ToonImportSheetProps {
  * Arrays use `[N]` headers or `- item` list syntax.
  * We parse into a plain JS object then merge into resonance_data.
  */
-async function decodeToon(input: string): Promise<Record<string, unknown>> {
+function decodeToon(input: string): Record<string, unknown> {
   const trimmed = input.trim();
 
-  // Try JSON first (most reliable)
-  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      // Fall through to TOON
-    }
+  // Try JSON first (most reliable) — note: toonDecode does NOT parse JSON correctly
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // Not JSON, fall through to TOON
   }
 
-  // Try TOON library
+  // Try TOON library (for .toon files / TOON-format text)
   try {
-    const toon = await import("@toon-format/toon");
-    const result = toon.decode(trimmed);
-    if (result && typeof result === "object" && Object.keys(result as object).length > 0) {
+    const result = toonDecode(trimmed);
+    if (
+      result &&
+      typeof result === "object" &&
+      Object.keys(result as object).length > 0
+    ) {
       return result as Record<string, unknown>;
     }
   } catch (e: any) {
     console.warn("TOON decode failed:", e.message);
   }
 
-  // Last resort: try JSON parse even if it doesn't look like JSON
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    throw new Error(
-      "Could not parse input. The TOON compact syntax (e.g. vectors[3]{…}) may not be supported by the parser yet. Try importing the JSON version instead."
-    );
-  }
+  throw new Error(
+    "Could not parse input. Make sure it is valid JSON or TOON format.",
+  );
 }
 
-const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProps) => {
+const ToonImportSheet = ({
+  open,
+  onOpenChange,
+  onImported,
+}: ToonImportSheetProps) => {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [rawContent, setRawContent] = useState("");
@@ -77,12 +83,12 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
     reader.readAsText(file);
   };
 
-  const tryParse = async (text: string) => {
+  const tryParse = (text: string) => {
     setError(null);
     setPreview(null);
     if (!text.trim()) return;
     try {
-      const parsed = await decodeToon(text);
+      const parsed = decodeToon(text);
       setPreview(parsed);
     } catch (err: any) {
       setError(err.message || "Parse error");
@@ -93,15 +99,35 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
     if (!user || !preview) return;
     setImporting(true);
     try {
+      // Normalize the imported data first (may throw on malformed input)
+      let normalized: Record<string, unknown>;
+      try {
+        normalized = normalizeImportData(preview);
+      } catch (normErr: any) {
+        console.error("normalizeImportData failed:", normErr);
+        toast.error(
+          "Could not normalize import data: " +
+            (normErr.message || "unknown error"),
+        );
+        return;
+      }
+
       // Fetch existing resonance_data to merge
-      const { data: existing } = await supabase
+      const { data: existing, error: selectError } = await supabase
         .from("profiles")
         .select("resonance_data")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      const currentData = (existing?.resonance_data as Record<string, unknown>) || {};
-      const normalized = normalizeImportData(preview);
+      if (selectError) {
+        console.warn(
+          "Could not load existing resonance_data (will import fresh):",
+          selectError.message,
+        );
+      }
+
+      const currentData =
+        (existing?.resonance_data as Record<string, unknown>) || {};
       const merged = deepMerge(currentData, normalized);
 
       const { error: updateError } = await supabase
@@ -109,13 +135,17 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
         .update({ resonance_data: merged as any })
         .eq("id", user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Supabase update failed:", updateError);
+        throw new Error(updateError.message || "Failed to save profile");
+      }
 
       toast.success("Resonance profile imported successfully");
       onImported?.();
       onOpenChange(false);
       resetState();
     } catch (err: any) {
+      console.error("Import error:", err);
       toast.error(err.message || "Import failed");
     } finally {
       setImporting(false);
@@ -132,12 +162,25 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
   const sectionCount = preview ? Object.keys(preview).length : 0;
 
   return (
-    <Sheet open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetState(); }}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl px-4 pt-6 pb-8 overflow-y-auto">
+    <Sheet
+      open={open}
+      onOpenChange={(v) => {
+        onOpenChange(v);
+        if (!v) resetState();
+      }}
+    >
+      <SheetContent
+        side="bottom"
+        className="h-[85vh] rounded-t-3xl px-4 pt-6 pb-8 overflow-y-auto"
+      >
         <SheetHeader className="mb-4">
-          <SheetTitle className="font-display text-lg">Import Resonance Profile</SheetTitle>
+          <SheetTitle className="font-display text-lg">
+            Import Resonance Profile
+          </SheetTitle>
           <p className="text-xs text-muted-foreground">
-            Paste TOON or JSON, or upload a <code className="rounded bg-secondary px-1">.toon</code> / <code className="rounded bg-secondary px-1">.json</code> file
+            Paste TOON or JSON, or upload a{" "}
+            <code className="rounded bg-secondary px-1">.toon</code> /{" "}
+            <code className="rounded bg-secondary px-1">.json</code> file
           </p>
         </SheetHeader>
 
@@ -196,7 +239,8 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
               <div className="flex items-center gap-2 mb-2">
                 <Check className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-foreground">
-                  Parsed successfully — {sectionCount} section{sectionCount !== 1 ? "s" : ""} detected
+                  Parsed successfully — {sectionCount} section
+                  {sectionCount !== 1 ? "s" : ""} detected
                 </span>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -233,7 +277,8 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
         </Button>
 
         <p className="text-[10px] text-muted-foreground text-center mt-2">
-          Data will be merged with your existing resonance profile. Existing fields are preserved unless overwritten.
+          Data will be merged with your existing resonance profile. Existing
+          fields are preserved unless overwritten.
         </p>
       </SheetContent>
     </Sheet>
@@ -241,13 +286,26 @@ const ToonImportSheet = ({ open, onOpenChange, onImported }: ToonImportSheetProp
 };
 
 /** Deep-merge two objects — arrays are replaced, not concatenated */
-function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+function deepMerge(
+  target: Record<string, unknown>,
+  source: Record<string, unknown>,
+): Record<string, unknown> {
   const result = { ...target };
   for (const key of Object.keys(source)) {
     const sv = source[key];
     const tv = target[key];
-    if (sv && typeof sv === "object" && !Array.isArray(sv) && tv && typeof tv === "object" && !Array.isArray(tv)) {
-      result[key] = deepMerge(tv as Record<string, unknown>, sv as Record<string, unknown>);
+    if (
+      sv &&
+      typeof sv === "object" &&
+      !Array.isArray(sv) &&
+      tv &&
+      typeof tv === "object" &&
+      !Array.isArray(tv)
+    ) {
+      result[key] = deepMerge(
+        tv as Record<string, unknown>,
+        sv as Record<string, unknown>,
+      );
     } else {
       result[key] = sv;
     }
