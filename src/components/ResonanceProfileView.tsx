@@ -405,12 +405,8 @@ const ResonanceProfileView = ({
     const fetchAll = async () => {
       setLoading(true);
 
-      const [profileRes, accessRes] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("resonance_data")
-          .eq("id", profile.id)
-          .single(),
+      const [resonanceRes, accessRes] = await Promise.all([
+        (supabase.rpc as any)("get_resonance", { target_id: profile.id }),
         supabase
           .from("resonance_access_requests")
           .select("section_id, status")
@@ -418,9 +414,9 @@ const ResonanceProfileView = ({
           .eq("target_id", profile.id),
       ]);
 
-      if (profileRes.data?.resonance_data) {
+      if (resonanceRes.data) {
         const normalized = normalizeImportData(
-          profileRes.data.resonance_data as Record<string, unknown>,
+          resonanceRes.data as Record<string, unknown>,
         );
         setDbData(normalized as ResonanceData);
       }
