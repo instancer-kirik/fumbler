@@ -113,8 +113,9 @@ export function useShareKeys(username: string | null | undefined) {
   const shareUrl = useCallback(
     (key: ShareKey): string => {
       if (!username) return "";
-      const base = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, "")}`;
-      return `${base}/u/${username}?key=${key.key}`;
+      // Use Vite BASE_URL so the URL is always correct regardless of current page.
+      const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+      return `${window.location.origin}${base}/u/${username}?key=${key.key}`;
     },
     [username]
   );

@@ -5,6 +5,34 @@ import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
 
+// Mapping from sectionVisibility keys to the top-level data keys the RPC emits.
+// The RPC only includes keys for sections the viewer is granted access to,
+// so we capture which keys were present in the raw response before normalization.
+const SECTION_KEYS: Record<string, string[]> = {
+  gtky:       ["getToKnowMe"],
+  aura:       ["aura", "aesthetics", "aliases", "persona"],
+  core:       ["activationVectors", "repulsionVectors", "flirtInterface"],
+  signals:    ["consumer", "trustSignals", "distrustSignals"],
+  qualities:  ["qualities", "introspections", "values"],
+  loops:      ["loops"],
+  lessons:    ["lessons"],
+  languages:  ["languages"],
+  kinks:      ["kinks"],
+  archetypes: ["archetypes"],
+  attraction: ["attraction"],
+  engagement: ["engagement"],
+  dynamics:   ["powerDynamics", "playPreferences"],
+  repulsion:  ["repulsion"],
+  viability:  ["viability"],
+  seeking:    ["seeking"],
+  safety:     ["safety"],
+  economic:   ["economic"],
+  connection: ["connection"],
+  content:    ["content"],
+  glossary:   ["glossary"],
+  discovery:  ["discovery"],
+};
+
 interface PublicProfileData {
   id: string;
   full_name: string | null;
@@ -13,17 +41,8 @@ interface PublicProfileData {
   bio: string | null;
   age: number | null;
   resonance_data: any;
+  granted_keys?: Set<string>;
 }
-
-type Visibility = "public" | "matches" | "express";
-
-const isSectionVisible = (
-  sectionId: string,
-  sv: Record<string, Visibility> | undefined,
-): boolean => {
-  const vis = sv?.[sectionId] || "matches";
-  return vis === "public";
-};
 
 const TagList = ({
   items,
@@ -161,9 +180,10 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const _base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
   const profileUrl = shareKey
-    ? `https://fumbler.lovable.app/u/${username}?key=${shareKey}`
-    : `https://fumbler.lovable.app/u/${username}`;
+    ? `${window.location.origin}${_base}/u/${username}?key=${shareKey}`
+    : `${window.location.origin}${_base}/u/${username}`;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -209,15 +229,18 @@ const PublicProfile = () => {
 
       const profileData = { ...data } as any;
       if (resonanceData) {
-        profileData.resonance_data = normalizeImportData(
-          resonanceData as Record<string, unknown>,
-        );
+        const rawRes = resonanceData as Record<string, unknown>;
+        // Capture which top-level keys the RPC returned BEFORE normalizing.
+        // These represent the sections the viewer is actually allowed to see.
+        profileData.granted_keys = new Set(Object.keys(rawRes));
+        profileData.resonance_data = normalizeImportData(rawRes);
       }
       setProfile(profileData);
       setLoading(false);
     };
     fetchProfile();
-  }, [username]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, shareKey]);
 
   if (loading) {
     return (
@@ -251,11 +274,13 @@ const PublicProfile = () => {
 
   // rd is now normalized v0.9 flat format
   const rd = profile.resonance_data as any;
-  const sv = rd?.sectionVisibility as Record<string, Visibility> | undefined;
-  const canSee = (id: string) => isSectionVisible(id, sv);
-
-  const hasAnyPublicSection =
-    rd && sv && Object.values(sv).some((v) => v === "public");
+  // grantedKeys = raw top-level keys the RPC returned (= sections viewer can see)
+  const grantedKeys: Set<string> = profile.granted_keys ?? new Set();
+  const canSee = (id: string): boolean => {
+    const keys = SECTION_KEYS[id];
+    return keys ? keys.some((k) => grantedKeys.has(k)) : false;
+  };
+  const hasAnySectionData = rd && Object.keys(SECTION_KEYS).some((id) => canSee(id));
 
   return (
     <div className="mx-auto max-w-lg min-h-screen bg-background px-4 pt-6 pb-10">
@@ -312,7 +337,7 @@ const PublicProfile = () => {
       </motion.div>
 
       {/* Resonance sections — all using v0.9 flat keys */}
-      {!rd || !hasAnyPublicSection ? (
+      {!rd || !hasAnySectionData ? (
         <div className="rounded-2xl bg-card border border-border p-6 text-center">
           <p className="text-sm text-muted-foreground">
             No public resonance sections yet.
