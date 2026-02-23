@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,12 +154,16 @@ const SectionCard = ({
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const shareKey = searchParams.get("key");
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const profileUrl = `https://fumbler.lovable.app/u/${username}`;
+  const profileUrl = shareKey
+    ? `https://fumbler.lovable.app/u/${username}?key=${shareKey}`
+    : `https://fumbler.lovable.app/u/${username}`;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -192,10 +196,16 @@ const PublicProfile = () => {
       }
 
       // Then fetch resonance_data through the RPC which enforces visibility.
-      // Passing no viewer_id (anon) → only public sections are returned.
-      const { data: resonanceData } = await supabase.rpc("get_resonance", {
+      // Passing no viewer_id (anon) → only public sections are returned,
+      // unless a valid share_key is provided which can elevate visibility.
+      const rpcParams: { target_id: string; share_key?: string } = {
         target_id: data.id,
-      });
+      };
+      if (shareKey) rpcParams.share_key = shareKey;
+      const { data: resonanceData } = await supabase.rpc(
+        "get_resonance",
+        rpcParams,
+      );
 
       const profileData = { ...data } as any;
       if (resonanceData) {
