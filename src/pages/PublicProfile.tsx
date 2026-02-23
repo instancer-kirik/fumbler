@@ -215,16 +215,17 @@ const PublicProfile = () => {
         return;
       }
 
-      // Fetch resonance_data directly from the profile
-      const { data: resProfile } = await supabase
-        .from("profiles")
-        .select("resonance_data")
-        .eq("id", data.id)
-        .single();
+      // Fetch resonance_data through the RPC which enforces visibility.
+      const rpcParams: Record<string, string> = { target_id: data.id };
+      if (shareKey) rpcParams.share_key = shareKey;
+      const { data: resonanceData } = await (supabase.rpc as any)(
+        "get_resonance",
+        rpcParams,
+      );
 
       const profileData = { ...data } as any;
-      if (resProfile?.resonance_data) {
-        const rawRes = resProfile.resonance_data as Record<string, unknown>;
+      if (resonanceData) {
+        const rawRes = resonanceData as Record<string, unknown>;
         profileData.granted_keys = new Set(Object.keys(rawRes));
         profileData.resonance_data = normalizeImportData(rawRes);
       }
