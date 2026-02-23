@@ -86,6 +86,10 @@ export function normalizeImportData(raw: Obj): Obj {
 
 // ─── v0.9 flat passthrough ────────────────────────────────────────────────────
 
+function num(v: unknown, fallback = 0): number {
+  return typeof v === "number" ? v : fallback;
+}
+
 function normalizeV9Flat(raw: Obj): Obj {
   const aura = obj(raw.aura);
   const cogStyle = obj(raw.cognitiveStyle);
@@ -102,6 +106,12 @@ function normalizeV9Flat(raw: Obj): Obj {
   const discIntro = obj((disc as Obj).introduction);
   const content = obj(raw.content);
   const gtky = obj(raw.getToKnowMe);
+  const attract = obj(raw.attraction);
+  const engage = obj(raw.engagement);
+  const power = obj(raw.powerDynamics);
+  const play = obj(raw.playPreferences);
+  const intensity = obj(play.intensityProfile);
+  const repulsion = obj(raw.repulsion);
 
   return {
     // ── Identity surface ──────────────────────────────────────────────────
@@ -295,6 +305,49 @@ function normalizeV9Flat(raw: Obj): Obj {
       currentObsession: str(gtky.currentObsession),
       idealWeekend: str(gtky.idealWeekend),
     },
+
+    // ── Attraction Gradient ───────────────────────────────────────────────
+    attraction: {
+      slowBurn: bool(attract.slowBurn),
+      fastHook: bool(attract.fastHook),
+      whatDrawsIn: arr(attract.whatDrawsIn),
+      timeline: str(attract.timeline),
+    },
+
+    // ── Engagement Curve ──────────────────────────────────────────────────
+    engagement: {
+      phase1: str(engage.phase1),
+      phase2: str(engage.phase2),
+      phase3: str(engage.phase3),
+      cooperationStyle: str(engage.cooperationStyle),
+    },
+
+    // ── Power Dynamics ────────────────────────────────────────────────────
+    powerDynamics: {
+      enabled: bool(power.enabled),
+      expressionModes: arr(power.expressionModes),
+      exploration: str(power.exploration),
+    },
+
+    // ── Play Preferences ─────────────────────────────────────────────────
+    playPreferences: {
+      mode: str(play.mode),
+      intensityProfile: {
+        emotional: num(intensity.emotional, 50),
+        theatrical: num(intensity.theatrical, 50),
+        intellectual: num(intensity.intellectual, 50),
+      },
+    },
+
+    // ── Repulsion (structured) ────────────────────────────────────────────
+    repulsion: {
+      hardStops: arr(repulsion.hardStops),
+      yellowFlags: arr(repulsion.yellowFlags),
+      patternConcerns: arr(repulsion.patternConcerns),
+    },
+
+    // ── Section visibility ────────────────────────────────────────────────
+    sectionVisibility: obj(raw.sectionVisibility),
   };
 }
 

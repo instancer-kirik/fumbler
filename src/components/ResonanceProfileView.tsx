@@ -404,19 +404,12 @@ const ResonanceProfileView = ({
 
     const fetchAll = async () => {
       setLoading(true);
-      const [profileRes, matchRes, accessRes] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("resonance_data")
-          .eq("id", profile.id)
-          .single(),
-        supabase
-          .from("matches")
-          .select("id")
-          .or(
-            `and(user1_id.eq.${user.id},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${user.id})`,
-          )
-          .limit(1),
+
+      // get_resonance() handles relationship detection + server-side visibility
+      // filtering in a single round-trip. It also returns the relationship level
+      // so we can show locked-section UI without a separate matches query.
+      const [resonanceRes, accessRes] = await Promise.all([
+        supabase.rpc("get_resonance", { target_id: profile.id }),
         supabase
           .from("resonance_access_requests")
           .select("section_id, status")
@@ -424,18 +417,36 @@ const ResonanceProfileView = ({
           .eq("target_id", profile.id),
       ]);
 
-      if (profileRes.data?.resonance_data) {
+      if (resonanceRes.data) {
         const normalized = normalizeImportData(
-          profileRes.data.resonance_data as Record<string, unknown>,
+          resonanceRes.data as Record<string, unknown>,
         );
         setDbData(normalized as ResonanceData);
       }
 
-      const isMatch = (matchRes.data?.length ?? 0) > 0;
+      // Derive relationship from what the RPC returned:
+      // - express sections present  → express
+      // - matches-level sections present (RPC omits them for public viewers) →
+      //   we still need to know if we're a match for the locked-section UI.
+      // Keep the access-requests query for the request map + express detection.
       const approvedSections = (accessRes.data || [])
         .filter((r: any) => r.status === "approved")
         .map((r: any) => r.section_id);
       const hasExpress = approvedSections.length > 0;
+
+      // Check match status separately only when needed for UI (not for data access)
+      let isMatch = false;
+      if (!hasExpress) {
+        const { data: matchData } = await supabase
+          .from("matches")
+          .select("id")
+          .or(
+            `and(user1_id.eq.${user.id},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${user.id})`,
+          )
+          .limit(1);
+        isMatch = (matchData?.length ?? 0) > 0;
+      }
+
       setRelationship(hasExpress ? "express" : isMatch ? "match" : "public");
 
       const reqMap: Record<string, string> = {};

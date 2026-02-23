@@ -62,12 +62,14 @@ export function useMatches() {
       if (matchError || !matchRows?.length) return [];
 
       const otherIds = matchRows.map((m: any) =>
-        m.user1_id === user.id ? m.user2_id : m.user1_id
+        m.user1_id === user.id ? m.user2_id : m.user1_id,
       );
 
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age, contact_methods, resonance_data" as any)
+        .select(
+          "id, full_name, username, avatar_url, bio, age, contact_methods",
+        )
         .in("id", otherIds);
 
       if (!profiles) return [];
@@ -104,10 +106,20 @@ export function useUpdateMatch() {
       updates,
     }: {
       matchId: string;
-      updates: Partial<Pick<MatchRow, "tags" | "notes" | "scheduled_date" | "status" | "last_interaction_at" | "contact_shared_by_user1" | "contact_shared_by_user2">>;
+      updates: Partial<
+        Pick<
+          MatchRow,
+          | "tags"
+          | "notes"
+          | "scheduled_date"
+          | "status"
+          | "last_interaction_at"
+          | "contact_shared_by_user1"
+          | "contact_shared_by_user2"
+        >
+      >;
     }) => {
-      const { error } = await (supabase
-        .from("matches") as any)
+      const { error } = await (supabase.from("matches") as any)
         .update(updates)
         .eq("id", matchId);
       if (error) throw error;
