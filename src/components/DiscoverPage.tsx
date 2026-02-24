@@ -4,6 +4,7 @@ import { Sliders, Menu } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
+import HamburgerMenu from "./HamburgerMenu";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
@@ -34,6 +35,7 @@ const DiscoverPage = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<ResonanceProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -55,14 +57,20 @@ const DiscoverPage = () => {
   }, [user]);
 
   const recordSwipe = useCallback(
-    async (swipedProfile: ResonanceProfile, direction: "left" | "right" | "super") => {
+    async (
+      swipedProfile: ResonanceProfile,
+      direction: "left" | "right" | "super",
+    ) => {
       if (!user) return;
       // Record swipe
-      await supabase.from("swipes").upsert({
-        swiper_id: user.id,
-        swiped_id: swipedProfile.id,
-        direction,
-      }, { onConflict: "swiper_id,swiped_id" });
+      await supabase.from("swipes").upsert(
+        {
+          swiper_id: user.id,
+          swiped_id: swipedProfile.id,
+          direction,
+        },
+        { onConflict: "swiper_id,swiped_id" },
+      );
 
       // Check for mutual match on right/super swipes
       if (direction === "right" || direction === "super") {
@@ -77,14 +85,17 @@ const DiscoverPage = () => {
         if (mutual) {
           // Create match (order IDs consistently)
           const [u1, u2] = [user.id, swipedProfile.id].sort();
-          await supabase.from("matches").upsert({
-            user1_id: u1,
-            user2_id: u2,
-          }, { onConflict: "user1_id,user2_id" });
+          await supabase.from("matches").upsert(
+            {
+              user1_id: u1,
+              user2_id: u2,
+            },
+            { onConflict: "user1_id,user2_id" },
+          );
         }
       }
     },
-    [user]
+    [user],
   );
 
   const handleSwipe = useCallback(
@@ -93,7 +104,7 @@ const DiscoverPage = () => {
       if (profile) recordSwipe(profile, direction);
       setCurrentIndex((prev) => prev + 1);
     },
-    [currentIndex, profiles, recordSwipe]
+    [currentIndex, profiles, recordSwipe],
   );
 
   const handleSuperLike = useCallback(() => {
@@ -114,7 +125,7 @@ const DiscoverPage = () => {
         </h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => setMenuOpen(true)}
             className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
           >
             <Menu className="h-5 w-5 text-foreground" />
@@ -140,7 +151,9 @@ const DiscoverPage = () => {
             >
               <span className="mb-4 text-6xl">🫠</span>
               <h2 className="mb-2 font-display text-xl font-bold text-foreground">
-                {profiles.length === 0 ? "No one here yet!" : "No more profiles!"}
+                {profiles.length === 0
+                  ? "No one here yet!"
+                  : "No more profiles!"}
               </h2>
               <p className="text-center text-sm text-muted-foreground px-8">
                 {profiles.length === 0
@@ -182,6 +195,11 @@ const DiscoverPage = () => {
       )}
 
       {/* Missed Connections Drawer */}
+      <HamburgerMenu
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        onMissedConnections={() => setDrawerOpen(true)}
+      />
       <MissedConnectionsDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
     </div>
   );

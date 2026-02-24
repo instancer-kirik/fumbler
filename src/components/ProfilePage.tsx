@@ -25,6 +25,8 @@ import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ResonanceEditor from "@/components/profile/ResonanceEditor";
 import ToonImportSheet from "@/components/profile/ToonImportSheet";
 import ShareKeysSheet from "@/components/profile/ShareKeysSheet";
+import SafetyPrivacySheet from "@/components/profile/SafetyPrivacySheet";
+import HelpSupportSheet from "@/components/profile/HelpSupportSheet";
 
 interface UserProfile {
   id: string;
@@ -47,6 +49,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showShareKeys, setShowShareKeys] = useState(false);
+  const [showSafety, setShowSafety] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
@@ -249,11 +253,19 @@ const ProfilePage = () => {
           },
           {
             icon: Upload,
-            label: "Import Resonance (TOON)",
+            label: "Import Resonance (JSON)",
             action: () => setShowImport(true),
           },
-          { icon: Shield, label: "Safety & Privacy" },
-          { icon: HelpCircle, label: "Help & Support" },
+          {
+            icon: Shield,
+            label: "Safety & Privacy",
+            action: () => setShowSafety(true),
+          },
+          {
+            icon: HelpCircle,
+            label: "Help & Support",
+            action: () => setShowHelp(true),
+          },
         ].map((item) => (
           <button
             key={item.label}
@@ -277,6 +289,10 @@ const ProfilePage = () => {
       <ResonanceEditor open={showResonance} onOpenChange={setShowResonance} />
 
       <ToonImportSheet open={showImport} onOpenChange={setShowImport} />
+
+      <SafetyPrivacySheet open={showSafety} onOpenChange={setShowSafety} />
+
+      <HelpSupportSheet open={showHelp} onOpenChange={setShowHelp} />
 
       <ShareKeysSheet
         open={showShareKeys}

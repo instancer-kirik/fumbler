@@ -13,6 +13,7 @@ import MatchesPage from "@/components/MatchesPage";
 import ProfilePage from "@/components/ProfilePage";
 import PublicProfile from "@/pages/PublicProfile";
 import AppLayout from "@/components/AppLayout";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
 
             {/* Public sharable profile */}
             <Route path="/u/:username" element={<PublicProfile />} />
+            <Route path="/about" element={<About />} />
 
             {/* Authenticated app routes */}
             <Route
@@ -64,7 +66,6 @@ const App = () => (
               <Route path="/matches" element={<MatchesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
-
 
             <Route path="*" element={<NotFound />} />
           </Routes>
