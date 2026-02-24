@@ -9,7 +9,7 @@
   },
   "profile": {
     "name": "baon.jpg",
-    "description": "Works construction, hits the gym, builds systems that accumulate meaning. Turns practical things into meaning-containers without trying to."
+    "description": "Works construction, hits the gym, builds systems and stuff."
   },
   "aura": {
     "descriptors": ["ominous", "nerdy", "volchaic", "confusing"],
@@ -275,7 +275,7 @@
     "willingToBeCompared": true,
     "willingToHaveCompatibilityShared": false,
     "introduction": {
-      "writtenBio": "I build myth-bearing infrastructure. If you want something real, build something with me.",
+      "writtenBio": "where's hats sometimes",
       "audioIntro": null,
       "videoIntro": null
     },
@@ -294,7 +294,7 @@
   },
   "getToKnowMe": {
     "height": null,
-    "build": "gym_consistent",
+    "build": "fit",
     "favoriteMedia": [],
     "currentObsession": "consolidation_and_signal",
     "idealWeekend": "build_something_lift_cook_share_music"

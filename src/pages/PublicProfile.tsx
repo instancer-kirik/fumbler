@@ -9,28 +9,28 @@ import { normalizeImportData } from "@/utils/resonance-normalizer";
 // The RPC only includes keys for sections the viewer is granted access to,
 // so we capture which keys were present in the raw response before normalization.
 const SECTION_KEYS: Record<string, string[]> = {
-  gtky:       ["getToKnowMe"],
-  aura:       ["aura", "aesthetics", "aliases", "persona"],
-  core:       ["activationVectors", "repulsionVectors", "flirtInterface"],
-  signals:    ["consumer", "trustSignals", "distrustSignals"],
-  qualities:  ["qualities", "introspections", "values"],
-  loops:      ["loops"],
-  lessons:    ["lessons"],
-  languages:  ["languages"],
-  kinks:      ["kinks"],
+  gtky: ["getToKnowMe"],
+  aura: ["aura", "aesthetics", "aliases", "persona"],
+  core: ["activationVectors", "repulsionVectors", "flirtInterface"],
+  signals: ["consumer", "trustSignals", "distrustSignals"],
+  qualities: ["qualities", "introspections", "values"],
+  loops: ["loops"],
+  lessons: ["lessons"],
+  languages: ["languages"],
+  kinks: ["kinks"],
   archetypes: ["archetypes"],
   attraction: ["attraction"],
   engagement: ["engagement"],
-  dynamics:   ["powerDynamics", "playPreferences"],
-  repulsion:  ["repulsion"],
-  viability:  ["viability"],
-  seeking:    ["seeking"],
-  safety:     ["safety"],
-  economic:   ["economic"],
+  dynamics: ["powerDynamics", "playPreferences"],
+  repulsion: ["repulsion"],
+  viability: ["viability"],
+  seeking: ["seeking"],
+  safety: ["safety"],
+  economic: ["economic"],
   connection: ["connection"],
-  content:    ["content"],
-  glossary:   ["glossary"],
-  discovery:  ["discovery"],
+  content: ["content"],
+  glossary: ["glossary"],
+  discovery: ["discovery"],
 };
 
 interface PublicProfileData {
@@ -217,11 +217,17 @@ const PublicProfile = () => {
 
       // Fetch resonance_data through the RPC which enforces visibility.
       // Always pass all 3 params to avoid PostgREST PGRST203 overload ambiguity.
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const viewerId = session?.user?.id ?? null;
       const { data: resonanceData } = await (supabase.rpc as any)(
         "get_resonance",
-        { target_id: data.id, viewer_id: viewerId, share_key: shareKey ?? null },
+        {
+          target_id: data.id,
+          viewer_id: viewerId,
+          share_key: shareKey ?? null,
+        },
       );
 
       const profileData = { ...data } as any;
@@ -234,7 +240,7 @@ const PublicProfile = () => {
       setLoading(false);
     };
     fetchProfile();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username, shareKey]);
 
   if (loading) {
@@ -275,7 +281,8 @@ const PublicProfile = () => {
     const keys = SECTION_KEYS[id];
     return keys ? keys.some((k) => grantedKeys.has(k)) : false;
   };
-  const hasAnySectionData = rd && Object.keys(SECTION_KEYS).some((id) => canSee(id));
+  const hasAnySectionData =
+    rd && Object.keys(SECTION_KEYS).some((id) => canSee(id));
 
   return (
     <div className="mx-auto max-w-lg min-h-screen bg-background px-4 pt-6 pb-10">
@@ -473,14 +480,14 @@ const PublicProfile = () => {
               </SectionCard>
             )}
 
-          {/* Signal Field */}
+          {/* Trust+Consumer */}
           {canSee("signals") &&
             rd?.consumer &&
             (rd.consumer.trustSignals?.length > 0 ||
               rd.consumer.distrustSignals?.length > 0) && (
               <SectionCard
                 icon="🔎"
-                label="Signal Field"
+                label="Trust+Consumer"
                 description="Trust & distrust signals"
               >
                 <div className="space-y-3">

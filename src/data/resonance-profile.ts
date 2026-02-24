@@ -243,7 +243,7 @@ export const RESONANCE_SECTIONS = [
   },
   {
     id: "signals",
-    label: "Signal Field",
+    label: "Trust+Consumer",
     icon: "🔎",
     description: "Trust & distrust signals you emit",
   },

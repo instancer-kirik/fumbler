@@ -1286,10 +1286,10 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     />
                   </EditorSection>
 
-                  {/* Signal Field (consumer) */}
+                  {/* Trust+Consumer (consumer) */}
                   <EditorSection
                     icon="🔎"
-                    label="Signal Field"
+                    label="Trust+Consumer"
                     description="Trust & distrust signals"
                     visibility={vis("signals")}
                     onVisibilityChange={(v) => setVis("signals", v)}
