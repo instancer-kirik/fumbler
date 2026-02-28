@@ -44,6 +44,12 @@ interface PublicProfileData {
   granted_keys?: Set<string>;
 }
 
+interface ViewerState {
+  id: string;
+  email?: string;
+  username?: string;
+}
+
 const TagList = ({
   items,
   variant = "default",
@@ -176,6 +182,8 @@ const PublicProfile = () => {
   const [searchParams] = useSearchParams();
   const shareKey = searchParams.get("key");
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
+  const [viewer, setViewer] = useState<ViewerState | null>(null);
+  const [isMatch, setIsMatch] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -221,6 +229,32 @@ const PublicProfile = () => {
         data: { session },
       } = await supabase.auth.getSession();
       const viewerId = session?.user?.id ?? null;
+      let viewerUsername = null;
+      let matchStatus = false;
+
+      if (viewerId) {
+        // Get viewer username
+        const { data: viewerData } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", viewerId)
+          .maybeSingle();
+        if (viewerData) viewerUsername = viewerData.username;
+
+        // Check match
+        const { data: matchData } = await supabase
+          .from("matches")
+          .select("id")
+          .or(
+            `and(user1_id.eq.${viewerId},user2_id.eq.${data.id}),and(user1_id.eq.${data.id},user2_id.eq.${viewerId})`
+          )
+          .limit(1);
+        matchStatus = (matchData?.length ?? 0) > 0;
+      }
+
+      setViewer(viewerId ? { id: viewerId, email: session?.user?.email, username: viewerUsername } : null);
+      setIsMatch(matchStatus);
+
       const { data: resonanceData } = await (supabase.rpc as any)(
         "get_resonance",
         {
@@ -315,6 +349,27 @@ const PublicProfile = () => {
           {copied ? "Copied!" : "Share profile"}
         </button>
       </div>
+
+      {viewer && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex justify-center"
+        >
+          <div className="text-xs font-medium px-4 py-2 rounded-full bg-secondary/80 text-secondary-foreground flex items-center gap-2 border border-border/50 shadow-sm backdrop-blur-sm">
+            <span className="opacity-80">Signed in as</span>
+            <span className="font-bold text-foreground">
+              @{viewer.username || viewer.email?.split('@')[0] || "Unknown"}
+            </span>
+            {isMatch && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-primary" />
+                <span className="text-primary font-bold">Matched</span>
+              </>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Profile header */}
       <motion.div
