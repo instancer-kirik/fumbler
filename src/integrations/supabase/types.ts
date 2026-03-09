@@ -7277,6 +7277,7 @@ export type Database = {
           location: string | null
           name: string
           status: string | null
+          tags: string[] | null
           updated_at: string
           user_id: string | null
         }
@@ -7293,6 +7294,7 @@ export type Database = {
           location?: string | null
           name: string
           status?: string | null
+          tags?: string[] | null
           updated_at?: string
           user_id?: string | null
         }
@@ -7309,6 +7311,7 @@ export type Database = {
           location?: string | null
           name?: string
           status?: string | null
+          tags?: string[] | null
           updated_at?: string
           user_id?: string | null
         }
@@ -8181,7 +8184,7 @@ export type Database = {
           budget: number | null
           created_at: string | null
           description: string | null
-          duration_estimate: unknown
+          duration_estimate: string | null
           id: string
           metadata: Json | null
           name: string
@@ -8194,7 +8197,7 @@ export type Database = {
           budget?: number | null
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           id?: string
           metadata?: Json | null
           name: string
@@ -8207,7 +8210,7 @@ export type Database = {
           budget?: number | null
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           id?: string
           metadata?: Json | null
           name?: string
@@ -8222,7 +8225,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
-          duration_estimate: unknown
+          duration_estimate: string | null
           id: string
           interior_exterior: string | null
           location: string | null
@@ -8239,7 +8242,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           id?: string
           interior_exterior?: string | null
           location?: string | null
@@ -8256,7 +8259,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           id?: string
           interior_exterior?: string | null
           location?: string | null
@@ -8284,7 +8287,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
-          estimated_duration: unknown
+          estimated_duration: string | null
           format: string | null
           id: string
           notes: string | null
@@ -8297,7 +8300,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string | null
-          estimated_duration?: unknown
+          estimated_duration?: string | null
           format?: string | null
           id?: string
           notes?: string | null
@@ -8310,7 +8313,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string | null
-          estimated_duration?: unknown
+          estimated_duration?: string | null
           format?: string | null
           id?: string
           notes?: string | null
@@ -8335,7 +8338,7 @@ export type Database = {
           camera_movement: string | null
           created_at: string | null
           description: string | null
-          duration_estimate: unknown
+          duration_estimate: string | null
           equipment_needed: string[] | null
           id: string
           metadata: Json | null
@@ -8351,7 +8354,7 @@ export type Database = {
           camera_movement?: string | null
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           equipment_needed?: string[] | null
           id?: string
           metadata?: Json | null
@@ -8367,7 +8370,7 @@ export type Database = {
           camera_movement?: string | null
           created_at?: string | null
           description?: string | null
-          duration_estimate?: unknown
+          duration_estimate?: string | null
           equipment_needed?: string[] | null
           id?: string
           metadata?: Json | null
