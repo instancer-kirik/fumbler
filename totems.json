@@ -1,0 +1,133 @@
+{
+    "system": {
+        "name": "Totem Constellation",
+        "version": "1.0",
+        "description": "Persistent symbolic aspects (non-stateful identity anchors)"
+    },
+    "totems": [
+        {
+            "id": "bobcat",
+            "type": "animal",
+            "label": "Bobcat",
+            "essence": [
+                "stealth",
+                "independence",
+                "quiet awareness"
+            ],
+            "domain": [
+                "observation",
+                "solitude",
+                "precision movement"
+            ],
+            "expression": {
+                "color": "#6B4F3A",
+                "sound": "low rustle",
+                "symbol": "two eyes in brush"
+            },
+            "gifts": [
+                "see_without_being_seen",
+                "act_without_noise"
+            ],
+            "warnings": [
+                "over-isolation",
+                "detachment drift"
+            ],
+            "invocation": [
+                "enter stillness",
+                "reduce noise",
+                "scan environment"
+            ],
+            "relations": {
+                "allies": [
+                    "freightliner"
+                ],
+                "tensions": [
+                    "wasp"
+                ]
+            }
+        },
+        {
+            "id": "wasp",
+            "type": "insect",
+            "label": "Wasp",
+            "essence": [
+                "precision",
+                "boundary defense",
+                "alertness"
+            ],
+            "domain": [
+                "protection",
+                "reaction",
+                "targeting"
+            ],
+            "expression": {
+                "color": "#F5C400",
+                "sound": "sharp buzz",
+                "symbol": "needle point"
+            },
+            "gifts": [
+                "instant clarity",
+                "decisive action"
+            ],
+            "warnings": [
+                "overreaction",
+                "constant tension"
+            ],
+            "invocation": [
+                "define boundary",
+                "focus target",
+                "act cleanly"
+            ],
+            "relations": {
+                "allies": [],
+                "tensions": [
+                    "bobcat"
+                ]
+            }
+        },
+        {
+            "id": "freightliner",
+            "type": "machine",
+            "label": "Freightliner",
+            "essence": [
+                "endurance",
+                "load bearing",
+                "momentum"
+            ],
+            "domain": [
+                "work",
+                "transport",
+                "long-haul effort"
+            ],
+            "expression": {
+                "color": "#2E2E2E",
+                "sound": "diesel hum",
+                "symbol": "long road line"
+            },
+            "gifts": [
+                "carry_weight",
+                "sustain_motion"
+            ],
+            "warnings": [
+                "overload",
+                "ignoring fatigue"
+            ],
+            "invocation": [
+                "commit to path",
+                "maintain pace",
+                "ignore noise"
+            ],
+            "relations": {
+                "allies": [
+                    "bobcat"
+                ],
+                "tensions": []
+            }
+        }
+    ],
+    "structure": {
+        "layout": "constellation",
+        "center": "self",
+        "notes": "Totems are always present; influence varies but they do not deactivate"
+    }
+}
