@@ -10325,6 +10325,18 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_public_identity: {
+        Args: { _username: string }
+        Returns: {
+          age: number
+          avatar_url: string
+          bio: string
+          full_name: string
+          id: string
+          is_public: boolean
+          username: string
+        }[]
+      }
       get_rating_count: { Args: { snack_id: string }; Returns: number }
       get_reading_order: {
         Args: { root_work_id: string }
