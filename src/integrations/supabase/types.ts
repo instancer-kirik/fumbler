@@ -65,6 +65,51 @@ export type Database = {
         }
         Relationships: []
       }
+      bots: {
+        Row: {
+          avatar_url: string | null
+          config: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          kind: Database["public"]["Enums"]["bot_kind"]
+          model: string
+          name: string
+          owner_id: string
+          system_prompt: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          kind?: Database["public"]["Enums"]["bot_kind"]
+          model?: string
+          name: string
+          owner_id: string
+          system_prompt?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          kind?: Database["public"]["Enums"]["bot_kind"]
+          model?: string
+          name?: string
+          owner_id?: string
+          system_prompt?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       brands: {
         Row: {
           created_at: string
@@ -272,6 +317,48 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_share_views: {
+        Row: {
+          added_by: string | null
+          community_id: string
+          created_at: string
+          featured: boolean
+          id: string
+          share_view_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          community_id: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          share_view_id: string
+        }
+        Update: {
+          added_by?: string | null
+          community_id?: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          share_view_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_share_views_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_share_views_share_view_id_fkey"
+            columns: ["share_view_id"]
+            isOneToOne: false
+            referencedRelation: "share_views"
             referencedColumns: ["id"]
           },
         ]
@@ -784,6 +871,7 @@ export type Database = {
           created_at: string
           id: string
           owner_id: string
+          role: string
           updated_at: string
         }
         Insert: {
@@ -792,6 +880,7 @@ export type Database = {
           created_at?: string
           id?: string
           owner_id: string
+          role?: string
           updated_at?: string
         }
         Update: {
@@ -800,6 +889,7 @@ export type Database = {
           created_at?: string
           id?: string
           owner_id?: string
+          role?: string
           updated_at?: string
         }
         Relationships: []
@@ -815,6 +905,7 @@ export type Database = {
           message_count: number | null
           metadata: Json
           name: string
+          owner_id: string | null
           participant_count: number | null
           participants: string[]
           raw_content: string
@@ -831,6 +922,7 @@ export type Database = {
           message_count?: number | null
           metadata?: Json
           name: string
+          owner_id?: string | null
           participant_count?: number | null
           participants?: string[]
           raw_content: string
@@ -847,6 +939,7 @@ export type Database = {
           message_count?: number | null
           metadata?: Json
           name?: string
+          owner_id?: string | null
           participant_count?: number | null
           participants?: string[]
           raw_content?: string
@@ -879,9 +972,12 @@ export type Database = {
       development_projects: {
         Row: {
           created_at: string
+          created_by: string | null
           description: string | null
           id: string
+          is_public: boolean
           name: string
+          owner_id: string | null
           progress: number
           repo_url: string | null
           status: string
@@ -890,9 +986,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean
           name: string
+          owner_id?: string | null
           progress?: number
           repo_url?: string | null
           status?: string
@@ -901,9 +1000,12 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean
           name?: string
+          owner_id?: string | null
           progress?: number
           repo_url?: string | null
           status?: string
@@ -1140,6 +1242,144 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      floorplan_assignments: {
+        Row: {
+          assigned_user_id: string | null
+          created_at: string
+          id: string
+          item_id: string
+          note: string | null
+          panel_id: string | null
+          project_id: string | null
+          status: Database["public"]["Enums"]["floorplan_assignment_status"]
+          ugc_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_user_id?: string | null
+          created_at?: string
+          id?: string
+          item_id: string
+          note?: string | null
+          panel_id?: string | null
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["floorplan_assignment_status"]
+          ugc_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_user_id?: string | null
+          created_at?: string
+          id?: string
+          item_id?: string
+          note?: string | null
+          panel_id?: string | null
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["floorplan_assignment_status"]
+          ugc_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "floorplan_assignments_assigned_user_id_fkey"
+            columns: ["assigned_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "floorplan_assignments_assigned_user_id_fkey"
+            columns: ["assigned_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "floorplan_assignments_assigned_user_id_fkey"
+            columns: ["assigned_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "floorplan_assignments_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "floorplan_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "floorplan_assignments_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "floorplan_assignments_ugc_id_fkey"
+            columns: ["ugc_id"]
+            isOneToOne: false
+            referencedRelation: "ugc_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      floorplan_items: {
+        Row: {
+          created_at: string
+          floorplan_id: string
+          h: number
+          id: string
+          kind: Database["public"]["Enums"]["floorplan_item_kind"]
+          label: string | null
+          meta: Json
+          rotation: number
+          updated_at: string
+          w: number
+          x: number
+          y: number
+          z: number
+        }
+        Insert: {
+          created_at?: string
+          floorplan_id: string
+          h?: number
+          id?: string
+          kind: Database["public"]["Enums"]["floorplan_item_kind"]
+          label?: string | null
+          meta?: Json
+          rotation?: number
+          updated_at?: string
+          w?: number
+          x?: number
+          y?: number
+          z?: number
+        }
+        Update: {
+          created_at?: string
+          floorplan_id?: string
+          h?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["floorplan_item_kind"]
+          label?: string | null
+          meta?: Json
+          rotation?: number
+          updated_at?: string
+          w?: number
+          x?: number
+          y?: number
+          z?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "floorplan_items_floorplan_id_fkey"
+            columns: ["floorplan_id"]
+            isOneToOne: false
+            referencedRelation: "venue_floorplans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fumble_photos: {
         Row: {
@@ -1620,6 +1860,7 @@ export type Database = {
           location: string | null
           metadata: Json | null
           name: string
+          owner_id: string | null
           quantity: number | null
           status: string | null
           tags: string[] | null
@@ -1640,6 +1881,7 @@ export type Database = {
           location?: string | null
           metadata?: Json | null
           name: string
+          owner_id?: string | null
           quantity?: number | null
           status?: string | null
           tags?: string[] | null
@@ -1660,6 +1902,7 @@ export type Database = {
           location?: string | null
           metadata?: Json | null
           name?: string
+          owner_id?: string | null
           quantity?: number | null
           status?: string | null
           tags?: string[] | null
@@ -2013,6 +2256,7 @@ export type Database = {
           content: string | null
           content_format: string | null
           created_at: string | null
+          created_by: string | null
           creative_type: string
           description: string | null
           external_links: Json | null
@@ -2023,6 +2267,7 @@ export type Database = {
           mood: string | null
           notes: Json | null
           outline: string | null
+          owner_id: string | null
           parent_work_id: string | null
           pov_character_id: string | null
           primary_location_id: string | null
@@ -2048,6 +2293,7 @@ export type Database = {
           content?: string | null
           content_format?: string | null
           created_at?: string | null
+          created_by?: string | null
           creative_type: string
           description?: string | null
           external_links?: Json | null
@@ -2058,6 +2304,7 @@ export type Database = {
           mood?: string | null
           notes?: Json | null
           outline?: string | null
+          owner_id?: string | null
           parent_work_id?: string | null
           pov_character_id?: string | null
           primary_location_id?: string | null
@@ -2083,6 +2330,7 @@ export type Database = {
           content?: string | null
           content_format?: string | null
           created_at?: string | null
+          created_by?: string | null
           creative_type?: string
           description?: string | null
           external_links?: Json | null
@@ -2093,6 +2341,7 @@ export type Database = {
           mood?: string | null
           notes?: Json | null
           outline?: string | null
+          owner_id?: string | null
           parent_work_id?: string | null
           pov_character_id?: string | null
           primary_location_id?: string | null
@@ -2887,6 +3136,7 @@ export type Database = {
       loreum_plot_thread_works: {
         Row: {
           created_at: string | null
+          created_by: string | null
           id: string
           notes: string | null
           plot_thread_id: string
@@ -2897,6 +3147,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
           id?: string
           notes?: string | null
           plot_thread_id: string
@@ -2907,6 +3158,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
           id?: string
           notes?: string | null
           plot_thread_id?: string
@@ -2963,6 +3215,7 @@ export type Database = {
       loreum_plot_threads: {
         Row: {
           created_at: string | null
+          created_by: string | null
           description: string
           id: string
           obstacles: Json | null
@@ -2982,6 +3235,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
           description: string
           id?: string
           obstacles?: Json | null
@@ -3001,6 +3255,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
           description?: string
           id?: string
           obstacles?: Json | null
@@ -3537,6 +3792,7 @@ export type Database = {
         Row: {
           collection_id: string
           created_at: string | null
+          created_by: string | null
           id: string
           membership_role: string | null
           notes: string | null
@@ -3546,6 +3802,7 @@ export type Database = {
         Insert: {
           collection_id: string
           created_at?: string | null
+          created_by?: string | null
           id?: string
           membership_role?: string | null
           notes?: string | null
@@ -3555,6 +3812,7 @@ export type Database = {
         Update: {
           collection_id?: string
           created_at?: string | null
+          created_by?: string | null
           id?: string
           membership_role?: string | null
           notes?: string | null
@@ -3589,6 +3847,7 @@ export type Database = {
         Row: {
           collection_type: string | null
           created_at: string | null
+          created_by: string | null
           description: string | null
           id: string
           is_public: boolean | null
@@ -3600,6 +3859,7 @@ export type Database = {
         Insert: {
           collection_type?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           is_public?: boolean | null
@@ -3611,6 +3871,7 @@ export type Database = {
         Update: {
           collection_type?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           is_public?: boolean | null
@@ -3812,6 +4073,7 @@ export type Database = {
       loreum_template_relationships: {
         Row: {
           created_at: string | null
+          created_by: string | null
           description: string | null
           id: string
           is_bidirectional: boolean | null
@@ -3823,6 +4085,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           is_bidirectional?: boolean | null
@@ -3834,6 +4097,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           is_bidirectional?: boolean | null
@@ -4187,6 +4451,62 @@ export type Database = {
           },
         ]
       }
+      lyrics: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          key_signature: string | null
+          mood: string | null
+          notes: string | null
+          project_id: string | null
+          status: string
+          tags: string[] | null
+          tempo_bpm: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          key_signature?: string | null
+          mood?: string | null
+          notes?: string | null
+          project_id?: string | null
+          status?: string
+          tags?: string[] | null
+          tempo_bpm?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          key_signature?: string | null
+          mood?: string | null
+          notes?: string | null
+          project_id?: string | null
+          status?: string
+          tags?: string[] | null
+          tempo_bpm?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lyrics_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_research: {
         Row: {
           conducted_date: string | null
@@ -4491,6 +4811,7 @@ export type Database = {
           inventory_item_id: string
           is_packed: boolean | null
           location_notes: string | null
+          owner_id: string | null
           packing_configuration_id: string
           priority: number | null
           quantity: number | null
@@ -4501,6 +4822,7 @@ export type Database = {
           inventory_item_id: string
           is_packed?: boolean | null
           location_notes?: string | null
+          owner_id?: string | null
           packing_configuration_id: string
           priority?: number | null
           quantity?: number | null
@@ -4511,6 +4833,7 @@ export type Database = {
           inventory_item_id?: string
           is_packed?: boolean | null
           location_notes?: string | null
+          owner_id?: string | null
           packing_configuration_id?: string
           priority?: number | null
           quantity?: number | null
@@ -4539,6 +4862,7 @@ export type Database = {
           id: string
           metadata: Json | null
           name: string
+          owner_id: string | null
           purpose: string | null
           status: string | null
           tags: string[] | null
@@ -4553,6 +4877,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name: string
+          owner_id?: string | null
           purpose?: string | null
           status?: string | null
           tags?: string[] | null
@@ -4567,6 +4892,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name?: string
+          owner_id?: string | null
           purpose?: string | null
           status?: string | null
           tags?: string[] | null
@@ -4581,6 +4907,189 @@ export type Database = {
             columns: ["vehicle_configuration_id"]
             isOneToOne: false
             referencedRelation: "vehicle_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_attendees: {
+        Row: {
+          checked_in_at: string | null
+          created_at: string
+          panel_id: string
+          status: Database["public"]["Enums"]["panel_rsvp_status"]
+          user_id: string
+        }
+        Insert: {
+          checked_in_at?: string | null
+          created_at?: string
+          panel_id: string
+          status?: Database["public"]["Enums"]["panel_rsvp_status"]
+          user_id: string
+        }
+        Update: {
+          checked_in_at?: string | null
+          created_at?: string
+          panel_id?: string
+          status?: Database["public"]["Enums"]["panel_rsvp_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_attendees_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_questions: {
+        Row: {
+          answered: boolean
+          asked_by: string | null
+          content: string
+          created_at: string
+          id: string
+          panel_id: string
+          promoted: boolean
+          upvotes: number
+        }
+        Insert: {
+          answered?: boolean
+          asked_by?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          panel_id: string
+          promoted?: boolean
+          upvotes?: number
+        }
+        Update: {
+          answered?: boolean
+          asked_by?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          panel_id?: string
+          promoted?: boolean
+          upvotes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_questions_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_speakers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          panel_id: string
+          position: number
+          role: Database["public"]["Enums"]["panel_speaker_role"]
+          user_id: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          panel_id: string
+          position?: number
+          role?: Database["public"]["Enums"]["panel_speaker_role"]
+          user_id?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          panel_id?: string
+          position?: number
+          role?: Database["public"]["Enums"]["panel_speaker_role"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_speakers_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panels: {
+        Row: {
+          backstage_thread_id: string | null
+          blurb: string | null
+          capacity: number | null
+          created_at: string
+          created_by: string
+          duration_min: number
+          event_id: string | null
+          id: string
+          livestream_url: string | null
+          recording_url: string | null
+          room: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["panel_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          backstage_thread_id?: string | null
+          blurb?: string | null
+          capacity?: number | null
+          created_at?: string
+          created_by: string
+          duration_min?: number
+          event_id?: string | null
+          id?: string
+          livestream_url?: string | null
+          recording_url?: string | null
+          room?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["panel_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          backstage_thread_id?: string | null
+          blurb?: string | null
+          capacity?: number | null
+          created_at?: string
+          created_by?: string
+          duration_min?: number
+          event_id?: string | null
+          id?: string
+          livestream_url?: string | null
+          recording_url?: string | null
+          room?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["panel_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panels_backstage_thread_id_fkey"
+            columns: ["backstage_thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "panels_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -4985,6 +5494,114 @@ export type Database = {
           },
         ]
       }
+      pockets_yt_bookmarks: {
+        Row: {
+          album: string | null
+          artist: string | null
+          broadcast_safety: string | null
+          cdn_url: string | null
+          clip_end_seconds: number | null
+          clip_purpose: string | null
+          clip_start_seconds: number | null
+          created_at: string
+          duration: number | null
+          elixir_file_path: string | null
+          elixir_server_synced: boolean | null
+          energy: number | null
+          external_id: string | null
+          family_factor: number | null
+          file_size: number | null
+          genre: string[] | null
+          id: string
+          instrument_tags: string[] | null
+          is_clip: boolean | null
+          local_filename: string | null
+          mood: string[] | null
+          notes: string | null
+          recording_type: string | null
+          season_tags: string[] | null
+          source_platform: string | null
+          source_url: string | null
+          status: string
+          tags: string[] | null
+          thumbnail_url: string | null
+          time_of_day: string[] | null
+          title: string
+          updated_at: string
+          weird_tolerance: number | null
+        }
+        Insert: {
+          album?: string | null
+          artist?: string | null
+          broadcast_safety?: string | null
+          cdn_url?: string | null
+          clip_end_seconds?: number | null
+          clip_purpose?: string | null
+          clip_start_seconds?: number | null
+          created_at?: string
+          duration?: number | null
+          elixir_file_path?: string | null
+          elixir_server_synced?: boolean | null
+          energy?: number | null
+          external_id?: string | null
+          family_factor?: number | null
+          file_size?: number | null
+          genre?: string[] | null
+          id?: string
+          instrument_tags?: string[] | null
+          is_clip?: boolean | null
+          local_filename?: string | null
+          mood?: string[] | null
+          notes?: string | null
+          recording_type?: string | null
+          season_tags?: string[] | null
+          source_platform?: string | null
+          source_url?: string | null
+          status?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          time_of_day?: string[] | null
+          title: string
+          updated_at?: string
+          weird_tolerance?: number | null
+        }
+        Update: {
+          album?: string | null
+          artist?: string | null
+          broadcast_safety?: string | null
+          cdn_url?: string | null
+          clip_end_seconds?: number | null
+          clip_purpose?: string | null
+          clip_start_seconds?: number | null
+          created_at?: string
+          duration?: number | null
+          elixir_file_path?: string | null
+          elixir_server_synced?: boolean | null
+          energy?: number | null
+          external_id?: string | null
+          family_factor?: number | null
+          file_size?: number | null
+          genre?: string[] | null
+          id?: string
+          instrument_tags?: string[] | null
+          is_clip?: boolean | null
+          local_filename?: string | null
+          mood?: string[] | null
+          notes?: string | null
+          recording_type?: string | null
+          season_tags?: string[] | null
+          source_platform?: string | null
+          source_url?: string | null
+          status?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          time_of_day?: string[] | null
+          title?: string
+          updated_at?: string
+          weird_tolerance?: number | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author: string
@@ -5112,14 +5729,17 @@ export type Database = {
           category_id: string | null
           competitor_analysis: string | null
           created_at: string | null
+          created_by: string | null
           description: string | null
           estimated_cost: number | null
           estimated_development_time: string | null
           feasibility_score: number | null
           id: string
           inspiration_sources: string[] | null
+          is_public: boolean
           market_potential_score: number | null
           name: string
+          owner_id: string | null
           priority_score: number | null
           problem_statement: string | null
           solution_approach: string | null
@@ -5133,14 +5753,17 @@ export type Database = {
           category_id?: string | null
           competitor_analysis?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           estimated_cost?: number | null
           estimated_development_time?: string | null
           feasibility_score?: number | null
           id?: string
           inspiration_sources?: string[] | null
+          is_public?: boolean
           market_potential_score?: number | null
           name: string
+          owner_id?: string | null
           priority_score?: number | null
           problem_statement?: string | null
           solution_approach?: string | null
@@ -5154,14 +5777,17 @@ export type Database = {
           category_id?: string | null
           competitor_analysis?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           estimated_cost?: number | null
           estimated_development_time?: string | null
           feasibility_score?: number | null
           id?: string
           inspiration_sources?: string[] | null
+          is_public?: boolean
           market_potential_score?: number | null
           name?: string
+          owner_id?: string | null
           priority_score?: number | null
           problem_statement?: string | null
           solution_approach?: string | null
@@ -5445,6 +6071,38 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      project_aspect_tags: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          tag_category: string
+          tag_value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          tag_category: string
+          tag_value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          tag_category?: string
+          tag_value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_aspect_tags_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_aspects: {
         Row: {
@@ -5865,6 +6523,54 @@ export type Database = {
           },
         ]
       }
+      project_share_variants: {
+        Row: {
+          accent_color: string | null
+          audience: string
+          created_at: string
+          created_by: string | null
+          cta_label: string | null
+          cta_url: string | null
+          headline: string
+          id: string
+          og_description: string | null
+          og_title: string | null
+          pitch: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          audience: string
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          headline: string
+          id?: string
+          og_description?: string | null
+          og_title?: string | null
+          pitch: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          audience?: string
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          headline?: string
+          id?: string
+          og_description?: string | null
+          og_title?: string | null
+          pitch?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_tasks: {
         Row: {
           assigned_to: string | null
@@ -6050,6 +6756,7 @@ export type Database = {
       projects_catalog: {
         Row: {
           created_at: string
+          created_by: string | null
           description: string
           dev_project_id: string | null
           domain: string
@@ -6058,7 +6765,9 @@ export type Database = {
           featured_order: number | null
           features: string[] | null
           id: string
+          is_public: boolean
           name: string
+          owner_id: string | null
           path: string | null
           product_idea_id: string | null
           project_type: string | null
@@ -6069,6 +6778,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           description: string
           dev_project_id?: string | null
           domain: string
@@ -6077,7 +6787,9 @@ export type Database = {
           featured_order?: number | null
           features?: string[] | null
           id?: string
+          is_public?: boolean
           name: string
+          owner_id?: string | null
           path?: string | null
           product_idea_id?: string | null
           project_type?: string | null
@@ -6088,6 +6800,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           description?: string
           dev_project_id?: string | null
           domain?: string
@@ -6096,7 +6809,9 @@ export type Database = {
           featured_order?: number | null
           features?: string[] | null
           id?: string
+          is_public?: boolean
           name?: string
+          owner_id?: string | null
           path?: string | null
           product_idea_id?: string | null
           project_type?: string | null
@@ -6949,6 +7664,57 @@ export type Database = {
         }
         Relationships: []
       }
+      share_views: {
+        Row: {
+          created_at: string
+          description: string | null
+          excluded_project_ids: string[] | null
+          id: string
+          is_active: boolean | null
+          labels: string[] | null
+          name: string
+          owner_id: string
+          pinned_project_ids: string[] | null
+          share_key: string
+          tags: string[] | null
+          theme: string | null
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          excluded_project_ids?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          labels?: string[] | null
+          name: string
+          owner_id: string
+          pinned_project_ids?: string[] | null
+          share_key?: string
+          tags?: string[] | null
+          theme?: string | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          excluded_project_ids?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          labels?: string[] | null
+          name?: string
+          owner_id?: string
+          pinned_project_ids?: string[] | null
+          share_key?: string
+          tags?: string[] | null
+          theme?: string | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       shopping_list: {
         Row: {
           actual_cost: number | null
@@ -7412,6 +8178,151 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      thread_bots: {
+        Row: {
+          added_at: string
+          added_by: string
+          bot_id: string
+          enabled: boolean
+          thread_id: string
+        }
+        Insert: {
+          added_at?: string
+          added_by: string
+          bot_id: string
+          enabled?: boolean
+          thread_id: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string
+          bot_id?: string
+          enabled?: boolean
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_bots_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thread_bots_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      thread_members: {
+        Row: {
+          joined_at: string
+          role: Database["public"]["Enums"]["thread_member_role"]
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          role?: Database["public"]["Enums"]["thread_member_role"]
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          role?: Database["public"]["Enums"]["thread_member_role"]
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_members_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      thread_messages: {
+        Row: {
+          attachments: Json
+          content: string
+          created_at: string
+          id: string
+          metadata: Json
+          sender_bot_id: string | null
+          sender_kind: Database["public"]["Enums"]["message_sender_kind"]
+          sender_user_id: string | null
+          thread_id: string
+        }
+        Insert: {
+          attachments?: Json
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          sender_bot_id?: string | null
+          sender_kind?: Database["public"]["Enums"]["message_sender_kind"]
+          sender_user_id?: string | null
+          thread_id: string
+        }
+        Update: {
+          attachments?: Json
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          sender_bot_id?: string | null
+          sender_kind?: Database["public"]["Enums"]["message_sender_kind"]
+          sender_user_id?: string | null
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      threads: {
+        Row: {
+          context_id: string | null
+          context_type: string | null
+          created_at: string
+          created_by: string
+          id: string
+          kind: Database["public"]["Enums"]["thread_kind"]
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          kind?: Database["public"]["Enums"]["thread_kind"]
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["thread_kind"]
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       toon_projects: {
         Row: {
@@ -8089,12 +9000,15 @@ export type Database = {
       vehicle_configurations: {
         Row: {
           created_at: string | null
+          created_by: string | null
           current_layout_state: string | null
           gvwr: number | null
           id: string
           interior_height: number | null
           interior_length: number | null
           interior_width: number | null
+          is_public: boolean
+          owner_id: string | null
           project_name: string | null
           updated_at: string | null
           vehicle_make: string | null
@@ -8105,12 +9019,15 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
           current_layout_state?: string | null
           gvwr?: number | null
           id?: string
           interior_height?: number | null
           interior_length?: number | null
           interior_width?: number | null
+          is_public?: boolean
+          owner_id?: string | null
           project_name?: string | null
           updated_at?: string | null
           vehicle_make?: string | null
@@ -8121,12 +9038,15 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
           current_layout_state?: string | null
           gvwr?: number | null
           id?: string
           interior_height?: number | null
           interior_length?: number | null
           interior_width?: number | null
+          is_public?: boolean
+          owner_id?: string | null
           project_name?: string | null
           updated_at?: string | null
           vehicle_make?: string | null
@@ -8136,6 +9056,84 @@ export type Database = {
           wheelbase_length?: number | null
         }
         Relationships: []
+      }
+      venue_floorplans: {
+        Row: {
+          canvas: Json
+          claim_mode: Database["public"]["Enums"]["floorplan_claim_mode"]
+          created_at: string
+          created_by: string
+          description: string | null
+          event_id: string | null
+          id: string
+          is_public: boolean
+          title: string
+          updated_at: string
+          venue_id: string | null
+        }
+        Insert: {
+          canvas?: Json
+          claim_mode?: Database["public"]["Enums"]["floorplan_claim_mode"]
+          created_at?: string
+          created_by: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          is_public?: boolean
+          title: string
+          updated_at?: string
+          venue_id?: string | null
+        }
+        Update: {
+          canvas?: Json
+          claim_mode?: Database["public"]["Enums"]["floorplan_claim_mode"]
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          is_public?: boolean
+          title?: string
+          updated_at?: string
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_floorplans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_floorplans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_floorplans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_floorplans_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_floorplans_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       venues: {
         Row: {
@@ -8183,11 +9181,14 @@ export type Database = {
         Row: {
           budget: number | null
           created_at: string | null
+          created_by: string | null
           description: string | null
           duration_estimate: string | null
           id: string
+          is_public: boolean
           metadata: Json | null
           name: string
+          owner_id: string | null
           project_type: string | null
           status: string | null
           tags: string[] | null
@@ -8196,11 +9197,14 @@ export type Database = {
         Insert: {
           budget?: number | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           duration_estimate?: string | null
           id?: string
+          is_public?: boolean
           metadata?: Json | null
           name: string
+          owner_id?: string | null
           project_type?: string | null
           status?: string | null
           tags?: string[] | null
@@ -8209,11 +9213,14 @@ export type Database = {
         Update: {
           budget?: number | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           duration_estimate?: string | null
           id?: string
+          is_public?: boolean
           metadata?: Json | null
           name?: string
+          owner_id?: string | null
           project_type?: string | null
           status?: string | null
           tags?: string[] | null
@@ -9056,8 +10063,6 @@ export type Database = {
       }
       unified_projects: {
         Row: {
-          category_color: string | null
-          category_icon: string | null
           category_name: string | null
           created_at: string | null
           created_by: string | null
@@ -9065,33 +10070,21 @@ export type Database = {
           dev_progress: number | null
           dev_project_id: string | null
           dev_repo_url: string | null
-          dev_version: string | null
           domain: string | null
           emoji: string | null
-          feasibility_score: number | null
           featured: boolean | null
-          featured_order: number | null
           features: string[] | null
           id: string | null
-          idea_category_id: string | null
-          idea_id: string | null
-          image_url: string | null
           is_public: boolean | null
-          market_potential_score: number | null
-          metadata: Json | null
           name: string | null
           owner_id: string | null
+          owner_ids: string[] | null
           path: string | null
-          priority_score: number | null
-          problem_statement: string | null
           project_type: string | null
-          solution_approach: string | null
           source_table: string | null
           source_url: string | null
           status: string | null
-          target_market: string | null
           tech_stack: string[] | null
-          updated_at: string | null
         }
         Relationships: []
       }
@@ -9259,6 +10252,7 @@ export type Database = {
           message_count: number | null
           metadata: Json
           name: string
+          owner_id: string | null
           participant_count: number | null
           participants: string[]
           raw_content: string
@@ -9566,6 +10560,26 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_my_content: {
+        Args: {
+          _content_id: string
+          _content_type: Database["public"]["Enums"]["content_type"]
+          _user_id?: string
+        }
+        Returns: boolean
+      }
+      is_panel_organizer: {
+        Args: { _panel_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_thread_member: {
+        Args: { _thread_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_thread_owner: {
+        Args: { _thread_id: string; _user_id: string }
+        Returns: boolean
+      }
       record_template_analytics: {
         Args: {
           p_context_data?: Json
@@ -9697,6 +10711,7 @@ export type Database = {
       }
     }
     Enums: {
+      bot_kind: "assistant" | "scheduled" | "moderator"
       content_type:
         | "project"
         | "event"
@@ -9706,8 +10721,38 @@ export type Database = {
         | "venue"
         | "brand"
         | "shop"
+        | "development_project"
+        | "product_idea"
+        | "loreum_work"
+        | "vehicle_config"
+        | "video_project"
+        | "catalog_entry"
       field_visibility: "public" | "matches" | "express"
+      floorplan_assignment_status:
+        | "assigned"
+        | "pending_claim"
+        | "confirmed"
+        | "declined"
+      floorplan_claim_mode: "organizer" | "open" | "hybrid"
+      floorplan_item_kind:
+        | "booth"
+        | "table"
+        | "wall"
+        | "pedestal"
+        | "stage"
+        | "seating"
+        | "tent"
+        | "truck"
+        | "path"
+        | "entrance"
+        | "power"
+        | "signage"
+        | "misc"
       game_jam_status: "upcoming" | "active" | "completed"
+      message_sender_kind: "user" | "bot" | "system"
+      panel_rsvp_status: "interested" | "going" | "checked_in" | "cancelled"
+      panel_speaker_role: "host" | "speaker" | "moderator"
+      panel_status: "draft" | "scheduled" | "live" | "ended" | "cancelled"
       privacy_level: "public" | "friends_only" | "private" | "invite_only"
       project_aspect_type:
         | "software"
@@ -9733,6 +10778,13 @@ export type Database = {
         | "documentation"
         | "research"
         | "other"
+      thread_kind:
+        | "direct"
+        | "group"
+        | "panel_backstage"
+        | "panel_qa"
+        | "community"
+      thread_member_role: "owner" | "member"
       user_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
@@ -9861,6 +10913,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bot_kind: ["assistant", "scheduled", "moderator"],
       content_type: [
         "project",
         "event",
@@ -9870,9 +10923,41 @@ export const Constants = {
         "venue",
         "brand",
         "shop",
+        "development_project",
+        "product_idea",
+        "loreum_work",
+        "vehicle_config",
+        "video_project",
+        "catalog_entry",
       ],
       field_visibility: ["public", "matches", "express"],
+      floorplan_assignment_status: [
+        "assigned",
+        "pending_claim",
+        "confirmed",
+        "declined",
+      ],
+      floorplan_claim_mode: ["organizer", "open", "hybrid"],
+      floorplan_item_kind: [
+        "booth",
+        "table",
+        "wall",
+        "pedestal",
+        "stage",
+        "seating",
+        "tent",
+        "truck",
+        "path",
+        "entrance",
+        "power",
+        "signage",
+        "misc",
+      ],
       game_jam_status: ["upcoming", "active", "completed"],
+      message_sender_kind: ["user", "bot", "system"],
+      panel_rsvp_status: ["interested", "going", "checked_in", "cancelled"],
+      panel_speaker_role: ["host", "speaker", "moderator"],
+      panel_status: ["draft", "scheduled", "live", "ended", "cancelled"],
       privacy_level: ["public", "friends_only", "private", "invite_only"],
       project_aspect_type: [
         "software",
@@ -9900,6 +10985,14 @@ export const Constants = {
         "research",
         "other",
       ],
+      thread_kind: [
+        "direct",
+        "group",
+        "panel_backstage",
+        "panel_qa",
+        "community",
+      ],
+      thread_member_role: ["owner", "member"],
       user_role: ["admin", "moderator", "user"],
     },
   },
