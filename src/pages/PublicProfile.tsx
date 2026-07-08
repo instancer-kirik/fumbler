@@ -186,6 +186,7 @@ const PublicProfile = () => {
   const [isMatch, setIsMatch] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const _base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
@@ -211,11 +212,34 @@ const PublicProfile = () => {
       if (!username) return;
 
       // First fetch the non-sensitive profile columns (no resonance_data)
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age")
         .eq("username", username)
         .maybeSingle();
+
+      // If direct lookup found nothing, fall back to the identity RPC:
+      // the profile may exist but be `is_public=false`, in which case RLS
+      // hides it from anon. We still want to distinguish "private" from
+      // "doesn't exist" so selective visibility can render partial content.
+      if (!data && !error) {
+        const { data: identity } = await (supabase.rpc as any)(
+          "get_public_identity",
+          { _username: username },
+        );
+        const row = Array.isArray(identity) ? identity[0] : identity;
+        if (row) {
+          data = {
+            id: row.id,
+            full_name: row.full_name,
+            username: row.username,
+            avatar_url: row.avatar_url,
+            bio: row.bio,
+            age: row.age,
+          } as any;
+          if (row.is_public === false) setIsPrivate(true);
+        }
+      }
 
       if (!data || error) {
         setNotFound(true);
