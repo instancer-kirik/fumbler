@@ -430,7 +430,11 @@ const PublicProfile = () => {
       {!rd || !hasAnySectionData ? (
         <div className="rounded-2xl bg-card border border-border p-6 text-center">
           <p className="text-sm text-muted-foreground">
-            No public resonance sections yet.
+            {isPrivate
+              ? "This profile is private. Sign in and match to see more."
+              : viewer
+                ? "No sections shared with you yet."
+                : "No public resonance sections yet."}
           </p>
         </div>
       ) : (
