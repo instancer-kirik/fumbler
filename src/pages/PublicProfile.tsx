@@ -234,7 +234,7 @@ const PublicProfile = () => {
             full_name: row.full_name,
             username: row.username,
             avatar_url: row.avatar_url,
-            bio: row.bio,
+            bio: null,
             age: row.age,
           } as any;
           if (row.is_public === false) setIsPrivate(true);

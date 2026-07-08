@@ -10330,7 +10330,6 @@ export type Database = {
         Returns: {
           age: number
           avatar_url: string
-          bio: string
           full_name: string
           id: string
           is_public: boolean
