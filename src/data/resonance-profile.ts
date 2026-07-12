@@ -46,8 +46,8 @@ export interface ViabilityProfile {
 export interface ExperientialProfile {
   loops: string[];
   lessons: string[];
-  aspirations: string[];
-  sleepingDreams: string[];
+  aspirations?: string[];
+  sleepingDreams?: string[];
   languages: {
     receiveLoveThrough: string[];
     expressLoveThrough: string[];
