@@ -45,6 +45,8 @@ interface ResonanceData {
   introspections?: string[];
   loops?: string[];
   lessons?: string[];
+  aspirations?: string[];
+  sleepingDreams?: string[];
   growthVectors?: string[];
 
   // ── Expression ────────────────────────────────────────────────────────────
@@ -814,6 +816,36 @@ const ResonanceProfileView = ({
               ) : null
             ) : (
               renderLocked("💡", "Lessons", "lessons")
+            )}
+
+            {/* Aspirations — waking dreams */}
+            {canSee("aspirations") ? (
+              rd?.aspirations?.length ? (
+                <SectionCard
+                  icon="🌅"
+                  label="Aspirations"
+                  description="What he wants to build with the life he has"
+                >
+                  <QuoteList items={rd.aspirations} />
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🌅", "Aspirations", "aspirations")
+            )}
+
+            {/* Sleeping dreams — recorded */}
+            {canSee("dreamlog") ? (
+              rd?.sleepingDreams?.length ? (
+                <SectionCard
+                  icon="🌙"
+                  label="Dream Log"
+                  description="Stories his sleeping mind told him"
+                >
+                  <QuoteList items={rd.sleepingDreams} />
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🌙", "Dream Log", "dreamlog")
             )}
 
             {/* Languages */}
