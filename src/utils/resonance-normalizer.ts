@@ -149,6 +149,8 @@ function normalizeV9Flat(raw: Obj): Obj {
     introspections: arr(raw.introspections),
     loops: arr(raw.loops),
     lessons: arr(raw.lessons),
+    aspirations: arr(raw.aspirations),
+    sleepingDreams: arr(raw.sleepingDreams ?? raw.sleeping_dreams ?? raw.dreams),
     growthVectors: arr(raw.growthVectors),
 
     // ── Expression ────────────────────────────────────────────────────────
@@ -391,6 +393,8 @@ function normalizeOldJSON(raw: Obj): Obj {
 
     loops: exp.loops,
     lessons: exp.lessons,
+    aspirations: exp.aspirations ?? raw.aspirations,
+    sleepingDreams: exp.sleepingDreams ?? raw.sleepingDreams ?? raw.sleeping_dreams ?? raw.dreams,
     languages: {
       receiveLoveThrough:
         langs.receiveLoveThrough ?? langs.receive_love_through,
@@ -518,6 +522,8 @@ function normalizeOldInternal(raw: Obj): Obj {
 
     loops: exp.loops,
     lessons: exp.lessons,
+    aspirations: exp.aspirations,
+    sleepingDreams: exp.sleepingDreams,
     languages: {
       receiveLoveThrough: langs.receiveLoveThrough,
       expressLoveThrough: langs.expressLoveThrough,

@@ -67,6 +67,8 @@ interface ResonanceData {
   introspections: string[];
   loops: string[];
   lessons: string[];
+  aspirations: string[];
+  sleepingDreams: string[];
   growthVectors: string[];
 
   // Expression
@@ -225,6 +227,8 @@ const emptyData: ResonanceData = {
   introspections: [],
   loops: [],
   lessons: [],
+  aspirations: [],
+  sleepingDreams: [],
   growthVectors: [],
   languages: {
     natural: [],
@@ -1064,6 +1068,8 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "qualities",
     "loops",
     "lessons",
+    "aspirations",
+    "dreamlog",
     "languages",
     "kinks",
     "archetypes",
@@ -1355,6 +1361,38 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       items={data.lessons}
                       onChange={(v) => set(["lessons"], v)}
                       placeholder="Something you've learned the hard way..."
+                    />
+                  </EditorSection>
+
+                  {/* Aspirations — waking dreams / life direction */}
+                  <EditorSection
+                    icon="🌅"
+                    label="Aspirations"
+                    description="What you want to build with the life you have"
+                    visibility={vis("aspirations")}
+                    onVisibilityChange={(v) => setVis("aspirations", v)}
+                  >
+                    <ListField
+                      label="🌅 Waking dreams"
+                      items={data.aspirations}
+                      onChange={(v) => set(["aspirations"], v)}
+                      placeholder="A future you'd actually walk toward..."
+                    />
+                  </EditorSection>
+
+                  {/* Sleeping dreams — recorded dream stories */}
+                  <EditorSection
+                    icon="🌙"
+                    label="Dream Log"
+                    description="Stories your sleeping mind told you"
+                    visibility={vis("dreamlog")}
+                    onVisibilityChange={(v) => setVis("dreamlog", v)}
+                  >
+                    <ListField
+                      label="🌙 Sleeping dreams"
+                      items={data.sleepingDreams}
+                      onChange={(v) => set(["sleepingDreams"], v)}
+                      placeholder="A dream you remember..."
                     />
                   </EditorSection>
 
