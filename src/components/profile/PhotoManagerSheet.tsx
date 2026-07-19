@@ -68,13 +68,20 @@ const PhotoManagerSheet = ({ open, onOpenChange, onChanged }: Props) => {
           .upload(path, file, { cacheControl: "3600", upsert: false });
         if (upErr) throw upErr;
         const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+        const becomesPrimary = photos.length === 0 && i === 0;
         const { error: insErr } = await supabase.from("fumble_photos").insert({
           user_id: user.id,
           photo_url: pub.publicUrl,
           display_order: baseOrder + i,
-          is_primary: photos.length === 0 && i === 0,
+          is_primary: becomesPrimary,
         });
         if (insErr) throw insErr;
+        if (becomesPrimary) {
+          await supabase
+            .from("profiles")
+            .update({ avatar_url: pub.publicUrl })
+            .eq("id", user.id);
+        }
         i++;
       }
       toast.success(`Uploaded ${i} photo${i > 1 ? "s" : ""}`);
