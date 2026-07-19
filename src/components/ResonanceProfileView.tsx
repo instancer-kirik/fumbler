@@ -660,14 +660,16 @@ const ResonanceProfileView = ({
 
             {/* Aura */}
             {canSee("aura") ? (
-              rd?.aura && (rd.aura.descriptors?.length || rd.aura.toneTag) ? (
+              rd?.aura && (rd.aura.descriptors?.length || rd.aura.toneTag) ||
+              rd?.aesthetics?.length ||
+              rd?.aliases?.length ? (
                 <SectionCard
                   icon="🌀"
                   label="Aura"
                   description="How they land before context"
                 >
                   <div className="space-y-3">
-                    {rd.aura.descriptors?.length ? (
+                    {rd?.aura?.descriptors?.length ? (
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-1.5">
                           Descriptors
@@ -675,7 +677,23 @@ const ResonanceProfileView = ({
                         <TagList items={rd.aura.descriptors} variant="warm" />
                       </div>
                     ) : null}
-                    {rd.aura.misreadAs?.length ? (
+                    {rd?.aesthetics?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Aesthetics
+                        </p>
+                        <TagList items={rd.aesthetics} />
+                      </div>
+                    ) : null}
+                    {rd?.aliases?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Also known as
+                        </p>
+                        <TagList items={rd.aliases} variant="muted" />
+                      </div>
+                    ) : null}
+                    {rd?.aura?.misreadAs?.length ? (
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-1.5">
                           Misread as
@@ -683,7 +701,7 @@ const ResonanceProfileView = ({
                         <TagList items={rd.aura.misreadAs} variant="muted" />
                       </div>
                     ) : null}
-                    {rd.aura.revealsOverTime?.length ? (
+                    {rd?.aura?.revealsOverTime?.length ? (
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-1.5">
                           Reveals over time
@@ -691,7 +709,7 @@ const ResonanceProfileView = ({
                         <TagList items={rd.aura.revealsOverTime} />
                       </div>
                     ) : null}
-                    {rd.aura.toneTag && (
+                    {rd?.aura?.toneTag && (
                       <p className="text-xs text-muted-foreground italic">
                         "{rd.aura.toneTag}"
                       </p>
