@@ -92,6 +92,17 @@ interface ResonanceData {
     nonNegotiables?: string[];
     niceToHaves?: string[];
   };
+  offering?: {
+    roles?: string[];
+    notes?: string;
+  };
+  collaborations?: Array<{
+    kind?: string;
+    role?: string;
+    lookingFor?: string;
+    notes?: string;
+  }>;
+
   reciprocityModel?: string;
   conflictStyle?: string;
 
