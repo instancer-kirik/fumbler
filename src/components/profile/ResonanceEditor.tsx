@@ -129,6 +129,24 @@ interface ResonanceData {
     notes: string;
   }>;
 
+  // Sizing — clothing/dress-up measurements (defaults to express-only visibility)
+  sizing: {
+    shirt: string;
+    pants: string;
+    dress: string;
+    shoe: string;
+    bra: string;
+    ring: string;
+    hat: string;
+    gloves: string;
+    waist: string;
+    inseam: string;
+    height: string;
+    notes: string;
+  };
+
+
+
   reciprocityModel: string;
   conflictStyle: string;
 
@@ -279,6 +297,11 @@ const emptyData: ResonanceData = {
   },
   offering: { roles: [], notes: "" },
   collaborations: [],
+  sizing: {
+    shirt: "", pants: "", dress: "", shoe: "", bra: "", ring: "",
+    hat: "", gloves: "", waist: "", inseam: "", height: "", notes: "",
+  },
+
 
   reciprocityModel: "",
   conflictStyle: "",
@@ -1216,6 +1239,8 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "seeking",
     "offering",
     "collaborations",
+    "sizing",
+
 
     "safety",
     "economic",
@@ -1991,6 +2016,38 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       multiline
                     />
                   </EditorSection>
+
+                  {/* Sizing — clothing/dress-up */}
+                  <EditorSection
+                    icon="👗"
+                    label="Sizing"
+                    description="Clothing sizes for dress-up, gifts, costumes — private by default"
+                    visibility={vis("sizing")}
+                    onVisibilityChange={(v) => setVis("sizing", v)}
+                  >
+                    <div className="grid grid-cols-2 gap-3">
+                      <TextField label="Shirt / Top" value={data.sizing.shirt} onChange={(v) => set(["sizing", "shirt"], v)} placeholder="M, US 8, EU 38..." />
+                      <TextField label="Pants" value={data.sizing.pants} onChange={(v) => set(["sizing", "pants"], v)} placeholder="32x30, US 8..." />
+                      <TextField label="Dress" value={data.sizing.dress} onChange={(v) => set(["sizing", "dress"], v)} placeholder="US 6, EU 36..." />
+                      <TextField label="Shoe" value={data.sizing.shoe} onChange={(v) => set(["sizing", "shoe"], v)} placeholder="US 10, EU 43..." />
+                      <TextField label="Bra" value={data.sizing.bra} onChange={(v) => set(["sizing", "bra"], v)} placeholder="34C..." />
+                      <TextField label="Ring" value={data.sizing.ring} onChange={(v) => set(["sizing", "ring"], v)} placeholder="US 7..." />
+                      <TextField label="Hat" value={data.sizing.hat} onChange={(v) => set(["sizing", "hat"], v)} placeholder="7 1/4, 58cm..." />
+                      <TextField label="Gloves" value={data.sizing.gloves} onChange={(v) => set(["sizing", "gloves"], v)} placeholder="M, L..." />
+                      <TextField label="Waist" value={data.sizing.waist} onChange={(v) => set(["sizing", "waist"], v)} placeholder="32in / 81cm" />
+                      <TextField label="Inseam" value={data.sizing.inseam} onChange={(v) => set(["sizing", "inseam"], v)} placeholder="30in / 76cm" />
+                      <TextField label="Height" value={data.sizing.height} onChange={(v) => set(["sizing", "height"], v)} placeholder="5'10 / 178cm" />
+                    </div>
+                    <TextField
+                      label="Notes"
+                      value={data.sizing.notes}
+                      onChange={(v) => set(["sizing", "notes"], v)}
+                      placeholder="Fit preferences, brands that fit well, anything to know..."
+                      multiline
+                    />
+                  </EditorSection>
+
+
 
                   {/* Collaborations — specific partnership types */}
                   <EditorSection

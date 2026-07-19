@@ -102,6 +102,12 @@ interface ResonanceData {
     lookingFor?: string;
     notes?: string;
   }>;
+  sizing?: {
+    shirt?: string; pants?: string; dress?: string; shoe?: string;
+    bra?: string; ring?: string; hat?: string; gloves?: string;
+    waist?: string; inseam?: string; height?: string; notes?: string;
+  };
+
 
   reciprocityModel?: string;
   conflictStyle?: string;
@@ -1457,7 +1463,38 @@ const ResonanceProfileView = ({
               renderLocked("🤝", "Collaborations", "collaborations")
             )}
 
+            {/* Sizing */}
+            {(() => {
+              const s = rd?.sizing;
+              const entries = s
+                ? (["shirt","pants","dress","shoe","bra","ring","hat","gloves","waist","inseam","height"] as const)
+                    .filter((k) => s[k])
+                    .map((k) => [k, s[k] as string] as const)
+                : [];
+              if (canSee("sizing")) {
+                if (!entries.length && !s?.notes) return null;
+                return (
+                  <SectionCard icon="👗" label="Sizing" description="Clothing sizes — for dress-up, costumes, gifts">
+                    <div className="grid grid-cols-2 gap-2">
+                      {entries.map(([k, v]) => (
+                        <div key={k} className="rounded-lg bg-secondary/40 px-3 py-2">
+                          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{k}</p>
+                          <p className="text-sm text-foreground">{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {s?.notes ? (
+                      <p className="mt-3 text-xs text-foreground/80 italic">{s.notes}</p>
+                    ) : null}
+                  </SectionCard>
+                );
+              }
+              return renderLocked("👗", "Sizing", "sizing");
+            })()}
+
             {/* Safety + Trust */}
+
+
 
             {canSee("safety") ? (
               <SectionCard
