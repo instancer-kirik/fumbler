@@ -10,10 +10,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
 
 // Build a minimal ResonanceProfile from DB row for the card stack
-const dbToCardProfile = (row: any): ResonanceProfile => ({
+const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
   id: row.id,
   name: row.full_name || "Anonymous",
   handle: `@${row.username || "unknown"}`,
+  username: row.username,
   description: row.bio || "",
   image: row.avatar_url || "/placeholder.svg",
   age: row.age || 0,
