@@ -102,6 +102,12 @@ interface ResonanceData {
     lookingFor?: string;
     notes?: string;
   }>;
+  sizing?: {
+    shirt?: string; pants?: string; dress?: string; shoe?: string;
+    bra?: string; ring?: string; hat?: string; gloves?: string;
+    waist?: string; inseam?: string; height?: string; notes?: string;
+  };
+
 
   reciprocityModel?: string;
   conflictStyle?: string;
