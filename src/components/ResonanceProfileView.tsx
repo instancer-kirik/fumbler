@@ -572,6 +572,30 @@ const ResonanceProfileView = ({
               )}
             </div>
 
+            {/* Prominent platform links — chip row */}
+            {canSee("discovery") && rd?.discovery?.platforms?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {rd.discovery.platforms.map((p) => (
+                  <a
+                    key={p.url}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    <span>{p.name || p.handle || "link"}</span>
+                    {p.handle && p.name ? (
+                      <span className="text-muted-foreground">
+                        @{p.handle}
+                      </span>
+                    ) : null}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+
+
+
             {/* Get to Know Me */}
             {canSee("gtky") ? (
               rd?.getToKnowMe &&
