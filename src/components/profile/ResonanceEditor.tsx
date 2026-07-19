@@ -1252,7 +1252,9 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm"
-        onClick={() => onOpenChange(false)}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onOpenChange(false);
+        }}
       >
         <motion.div
           initial={{ y: "100%" }}

@@ -148,21 +148,22 @@ const DiscoverPage = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background pb-24">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-2">
-        <h1 className="font-display text-3xl font-bold text-primary">
-          fumbler
+      <div className="flex items-center justify-between px-5 pt-5 pb-2 gap-2">
+        <h1 className="font-display text-3xl font-bold text-primary shrink-0">
+          Fumbler
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={togglePinSelf}
             title={pinSelf ? "Unpin my profile (dev)" : "Pin my profile (dev)"}
-            className={`rounded-full p-2.5 transition-colors ${
+            className={`flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors ${
               pinSelf
                 ? "bg-primary text-primary-foreground"
                 : "bg-secondary text-foreground hover:bg-secondary/80"
             }`}
           >
-            <Pin className="h-5 w-5" />
+            <Pin className="h-3.5 w-3.5" />
+            {pinSelf ? "Pinned" : "Pin me"}
           </button>
           <button
             onClick={() => setMenuOpen(true)}
