@@ -114,6 +114,21 @@ interface ResonanceData {
     nonNegotiables: string[];
     niceToHaves: string[];
   };
+
+  // Offering — roles/postures you're open to playing for someone
+  offering: {
+    roles: string[];
+    notes: string;
+  };
+
+  // Collaborations — specific partnership types you're seeking
+  collaborations: Array<{
+    kind: string;      // e.g. "band", "vehicle_build", "co-op_game"
+    role: string;      // your role: e.g. "rhythm_guitar", "welder", "co-designer"
+    lookingFor: string; // what you need from a partner
+    notes: string;
+  }>;
+
   reciprocityModel: string;
   conflictStyle: string;
 
