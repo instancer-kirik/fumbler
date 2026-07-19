@@ -850,6 +850,123 @@ const PlatformsField = ({
   );
 };
 
+// ─── Collaborations field ────────────────────────────────────────────────────
+
+type Collaboration = {
+  kind: string;
+  role: string;
+  lookingFor: string;
+  notes: string;
+};
+
+const CollaborationsField = ({
+  items,
+  onChange,
+}: {
+  items: Collaboration[];
+  onChange: (v: Collaboration[]) => void;
+}) => {
+  const [kind, setKind] = useState("");
+  const [role, setRole] = useState("");
+  const [lookingFor, setLookingFor] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const add = () => {
+    if (!kind.trim()) return;
+    onChange([
+      ...items,
+      {
+        kind: kind.trim(),
+        role: role.trim(),
+        lookingFor: lookingFor.trim(),
+        notes: notes.trim(),
+      },
+    ]);
+    setKind("");
+    setRole("");
+    setLookingFor("");
+    setNotes("");
+  };
+
+  return (
+    <div>
+      <div className="space-y-2 mb-3">
+        {items.map((c, i) => (
+          <div
+            key={i}
+            className="rounded-xl bg-secondary/50 p-3 group relative"
+          >
+            <p className="text-sm font-medium text-foreground">{c.kind}</p>
+            {c.role && (
+              <p className="text-xs text-muted-foreground">
+                my role: {c.role}
+              </p>
+            )}
+            {c.lookingFor && (
+              <p className="text-xs text-foreground/80 mt-1">
+                seeking: {c.lookingFor}
+              </p>
+            )}
+            {c.notes && (
+              <p className="text-xs text-muted-foreground mt-1 italic">
+                {c.notes}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 rounded-full p-1 hover:bg-destructive/20 transition-all"
+            >
+              <X className="h-3 w-3 text-muted-foreground" />
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-2">
+        <input
+          type="text"
+          value={kind}
+          onChange={(e) => setKind(e.target.value)}
+          placeholder="Kind (e.g. band, vehicle_build, co-op_game, film_crew)"
+          className={inputClass}
+        />
+        <input
+          type="text"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          placeholder="My role (e.g. rhythm_guitar, welder, co-writer)"
+          className={inputClass}
+        />
+        <input
+          type="text"
+          value={lookingFor}
+          onChange={(e) => setLookingFor(e.target.value)}
+          placeholder="Looking for (e.g. vocalist, another wrench, an artist)"
+          className={inputClass}
+        />
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Notes (optional)"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={add}
+            className="flex-shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary hover:bg-primary/20 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
 // ─── Custom Archetype Creator (v0.9 format: name/definition/activationContext) ─
 
 const CustomArchetypeCreator = ({ onAdd }: { onAdd: (arch: any) => void }) => {
