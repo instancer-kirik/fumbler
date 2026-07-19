@@ -1507,11 +1507,11 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     />
                   </EditorSection>
 
-                  {/* Loops & Lessons */}
+                  {/* Loops */}
                   <EditorSection
                     icon="🔄"
-                    label="Loops & Lessons"
-                    description="Patterns and wisdom"
+                    label="Loops"
+                    description="Recurring behavioral patterns"
                     visibility={vis("loops")}
                     onVisibilityChange={(v) => setVis("loops", v)}
                   >
@@ -1521,6 +1521,16 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) => set(["loops"], v)}
                       placeholder="A recurring pattern you've noticed..."
                     />
+                  </EditorSection>
+
+                  {/* Lessons */}
+                  <EditorSection
+                    icon="💡"
+                    label="Lessons"
+                    description="Hard-won wisdom"
+                    visibility={vis("lessons")}
+                    onVisibilityChange={(v) => setVis("lessons", v)}
+                  >
                     <ListField
                       label="💡 Hard-won lessons"
                       items={data.lessons}
