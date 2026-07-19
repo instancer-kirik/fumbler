@@ -245,6 +245,11 @@ const ProfilePage = () => {
             action: () => setShowEdit(true),
           },
           {
+            icon: ImageIcon,
+            label: "Photos & Gallery",
+            action: () => setShowPhotos(true),
+          },
+          {
             icon: Settings,
             label: "Resonance Profile",
             action: () => setShowResonance(true),
