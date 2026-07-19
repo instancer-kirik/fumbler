@@ -1097,6 +1097,9 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "repulsion",
     "viability",
     "seeking",
+    "offering",
+    "collaborations",
+
     "safety",
     "economic",
     "connection",
