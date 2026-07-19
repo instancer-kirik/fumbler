@@ -817,7 +817,7 @@ const ResonanceProfileView = ({
 
             {/* Qualities & Introspections */}
             {canSee("qualities") ? (
-              rd?.qualities?.length || rd?.introspections?.length ? (
+              rd?.qualities?.length || rd?.introspections?.length || rd?.values?.length ? (
                 <SectionCard
                   icon="✨"
                   label="Qualities"
@@ -830,6 +830,14 @@ const ResonanceProfileView = ({
                           Character
                         </p>
                         <TagList items={rd.qualities} variant="warm" />
+                      </div>
+                    ) : null}
+                    {rd?.values?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Core values
+                        </p>
+                        <TagList items={rd.values} variant="warm" />
                       </div>
                     ) : null}
                     {rd?.introspections?.length ? (
