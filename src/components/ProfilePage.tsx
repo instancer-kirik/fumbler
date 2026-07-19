@@ -15,6 +15,7 @@ import {
   Share2,
   Eye,
   Key,
+  Image as ImageIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +28,7 @@ import ToonImportSheet from "@/components/profile/ToonImportSheet";
 import ShareKeysSheet from "@/components/profile/ShareKeysSheet";
 import SafetyPrivacySheet from "@/components/profile/SafetyPrivacySheet";
 import HelpSupportSheet from "@/components/profile/HelpSupportSheet";
+import PhotoManagerSheet from "@/components/profile/PhotoManagerSheet";
 
 interface UserProfile {
   id: string;
@@ -51,6 +53,7 @@ const ProfilePage = () => {
   const [showShareKeys, setShowShareKeys] = useState(false);
   const [showSafety, setShowSafety] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
@@ -242,6 +245,11 @@ const ProfilePage = () => {
             action: () => setShowEdit(true),
           },
           {
+            icon: ImageIcon,
+            label: "Photos & Gallery",
+            action: () => setShowPhotos(true),
+          },
+          {
             icon: Settings,
             label: "Resonance Profile",
             action: () => setShowResonance(true),
@@ -298,6 +306,12 @@ const ProfilePage = () => {
         open={showShareKeys}
         onOpenChange={setShowShareKeys}
         username={profile?.username}
+      />
+
+      <PhotoManagerSheet
+        open={showPhotos}
+        onOpenChange={setShowPhotos}
+        onChanged={fetchProfile}
       />
     </div>
   );

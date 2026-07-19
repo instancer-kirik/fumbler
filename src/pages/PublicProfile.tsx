@@ -42,6 +42,7 @@ interface PublicProfileData {
   age: number | null;
   resonance_data: any;
   granted_keys?: Set<string>;
+  photos?: { id: string; photo_url: string }[];
 }
 
 interface ViewerState {
@@ -294,6 +295,15 @@ const PublicProfile = () => {
         profileData.granted_keys = new Set(Object.keys(rawRes));
         profileData.resonance_data = normalizeImportData(rawRes);
       }
+
+      // Fetch public gallery photos (RLS policy allows read when profile.is_public)
+      const { data: photoRows } = await supabase
+        .from("fumble_photos")
+        .select("id, photo_url, display_order")
+        .eq("user_id", data.id)
+        .order("display_order", { ascending: true });
+      profileData.photos = photoRows ?? [];
+
       setProfile(profileData);
       setLoading(false);
     };
@@ -425,6 +435,30 @@ const PublicProfile = () => {
           </p>
         )}
       </motion.div>
+
+      {/* Gallery */}
+      {profile.photos && profile.photos.length > 0 && (
+        <div className="mb-4 -mx-4 px-4 overflow-x-auto">
+          <div className="flex gap-2 pb-2">
+            {profile.photos.map((p) => (
+              <a
+                key={p.id}
+                href={p.photo_url}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0"
+              >
+                <img
+                  src={p.photo_url}
+                  alt=""
+                  className="h-40 w-32 rounded-2xl object-cover shadow-card"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
 
       {/* Resonance sections — all using v0.9 flat keys */}
       {!rd || !hasAnySectionData ? (
