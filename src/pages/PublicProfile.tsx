@@ -295,6 +295,15 @@ const PublicProfile = () => {
         profileData.granted_keys = new Set(Object.keys(rawRes));
         profileData.resonance_data = normalizeImportData(rawRes);
       }
+
+      // Fetch public gallery photos (RLS policy allows read when profile.is_public)
+      const { data: photoRows } = await supabase
+        .from("fumble_photos")
+        .select("id, photo_url, display_order")
+        .eq("user_id", data.id)
+        .order("display_order", { ascending: true });
+      profileData.photos = photoRows ?? [];
+
       setProfile(profileData);
       setLoading(false);
     };
