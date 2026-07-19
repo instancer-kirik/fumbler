@@ -53,6 +53,7 @@ const ProfilePage = () => {
   const [showShareKeys, setShowShareKeys] = useState(false);
   const [showSafety, setShowSafety] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
