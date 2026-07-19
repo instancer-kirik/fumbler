@@ -297,6 +297,11 @@ const emptyData: ResonanceData = {
   },
   offering: { roles: [], notes: "" },
   collaborations: [],
+  sizing: {
+    shirt: "", pants: "", dress: "", shoe: "", bra: "", ring: "",
+    hat: "", gloves: "", waist: "", inseam: "", height: "", notes: "",
+  },
+
 
   reciprocityModel: "",
   conflictStyle: "",
