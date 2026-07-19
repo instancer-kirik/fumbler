@@ -1368,7 +1368,73 @@ const ResonanceProfileView = ({
               renderLocked("🧭", "Seeking", "seeking")
             )}
 
+            {/* Offering */}
+            {canSee("offering") ? (
+              rd?.offering && (rd.offering.roles?.length || rd.offering.notes) ? (
+                <SectionCard
+                  icon="🎭"
+                  label="Offering"
+                  description="Roles they're open to playing"
+                >
+                  <div className="space-y-3">
+                    {rd.offering.roles?.length ? (
+                      <TagList items={rd.offering.roles} variant="warm" />
+                    ) : null}
+                    {rd.offering.notes ? (
+                      <p className="text-xs text-foreground/80 italic">
+                        {rd.offering.notes}
+                      </p>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🎭", "Offering", "offering")
+            )}
+
+            {/* Collaborations */}
+            {canSee("collaborations") ? (
+              rd?.collaborations?.length ? (
+                <SectionCard
+                  icon="🤝"
+                  label="Collaborations"
+                  description="Partnerships they're seeking"
+                >
+                  <div className="space-y-2">
+                    {rd.collaborations.map((c, i) => (
+                      <div
+                        key={i}
+                        className="rounded-xl bg-secondary/40 p-3"
+                      >
+                        <p className="text-sm font-medium text-foreground">
+                          {c.kind}
+                        </p>
+                        {c.role ? (
+                          <p className="text-xs text-muted-foreground">
+                            their role: {c.role}
+                          </p>
+                        ) : null}
+                        {c.lookingFor ? (
+                          <p className="text-xs text-foreground/80 mt-1">
+                            seeking: {c.lookingFor}
+                          </p>
+                        ) : null}
+                        {c.notes ? (
+                          <p className="text-xs text-muted-foreground italic mt-1">
+                            {c.notes}
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🤝", "Collaborations", "collaborations")
+            )}
+
             {/* Safety + Trust */}
+
             {canSee("safety") ? (
               <SectionCard
                 icon="🛡️"
