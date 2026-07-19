@@ -1276,14 +1276,7 @@ const ResonanceProfileView = ({
                       value={rd?.viability?.availability?.timezone ?? ""}
                     />
                   </div>
-                  {rd?.values?.length ? (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        Core values
-                      </p>
-                      <TagList items={rd.values} variant="warm" />
-                    </div>
-                  ) : null}
+                  {/* values render in the Qualities section to match editor grouping */}
                   {rd?.growthVectors?.length ? (
                     <div>
                       <p className="text-xs font-semibold text-foreground mb-1.5">
