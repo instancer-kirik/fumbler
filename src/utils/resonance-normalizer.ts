@@ -216,6 +216,34 @@ function normalizeV9Flat(raw: Obj): Obj {
       nonNegotiables: arr(seeking.nonNegotiables),
       niceToHaves: arr(seeking.niceToHaves),
     },
+    offering: {
+      roles: arr(obj(raw.offering).roles),
+      notes: str(obj(raw.offering).notes),
+    },
+    collaborations: Array.isArray(raw.collaborations)
+      ? (raw.collaborations as Obj[])
+          .filter((c) => c && typeof c === "object")
+          .map((c) => ({
+            kind: str(c.kind),
+            role: str(c.role),
+            lookingFor: str(c.lookingFor ?? c.looking_for),
+            notes: str(c.notes),
+          }))
+      : [],
+    sizing: {
+      shirt: str(obj(raw.sizing).shirt),
+      pants: str(obj(raw.sizing).pants),
+      dress: str(obj(raw.sizing).dress),
+      shoe: str(obj(raw.sizing).shoe),
+      bra: str(obj(raw.sizing).bra),
+      ring: str(obj(raw.sizing).ring),
+      hat: str(obj(raw.sizing).hat),
+      gloves: str(obj(raw.sizing).gloves),
+      waist: str(obj(raw.sizing).waist),
+      inseam: str(obj(raw.sizing).inseam),
+      height: str(obj(raw.sizing).height),
+      notes: str(obj(raw.sizing).notes),
+    },
     reciprocityModel: str(raw.reciprocityModel),
     conflictStyle: str(raw.conflictStyle),
 
