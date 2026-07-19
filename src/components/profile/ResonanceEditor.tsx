@@ -114,6 +114,21 @@ interface ResonanceData {
     nonNegotiables: string[];
     niceToHaves: string[];
   };
+
+  // Offering — roles/postures you're open to playing for someone
+  offering: {
+    roles: string[];
+    notes: string;
+  };
+
+  // Collaborations — specific partnership types you're seeking
+  collaborations: Array<{
+    kind: string;      // e.g. "band", "vehicle_build", "co-op_game"
+    role: string;      // your role: e.g. "rhythm_guitar", "welder", "co-designer"
+    lookingFor: string; // what you need from a partner
+    notes: string;
+  }>;
+
   reciprocityModel: string;
   conflictStyle: string;
 
@@ -262,6 +277,9 @@ const emptyData: ResonanceData = {
     nonNegotiables: [],
     niceToHaves: [],
   },
+  offering: { roles: [], notes: "" },
+  collaborations: [],
+
   reciprocityModel: "",
   conflictStyle: "",
   economic: {
@@ -832,6 +850,123 @@ const PlatformsField = ({
   );
 };
 
+// ─── Collaborations field ────────────────────────────────────────────────────
+
+type Collaboration = {
+  kind: string;
+  role: string;
+  lookingFor: string;
+  notes: string;
+};
+
+const CollaborationsField = ({
+  items,
+  onChange,
+}: {
+  items: Collaboration[];
+  onChange: (v: Collaboration[]) => void;
+}) => {
+  const [kind, setKind] = useState("");
+  const [role, setRole] = useState("");
+  const [lookingFor, setLookingFor] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const add = () => {
+    if (!kind.trim()) return;
+    onChange([
+      ...items,
+      {
+        kind: kind.trim(),
+        role: role.trim(),
+        lookingFor: lookingFor.trim(),
+        notes: notes.trim(),
+      },
+    ]);
+    setKind("");
+    setRole("");
+    setLookingFor("");
+    setNotes("");
+  };
+
+  return (
+    <div>
+      <div className="space-y-2 mb-3">
+        {items.map((c, i) => (
+          <div
+            key={i}
+            className="rounded-xl bg-secondary/50 p-3 group relative"
+          >
+            <p className="text-sm font-medium text-foreground">{c.kind}</p>
+            {c.role && (
+              <p className="text-xs text-muted-foreground">
+                my role: {c.role}
+              </p>
+            )}
+            {c.lookingFor && (
+              <p className="text-xs text-foreground/80 mt-1">
+                seeking: {c.lookingFor}
+              </p>
+            )}
+            {c.notes && (
+              <p className="text-xs text-muted-foreground mt-1 italic">
+                {c.notes}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 rounded-full p-1 hover:bg-destructive/20 transition-all"
+            >
+              <X className="h-3 w-3 text-muted-foreground" />
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-2">
+        <input
+          type="text"
+          value={kind}
+          onChange={(e) => setKind(e.target.value)}
+          placeholder="Kind (e.g. band, vehicle_build, co-op_game, film_crew)"
+          className={inputClass}
+        />
+        <input
+          type="text"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          placeholder="My role (e.g. rhythm_guitar, welder, co-writer)"
+          className={inputClass}
+        />
+        <input
+          type="text"
+          value={lookingFor}
+          onChange={(e) => setLookingFor(e.target.value)}
+          placeholder="Looking for (e.g. vocalist, another wrench, an artist)"
+          className={inputClass}
+        />
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Notes (optional)"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={add}
+            className="flex-shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary hover:bg-primary/20 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
 // ─── Custom Archetype Creator (v0.9 format: name/definition/activationContext) ─
 
 const CustomArchetypeCreator = ({ onAdd }: { onAdd: (arch: any) => void }) => {
@@ -1079,6 +1214,9 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "repulsion",
     "viability",
     "seeking",
+    "offering",
+    "collaborations",
+
     "safety",
     "economic",
     "connection",
@@ -1828,6 +1966,45 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) => set(["seeking", "niceToHaves"], v)}
                     />
                   </EditorSection>
+
+                  {/* Offering — roles you're open to playing */}
+                  <EditorSection
+                    icon="🎭"
+                    label="Offering"
+                    description="Roles/postures you're open to playing for someone"
+                    visibility={vis("offering")}
+                    onVisibilityChange={(v) => setVis("offering", v)}
+                  >
+                    <TagField
+                      label="Roles I'm open to"
+                      tags={data.offering.roles}
+                      onChange={(v) => set(["offering", "roles"], v)}
+                      placeholder="e.g. maid, passenger_princess, rigger, jester, piggyback_rider"
+                    />
+                    <TextField
+                      label="Notes"
+                      value={data.offering.notes}
+                      onChange={(v) => set(["offering", "notes"], v)}
+                      placeholder="Context, conditions, what this looks like for you..."
+                      multiline
+                    />
+                  </EditorSection>
+
+                  {/* Collaborations — specific partnership types */}
+                  <EditorSection
+                    icon="🤝"
+                    label="Collaborations"
+                    description="Bands, builds, projects you want partners for"
+                    visibility={vis("collaborations")}
+                    onVisibilityChange={(v) => setVis("collaborations", v)}
+                  >
+                    <CollaborationsField
+                      items={data.collaborations}
+                      onChange={(v) => set(["collaborations"], v)}
+                    />
+                  </EditorSection>
+
+
 
                   {/* Safety + Trust */}
                   <EditorSection

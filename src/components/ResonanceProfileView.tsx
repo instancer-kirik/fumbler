@@ -92,6 +92,17 @@ interface ResonanceData {
     nonNegotiables?: string[];
     niceToHaves?: string[];
   };
+  offering?: {
+    roles?: string[];
+    notes?: string;
+  };
+  collaborations?: Array<{
+    kind?: string;
+    role?: string;
+    lookingFor?: string;
+    notes?: string;
+  }>;
+
   reciprocityModel?: string;
   conflictStyle?: string;
 
@@ -560,6 +571,30 @@ const ResonanceProfileView = ({
                 </div>
               )}
             </div>
+
+            {/* Prominent platform links — chip row */}
+            {canSee("discovery") && rd?.discovery?.platforms?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {rd.discovery.platforms.map((p) => (
+                  <a
+                    key={p.url}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    <span>{p.name || p.handle || "link"}</span>
+                    {p.handle && p.name ? (
+                      <span className="text-muted-foreground">
+                        @{p.handle}
+                      </span>
+                    ) : null}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+
+
 
             {/* Get to Know Me */}
             {canSee("gtky") ? (
@@ -1357,7 +1392,73 @@ const ResonanceProfileView = ({
               renderLocked("🧭", "Seeking", "seeking")
             )}
 
+            {/* Offering */}
+            {canSee("offering") ? (
+              rd?.offering && (rd.offering.roles?.length || rd.offering.notes) ? (
+                <SectionCard
+                  icon="🎭"
+                  label="Offering"
+                  description="Roles they're open to playing"
+                >
+                  <div className="space-y-3">
+                    {rd.offering.roles?.length ? (
+                      <TagList items={rd.offering.roles} variant="warm" />
+                    ) : null}
+                    {rd.offering.notes ? (
+                      <p className="text-xs text-foreground/80 italic">
+                        {rd.offering.notes}
+                      </p>
+                    ) : null}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🎭", "Offering", "offering")
+            )}
+
+            {/* Collaborations */}
+            {canSee("collaborations") ? (
+              rd?.collaborations?.length ? (
+                <SectionCard
+                  icon="🤝"
+                  label="Collaborations"
+                  description="Partnerships they're seeking"
+                >
+                  <div className="space-y-2">
+                    {rd.collaborations.map((c, i) => (
+                      <div
+                        key={i}
+                        className="rounded-xl bg-secondary/40 p-3"
+                      >
+                        <p className="text-sm font-medium text-foreground">
+                          {c.kind}
+                        </p>
+                        {c.role ? (
+                          <p className="text-xs text-muted-foreground">
+                            their role: {c.role}
+                          </p>
+                        ) : null}
+                        {c.lookingFor ? (
+                          <p className="text-xs text-foreground/80 mt-1">
+                            seeking: {c.lookingFor}
+                          </p>
+                        ) : null}
+                        {c.notes ? (
+                          <p className="text-xs text-muted-foreground italic mt-1">
+                            {c.notes}
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🤝", "Collaborations", "collaborations")
+            )}
+
             {/* Safety + Trust */}
+
             {canSee("safety") ? (
               <SectionCard
                 icon="🛡️"
