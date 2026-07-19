@@ -1183,6 +1183,16 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     }
   }, [open, user]);
 
+  // Lock body scroll while the editor overlay is open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
