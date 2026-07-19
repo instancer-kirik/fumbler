@@ -950,14 +950,14 @@ const CollaborationsField = ({
           type="text"
           value={kind}
           onChange={(e) => setKind(e.target.value)}
-          placeholder="Kind (e.g. band, vehicle_build, co-op_game, film_crew)"
+          placeholder="Kind (e.g. band, vehicle build, co-op game, film crew)"
           className={inputClass}
         />
         <input
           type="text"
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          placeholder="My role (e.g. rhythm_guitar, welder, co-writer)"
+          placeholder="My role (e.g. rhythm guitar, welder, co-writer)"
           className={inputClass}
         />
         <input
@@ -1047,7 +1047,7 @@ const CustomArchetypeCreator = ({ onAdd }: { onAdd: (arch: any) => void }) => {
         label="Name"
         value={name}
         onChange={setName}
-        placeholder="e.g. mythrogito"
+        placeholder="e.g. Night Gardener, The Archivist"
       />
       <TextField
         label="Definition"
@@ -1182,6 +1182,16 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
         });
     }
   }, [open, user]);
+
+  // Lock body scroll while the editor overlay is open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -1375,7 +1385,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Build"
                       value={data.getToKnowMe.build}
                       onChange={(v) => set(["getToKnowMe", "build"], v)}
-                      placeholder="e.g. gym_consistent"
+                      placeholder="e.g. reads a lot, gym consistent"
                     />
                     <TextField
                       label="Current obsession"
@@ -1426,7 +1436,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Tone tag"
                       value={data.aura.toneTag}
                       onChange={(v) => set(["aura", "toneTag"], v)}
-                      placeholder="e.g. vawy.scawy"
+                      placeholder="e.g. wavy scary, gentle nerd"
                     />
                   </EditorSection>
 
@@ -1443,7 +1453,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="✨ Activation vectors"
                       tags={data.activationVectors}
                       onChange={(v) => set(["activationVectors"], v)}
-                      placeholder="e.g. competent_weirdness"
+                      placeholder="e.g. competent weirdness, quiet warmth"
                     />
                     <TagField
                       label="💘 Flirt — attracts"
@@ -1469,13 +1479,13 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="🟢 Trust signals"
                       tags={data.consumer.trustSignals}
                       onChange={(v) => set(["consumer", "trustSignals"], v)}
-                      placeholder="e.g. artifact_built_tools"
+                      placeholder="e.g. artifact built tools"
                     />
                     <TagField
                       label="🔴 Distrust signals"
                       tags={data.consumer.distrustSignals}
                       onChange={(v) => set(["consumer", "distrustSignals"], v)}
-                      placeholder="e.g. over_polished_emptiness"
+                      placeholder="e.g. over polished emptiness"
                     />
                   </EditorSection>
 
@@ -1503,7 +1513,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Values"
                       tags={data.values}
                       onChange={(v) => set(["values"], v)}
-                      placeholder="e.g. sovereignty, competence"
+                      placeholder="e.g. sovereignty, competence, warmth"
                     />
                   </EditorSection>
 
@@ -1591,7 +1601,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["languages", "receiveLoveThrough"], v)
                       }
-                      placeholder="e.g. quality_time"
+                      placeholder="e.g. quality time"
                     />
                     <TagField
                       label="Express love through"
@@ -1599,7 +1609,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["languages", "expressLoveThrough"], v)
                       }
-                      placeholder="e.g. acts_of_service"
+                      placeholder="e.g. acts of service"
                     />
                     <TextField
                       label="Communication style"
@@ -1732,7 +1742,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Aesthetic tags"
                       tags={data.aesthetics}
                       onChange={(v) => set(["aesthetics"], v)}
-                      placeholder="e.g. workwear, minimal_polish"
+                      placeholder="e.g. workwear, minimal polish"
                     />
                   </EditorSection>
 
@@ -1760,7 +1770,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="What draws you in"
                       tags={data.attraction.whatDrawsIn}
                       onChange={(v) => set(["attraction", "whatDrawsIn"], v)}
-                      placeholder="e.g. quiet_competence"
+                      placeholder="e.g. quiet competence, dry humor"
                     />
                     <TextField
                       label="Timeline"
@@ -1825,7 +1835,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="🚫 Top-level repulsion"
                       tags={data.repulsionVectors}
                       onChange={(v) => set(["repulsionVectors"], v)}
-                      placeholder="e.g. extractive_attention"
+                      placeholder="e.g. extractive attention, performative intensity"
                     />
                     <TagField
                       label="🛑 Hard stops"
@@ -1954,7 +1964,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Seeking archetypes"
                       tags={data.seeking.archetypes}
                       onChange={(v) => set(["seeking", "archetypes"], v)}
-                      placeholder="e.g. grounded_curiosity_with_self_direction"
+                      placeholder="e.g. grounded curiosity with self-direction"
                     />
                     <TagField
                       label="Seeking aesthetics"
@@ -1974,7 +1984,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["seeking", "languages", "mismatchTolerance"], v)
                       }
-                      placeholder="e.g. low_for_chaos_high_for_difference"
+                      placeholder="e.g. low for chaos, high for difference"
                     />
                     <TagField
                       label="Seeking qualities"
@@ -2016,7 +2026,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Roles I'm open to"
                       tags={data.offering.roles}
                       onChange={(v) => set(["offering", "roles"], v)}
-                      placeholder="e.g. maid, passenger_princess, rigger, jester, piggyback_rider"
+                      placeholder="e.g. maid, passenger princess, rigger, jester, piggyback rider"
                     />
                     <TextField
                       label="Notes"
@@ -2087,7 +2097,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Consent frameworks"
                       tags={data.safety.consentFrameworks}
                       onChange={(v) => set(["safety", "consentFrameworks"], v)}
-                      placeholder="e.g. explicit_yes"
+                      placeholder="e.g. explicit yes, ongoing check-ins"
                     />
                     <TagField
                       label="Hard boundaries"
@@ -2143,7 +2153,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["viability", "availability", "currentSeason"], v)
                       }
-                      placeholder="e.g. available_and_seeking_but_building"
+                      placeholder="e.g. available and seeking, but still building"
                     />
                     <TextField
                       label="Weekly hours"
@@ -2174,25 +2184,25 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["viability", "relationshipTypesAvailable"], v)
                       }
-                      placeholder="e.g. romantic, creative_collaboration"
+                      placeholder="e.g. romantic, creative collaboration"
                     />
                     <TextField
                       label="Conflict style"
                       value={data.conflictStyle}
                       onChange={(v) => set(["conflictStyle"], v)}
-                      placeholder="e.g. clarify_pattern_then_address"
+                      placeholder="e.g. clarify pattern then address"
                     />
                     <TextField
                       label="Reciprocity model"
                       value={data.reciprocityModel}
                       onChange={(v) => set(["reciprocityModel"], v)}
-                      placeholder="e.g. evolving_toward_sovereignty"
+                      placeholder="e.g. evolving toward sovereignty"
                     />
                     <TagField
                       label="Growth vectors"
                       tags={data.growthVectors}
                       onChange={(v) => set(["growthVectors"], v)}
-                      placeholder="e.g. deepening_craft"
+                      placeholder="e.g. deepening craft"
                     />
                   </EditorSection>
 
@@ -2213,25 +2223,25 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Contexts"
                       tags={data.economic.contexts}
                       onChange={(v) => set(["economic", "contexts"], v)}
-                      placeholder="e.g. creative_collaboration"
+                      placeholder="e.g. creative collaboration"
                     />
                     <TagField
                       label="Principles"
                       tags={data.economic.principles}
                       onChange={(v) => set(["economic", "principles"], v)}
-                      placeholder="e.g. sovereignty_over_dependency"
+                      placeholder="e.g. sovereignty over dependency"
                     />
                     <TagField
                       label="Limits"
                       tags={data.economic.limits}
                       onChange={(v) => set(["economic", "limits"], v)}
-                      placeholder="e.g. no_uncompensated_extractive_labor"
+                      placeholder="e.g. no uncompensated extractive labor"
                     />
                     <TagField
                       label="Kink alignment"
                       tags={data.economic.kinkAlignment}
                       onChange={(v) => set(["economic", "kinkAlignment"], v)}
-                      placeholder="e.g. financial_asymmetry_as_play"
+                      placeholder="e.g. financial asymmetry as play"
                     />
                   </EditorSection>
 
@@ -2247,7 +2257,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Primary channel"
                       value={data.connection.channelPrimary}
                       onChange={(v) => set(["connection", "channelPrimary"], v)}
-                      placeholder="e.g. async_voice_text"
+                      placeholder="e.g. async voice text"
                     />
                     <TextField
                       label="Secondary channel"
@@ -2255,7 +2265,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["connection", "channelSecondary"], v)
                       }
-                      placeholder="e.g. voice_calls"
+                      placeholder="e.g. voice calls"
                     />
                     <TextField
                       label="Contact etiquette"
@@ -2263,7 +2273,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["connection", "contactEtiquette"], v)
                       }
-                      placeholder="e.g. text_first_then_call"
+                      placeholder="e.g. text first then call"
                     />
                     <TextField
                       label="Response time"
@@ -2271,7 +2281,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["connection", "responseTimeExpectations"], v)
                       }
-                      placeholder="e.g. 24-48_hours"
+                      placeholder="e.g. 24-48 hours"
                     />
                     <TextField
                       label="Frequency"
@@ -2279,7 +2289,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["connection", "frequencyOfContact"], v)
                       }
-                      placeholder="e.g. daily_async_or_less_frequent_sync"
+                      placeholder="e.g. daily async or less frequent sync"
                     />
                     <TextField
                       label="Meeting modality"
@@ -2293,7 +2303,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Location"
                       value={data.connection.location}
                       onChange={(v) => set(["connection", "location"], v)}
-                      placeholder="e.g. remote_ok"
+                      placeholder="e.g. remote ok"
                     />
                     <TextField
                       label="Willing to travel"
@@ -2323,7 +2333,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Style"
                       tags={data.content.style}
                       onChange={(v) => set(["content", "style"], v)}
-                      placeholder="e.g. slow_build, artifact_oriented"
+                      placeholder="e.g. slow build, artifact oriented"
                     />
                   </EditorSection>
 
@@ -2339,7 +2349,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Visibility"
                       value={data.discovery.visibility}
                       onChange={(v) => set(["discovery", "visibility"], v)}
-                      placeholder="e.g. artifact_first_identity_second"
+                      placeholder="e.g. artifact first identity second"
                     />
                     <TextField
                       label="Content rating"
