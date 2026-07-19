@@ -1,9 +1,10 @@
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { ResonanceProfile } from "@/data/resonance-profile";
 
 interface ProfileCardProps {
-  profile: ResonanceProfile;
+  profile: ResonanceProfile & { username?: string };
   onSwipe: (direction: "left" | "right") => void;
   isTop: boolean;
 }
@@ -98,6 +99,18 @@ const ProfileCard = ({ profile, onSwipe, isTop }: ProfileCardProps) => {
               </span>
             ))}
           </div>
+
+          {/* View full profile */}
+          {profile.username && (
+            <Link
+              to={`/u/${profile.username}`}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-primary-foreground/15 py-2.5 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm transition-colors hover:bg-primary-foreground/25"
+            >
+              <ChevronUp className="h-3.5 w-3.5" />
+              View full profile
+            </Link>
+          )}
         </div>
       </div>
     </motion.div>

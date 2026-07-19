@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sliders, Menu } from "lucide-react";
+import { Sliders, Menu, Pin } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
@@ -10,10 +10,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
 
 // Build a minimal ResonanceProfile from DB row for the card stack
-const dbToCardProfile = (row: any): ResonanceProfile => ({
+const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
   id: row.id,
   name: row.full_name || "Anonymous",
   handle: `@${row.username || "unknown"}`,
+  username: row.username,
   description: row.bio || "",
   image: row.avatar_url || "/placeholder.svg",
   age: row.age || 0,
@@ -31,6 +32,8 @@ const dbToCardProfile = (row: any): ResonanceProfile => ({
   connection: {} as any,
 });
 
+const PIN_SELF_KEY = "fumbler.dev.pinSelf";
+
 const DiscoverPage = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<ResonanceProfile[]>([]);
@@ -38,23 +41,49 @@ const DiscoverPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pinSelf, setPinSelf] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(PIN_SELF_KEY) === "1";
+  });
 
   useEffect(() => {
     const fetchProfiles = async () => {
       if (!user) return;
-      const { data, error } = await supabase
+      setLoading(true);
+      let query = supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age")
-        .neq("id", user.id)
         .eq("onboarding_complete", true);
 
+      if (!pinSelf) {
+        query = query.neq("id", user.id);
+      }
+
+      const { data, error } = await query;
+
       if (!error && data) {
-        setProfiles(data.map(dbToCardProfile));
+        // If pinning self, put own profile first
+        const mapped = data.map(dbToCardProfile);
+        if (pinSelf) {
+          mapped.sort((a, b) =>
+            a.id === user.id ? -1 : b.id === user.id ? 1 : 0,
+          );
+        }
+        setProfiles(mapped);
+        setCurrentIndex(0);
       }
       setLoading(false);
     };
     fetchProfiles();
-  }, [user]);
+  }, [user, pinSelf]);
+
+  const togglePinSelf = () => {
+    setPinSelf((prev) => {
+      const next = !prev;
+      localStorage.setItem(PIN_SELF_KEY, next ? "1" : "0");
+      return next;
+    });
+  };
 
   const recordSwipe = useCallback(
     async (
@@ -124,6 +153,17 @@ const DiscoverPage = () => {
           fumbler
         </h1>
         <div className="flex items-center gap-2">
+          <button
+            onClick={togglePinSelf}
+            title={pinSelf ? "Unpin my profile (dev)" : "Pin my profile (dev)"}
+            className={`rounded-full p-2.5 transition-colors ${
+              pinSelf
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-foreground hover:bg-secondary/80"
+            }`}
+          >
+            <Pin className="h-5 w-5" />
+          </button>
           <button
             onClick={() => setMenuOpen(true)}
             className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
