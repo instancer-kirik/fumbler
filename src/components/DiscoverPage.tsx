@@ -154,6 +154,17 @@ const DiscoverPage = () => {
         </h1>
         <div className="flex items-center gap-2">
           <button
+            onClick={togglePinSelf}
+            title={pinSelf ? "Unpin my profile (dev)" : "Pin my profile (dev)"}
+            className={`rounded-full p-2.5 transition-colors ${
+              pinSelf
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-foreground hover:bg-secondary/80"
+            }`}
+          >
+            <Pin className="h-5 w-5" />
+          </button>
+          <button
             onClick={() => setMenuOpen(true)}
             className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
           >
