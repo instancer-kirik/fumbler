@@ -307,6 +307,12 @@ const ProfilePage = () => {
         onOpenChange={setShowShareKeys}
         username={profile?.username}
       />
+
+      <PhotoManagerSheet
+        open={showPhotos}
+        onOpenChange={setShowPhotos}
+        onChanged={fetchProfile}
+      />
     </div>
   );
 };
