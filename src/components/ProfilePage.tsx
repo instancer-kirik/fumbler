@@ -15,6 +15,7 @@ import {
   Share2,
   Eye,
   Key,
+  Image as ImageIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
