@@ -1850,6 +1850,45 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     />
                   </EditorSection>
 
+                  {/* Offering — roles you're open to playing */}
+                  <EditorSection
+                    icon="🎭"
+                    label="Offering"
+                    description="Roles/postures you're open to playing for someone"
+                    visibility={vis("offering")}
+                    onVisibilityChange={(v) => setVis("offering", v)}
+                  >
+                    <TagField
+                      label="Roles I'm open to"
+                      tags={data.offering.roles}
+                      onChange={(v) => set(["offering", "roles"], v)}
+                      placeholder="e.g. maid, passenger_princess, rigger, jester, piggyback_rider"
+                    />
+                    <TextField
+                      label="Notes"
+                      value={data.offering.notes}
+                      onChange={(v) => set(["offering", "notes"], v)}
+                      placeholder="Context, conditions, what this looks like for you..."
+                      multiline
+                    />
+                  </EditorSection>
+
+                  {/* Collaborations — specific partnership types */}
+                  <EditorSection
+                    icon="🤝"
+                    label="Collaborations"
+                    description="Bands, builds, projects you want partners for"
+                    visibility={vis("collaborations")}
+                    onVisibilityChange={(v) => setVis("collaborations", v)}
+                  >
+                    <CollaborationsField
+                      items={data.collaborations}
+                      onChange={(v) => set(["collaborations"], v)}
+                    />
+                  </EditorSection>
+
+
+
                   {/* Safety + Trust */}
                   <EditorSection
                     icon="🛡️"
