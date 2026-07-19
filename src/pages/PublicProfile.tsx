@@ -42,6 +42,7 @@ interface PublicProfileData {
   age: number | null;
   resonance_data: any;
   granted_keys?: Set<string>;
+  photos?: { id: string; photo_url: string }[];
 }
 
 interface ViewerState {
