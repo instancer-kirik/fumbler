@@ -277,6 +277,9 @@ const emptyData: ResonanceData = {
     nonNegotiables: [],
     niceToHaves: [],
   },
+  offering: { roles: [], notes: "" },
+  collaborations: [],
+
   reciprocityModel: "",
   conflictStyle: "",
   economic: {
