@@ -32,6 +32,8 @@ const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => 
   connection: {} as any,
 });
 
+const PIN_SELF_KEY = "fumbler.dev.pinSelf";
+
 const DiscoverPage = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<ResonanceProfile[]>([]);
@@ -39,23 +41,49 @@ const DiscoverPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pinSelf, setPinSelf] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(PIN_SELF_KEY) === "1";
+  });
 
   useEffect(() => {
     const fetchProfiles = async () => {
       if (!user) return;
-      const { data, error } = await supabase
+      setLoading(true);
+      let query = supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age")
-        .neq("id", user.id)
         .eq("onboarding_complete", true);
 
+      if (!pinSelf) {
+        query = query.neq("id", user.id);
+      }
+
+      const { data, error } = await query;
+
       if (!error && data) {
-        setProfiles(data.map(dbToCardProfile));
+        // If pinning self, put own profile first
+        const mapped = data.map(dbToCardProfile);
+        if (pinSelf) {
+          mapped.sort((a, b) =>
+            a.id === user.id ? -1 : b.id === user.id ? 1 : 0,
+          );
+        }
+        setProfiles(mapped);
+        setCurrentIndex(0);
       }
       setLoading(false);
     };
     fetchProfiles();
-  }, [user]);
+  }, [user, pinSelf]);
+
+  const togglePinSelf = () => {
+    setPinSelf((prev) => {
+      const next = !prev;
+      localStorage.setItem(PIN_SELF_KEY, next ? "1" : "0");
+      return next;
+    });
+  };
 
   const recordSwipe = useCallback(
     async (
