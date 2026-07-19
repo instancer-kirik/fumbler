@@ -28,6 +28,7 @@ import ToonImportSheet from "@/components/profile/ToonImportSheet";
 import ShareKeysSheet from "@/components/profile/ShareKeysSheet";
 import SafetyPrivacySheet from "@/components/profile/SafetyPrivacySheet";
 import HelpSupportSheet from "@/components/profile/HelpSupportSheet";
+import PhotoManagerSheet from "@/components/profile/PhotoManagerSheet";
 
 interface UserProfile {
   id: string;
