@@ -129,6 +129,24 @@ interface ResonanceData {
     notes: string;
   }>;
 
+  // Sizing — clothing/dress-up measurements (defaults to express-only visibility)
+  sizing: {
+    shirt: string;
+    pants: string;
+    dress: string;
+    shoe: string;
+    bra: string;
+    ring: string;
+    hat: string;
+    gloves: string;
+    waist: string;
+    inseam: string;
+    height: string;
+    notes: string;
+  };
+
+
+
   reciprocityModel: string;
   conflictStyle: string;
 
