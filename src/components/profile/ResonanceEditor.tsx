@@ -1047,7 +1047,7 @@ const CustomArchetypeCreator = ({ onAdd }: { onAdd: (arch: any) => void }) => {
         label="Name"
         value={name}
         onChange={setName}
-        placeholder="e.g. mythrogito"
+        placeholder="e.g. Night Gardener, The Archivist"
       />
       <TextField
         label="Definition"
@@ -1385,7 +1385,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Build"
                       value={data.getToKnowMe.build}
                       onChange={(v) => set(["getToKnowMe", "build"], v)}
-                      placeholder="e.g. gym_consistent"
+                      placeholder="e.g. reads a lot, gym consistent"
                     />
                     <TextField
                       label="Current obsession"
@@ -1436,7 +1436,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Tone tag"
                       value={data.aura.toneTag}
                       onChange={(v) => set(["aura", "toneTag"], v)}
-                      placeholder="e.g. vawy.scawy"
+                      placeholder="e.g. wavy scary, gentle nerd"
                     />
                   </EditorSection>
 
@@ -1453,7 +1453,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="✨ Activation vectors"
                       tags={data.activationVectors}
                       onChange={(v) => set(["activationVectors"], v)}
-                      placeholder="e.g. competent_weirdness"
+                      placeholder="e.g. competent weirdness, quiet warmth"
                     />
                     <TagField
                       label="💘 Flirt — attracts"
@@ -1513,7 +1513,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Values"
                       tags={data.values}
                       onChange={(v) => set(["values"], v)}
-                      placeholder="e.g. sovereignty, competence"
+                      placeholder="e.g. sovereignty, competence, warmth"
                     />
                   </EditorSection>
 
@@ -1742,7 +1742,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Aesthetic tags"
                       tags={data.aesthetics}
                       onChange={(v) => set(["aesthetics"], v)}
-                      placeholder="e.g. workwear, minimal_polish"
+                      placeholder="e.g. workwear, minimal polish"
                     />
                   </EditorSection>
 
@@ -1770,7 +1770,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="What draws you in"
                       tags={data.attraction.whatDrawsIn}
                       onChange={(v) => set(["attraction", "whatDrawsIn"], v)}
-                      placeholder="e.g. quiet_competence"
+                      placeholder="e.g. quiet competence, dry humor"
                     />
                     <TextField
                       label="Timeline"
@@ -1835,7 +1835,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="🚫 Top-level repulsion"
                       tags={data.repulsionVectors}
                       onChange={(v) => set(["repulsionVectors"], v)}
-                      placeholder="e.g. extractive_attention"
+                      placeholder="e.g. extractive attention, performative intensity"
                     />
                     <TagField
                       label="🛑 Hard stops"
@@ -1964,7 +1964,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Seeking archetypes"
                       tags={data.seeking.archetypes}
                       onChange={(v) => set(["seeking", "archetypes"], v)}
-                      placeholder="e.g. grounded_curiosity_with_self_direction"
+                      placeholder="e.g. grounded curiosity with self-direction"
                     />
                     <TagField
                       label="Seeking aesthetics"
@@ -1984,7 +1984,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["seeking", "languages", "mismatchTolerance"], v)
                       }
-                      placeholder="e.g. low_for_chaos_high_for_difference"
+                      placeholder="e.g. low for chaos, high for difference"
                     />
                     <TagField
                       label="Seeking qualities"
@@ -2026,7 +2026,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Roles I'm open to"
                       tags={data.offering.roles}
                       onChange={(v) => set(["offering", "roles"], v)}
-                      placeholder="e.g. maid, passenger_princess, rigger, jester, piggyback_rider"
+                      placeholder="e.g. maid, passenger princess, rigger, jester, piggyback rider"
                     />
                     <TextField
                       label="Notes"
@@ -2097,7 +2097,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       label="Consent frameworks"
                       tags={data.safety.consentFrameworks}
                       onChange={(v) => set(["safety", "consentFrameworks"], v)}
-                      placeholder="e.g. explicit_yes"
+                      placeholder="e.g. explicit yes, ongoing check-ins"
                     />
                     <TagField
                       label="Hard boundaries"
@@ -2153,7 +2153,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       onChange={(v) =>
                         set(["viability", "availability", "currentSeason"], v)
                       }
-                      placeholder="e.g. available_and_seeking_but_building"
+                      placeholder="e.g. available and seeking, but still building"
                     />
                     <TextField
                       label="Weekly hours"
