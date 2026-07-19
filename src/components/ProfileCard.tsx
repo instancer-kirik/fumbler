@@ -1,9 +1,10 @@
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { ResonanceProfile } from "@/data/resonance-profile";
 
 interface ProfileCardProps {
-  profile: ResonanceProfile;
+  profile: ResonanceProfile & { username?: string };
   onSwipe: (direction: "left" | "right") => void;
   isTop: boolean;
 }
