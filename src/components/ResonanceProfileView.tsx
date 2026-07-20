@@ -1001,24 +1001,54 @@ const ResonanceProfileView = ({
               renderLocked("💬", "Languages", "languages")
             )}
 
-            {/* Desires */}
-            {canSee("kinks") ? (
-              rd?.kinks && Object.values(rd.kinks).some((v: any) => Array.isArray(v) ? v.length : Boolean(v)) ? (
+            {/* Desires — prefer new `desires[]` array; fall back to legacy flat `kinks` */}
+            {canSee("kinks") ? (() => {
+              const desires = Array.isArray((rd as any)?.desires) ? (rd as any).desires : [];
+              const hasDesires = desires.some((d: any) =>
+                d && ["intellectual", "relational", "intensity", "play", "avoid"]
+                  .some((f) => Array.isArray(d[f]) ? d[f].length : Boolean(d[f]))
+              );
+              const legacyKinks = rd?.kinks;
+              const hasLegacy = !hasDesires && legacyKinks &&
+                Object.values(legacyKinks).some((v: any) => Array.isArray(v) ? v.length : Boolean(v));
+
+              if (!hasDesires && !hasLegacy) return null;
+
+              return (
                 <SectionCard
                   icon="🔥"
                   label="Desires"
                   description="Pleasure, power & what they need"
                 >
-                  <div className="space-y-3">
-                    <LabelList label="Intellectual" items={rd.kinks.intellectual} />
-                    <LabelList label="Relational" items={rd.kinks.relational} />
-                    <LabelList label="Intensity" items={rd.kinks.intensity} />
-                    <LabelList label="Play" items={rd.kinks.play} />
-                    <LabelList label="Avoids" items={rd.kinks.avoid} />
+                  <div className="space-y-4">
+                    {hasDesires
+                      ? desires.map((d: any, i: number) => (
+                          <div key={i} className="space-y-2">
+                            {d.label && (
+                              <div className="text-sm font-medium text-foreground/90">
+                                {d.label}
+                              </div>
+                            )}
+                            <LabelList label="Intellectual" items={d.intellectual} />
+                            <LabelList label="Relational" items={d.relational} />
+                            <LabelList label="Intensity" items={d.intensity} />
+                            <LabelList label="Play" items={d.play} />
+                            <LabelList label="Avoids" items={d.avoid} />
+                          </div>
+                        ))
+                      : (
+                        <div className="space-y-2">
+                          <LabelList label="Intellectual" items={legacyKinks!.intellectual} />
+                          <LabelList label="Relational" items={legacyKinks!.relational} />
+                          <LabelList label="Intensity" items={legacyKinks!.intensity} />
+                          <LabelList label="Play" items={legacyKinks!.play} />
+                          <LabelList label="Avoids" items={legacyKinks!.avoid} />
+                        </div>
+                      )}
                   </div>
                 </SectionCard>
-              ) : null
-            ) : (
+              );
+            })() : (
               renderLocked("🔥", "Desires", "kinks")
             )}
 
