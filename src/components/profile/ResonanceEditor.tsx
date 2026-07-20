@@ -1644,33 +1644,37 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     visibility={vis("kinks")}
                     onVisibilityChange={(v) => setVis("kinks", v)}
                   >
-                    <TextField
+                    <ListField
                       label="Intellectual"
-                      value={data.kinks.intellectual}
+                      items={data.kinks.intellectual}
                       onChange={(v) => set(["kinks", "intellectual"], v)}
                       placeholder="What stimulates your mind..."
                     />
-                    <TextField
+                    <ListField
                       label="Relational"
-                      value={data.kinks.relational}
+                      items={data.kinks.relational}
                       onChange={(v) => set(["kinks", "relational"], v)}
                       placeholder="What you need in connection..."
                     />
-                    <TextField
+                    <ListField
                       label="Intensity"
-                      value={data.kinks.intensity}
+                      items={data.kinks.intensity}
                       onChange={(v) => set(["kinks", "intensity"], v)}
+                      placeholder="Add an intensity note..."
                     />
-                    <TextField
+                    <ListField
                       label="Play"
-                      value={data.kinks.play}
+                      items={data.kinks.play}
                       onChange={(v) => set(["kinks", "play"], v)}
+                      placeholder="Add a play mode..."
                     />
-                    <TextField
+                    <ListField
                       label="Avoids"
-                      value={data.kinks.avoid}
+                      items={data.kinks.avoid}
                       onChange={(v) => set(["kinks", "avoid"], v)}
+                      placeholder="Add something to avoid..."
                     />
+
                   </EditorSection>
                 </TabsContent>
 
