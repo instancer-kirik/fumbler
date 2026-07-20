@@ -81,11 +81,11 @@ interface ResonanceData {
     vulnerabilityLanguage: string;
   };
   kinks: {
-    intellectual: string;
-    relational: string;
-    intensity: string;
-    play: string;
-    avoid: string;
+    intellectual: string[];
+    relational: string[];
+    intensity: string[];
+    play: string[];
+    avoid: string[];
   };
 
   // Interpersonal
