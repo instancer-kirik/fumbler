@@ -163,11 +163,11 @@ function normalizeV9Flat(raw: Obj): Obj {
       vulnerabilityLanguage: str(langs.vulnerabilityLanguage),
     },
     kinks: {
-      intellectual: str(obj(raw.kinks).intellectual),
-      relational: str(obj(raw.kinks).relational),
-      intensity: str(obj(raw.kinks).intensity),
-      play: str(obj(raw.kinks).play),
-      avoid: str(obj(raw.kinks).avoid),
+      intellectual: kinkList(obj(raw.kinks).intellectual),
+      relational: kinkList(obj(raw.kinks).relational),
+      intensity: kinkList(obj(raw.kinks).intensity),
+      play: kinkList(obj(raw.kinks).play),
+      avoid: kinkList(obj(raw.kinks).avoid),
     },
 
     // ── Interpersonal ─────────────────────────────────────────────────────
