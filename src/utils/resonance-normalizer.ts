@@ -176,6 +176,32 @@ function normalizeV9Flat(raw: Obj): Obj {
       play: kinkList(obj(raw.kinks).play),
       avoid: kinkList(obj(raw.kinks).avoid),
     },
+    desires: (() => {
+      // Prefer explicit desires[] array; each entry has optional label + 5 facets.
+      if (Array.isArray(raw.desires)) {
+        return (raw.desires as Obj[])
+          .filter((d) => d && typeof d === "object")
+          .map((d) => ({
+            label: str(d.label ?? d.context ?? d.name),
+            intellectual: kinkList(d.intellectual),
+            relational: kinkList(d.relational),
+            intensity: kinkList(d.intensity),
+            play: kinkList(d.play),
+            avoid: kinkList(d.avoid),
+          }));
+      }
+      // Legacy fallback: collapse the flat `kinks` object into a single unnamed desire.
+      const k = obj(raw.kinks);
+      const facets = {
+        intellectual: kinkList(k.intellectual),
+        relational: kinkList(k.relational),
+        intensity: kinkList(k.intensity),
+        play: kinkList(k.play),
+        avoid: kinkList(k.avoid),
+      };
+      const anyFilled = Object.values(facets).some((v) => v.length > 0);
+      return anyFilled ? [{ label: "", ...facets }] : [];
+    })(),
 
     // ── Interpersonal ─────────────────────────────────────────────────────
     activationVectors: arr(raw.activationVectors),
