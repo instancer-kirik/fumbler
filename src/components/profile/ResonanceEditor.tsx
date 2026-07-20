@@ -87,6 +87,14 @@ interface ResonanceData {
     play: string[];
     avoid: string[];
   };
+  desires: Array<{
+    label: string;
+    intellectual: string[];
+    relational: string[];
+    intensity: string[];
+    play: string[];
+    avoid: string[];
+  }>;
 
   // Interpersonal
   activationVectors: string[];
