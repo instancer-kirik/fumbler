@@ -977,33 +977,25 @@ const ResonanceProfileView = ({
 
             {/* Desires */}
             {canSee("kinks") ? (
-              rd?.kinks && Object.values(rd.kinks).some(Boolean) ? (
+              rd?.kinks && Object.values(rd.kinks).some((v: any) => Array.isArray(v) ? v.length : Boolean(v)) ? (
                 <SectionCard
                   icon="🔥"
                   label="Desires"
                   description="Pleasure, power & what they need"
                 >
-                  <div className="space-y-1">
-                    <LabelValue
-                      label="Intellectual"
-                      value={rd.kinks.intellectual ?? ""}
-                    />
-                    <LabelValue
-                      label="Relational"
-                      value={rd.kinks.relational ?? ""}
-                    />
-                    <LabelValue
-                      label="Intensity"
-                      value={rd.kinks.intensity ?? ""}
-                    />
-                    <LabelValue label="Play" value={rd.kinks.play ?? ""} />
-                    <LabelValue label="Avoids" value={rd.kinks.avoid ?? ""} />
+                  <div className="space-y-3">
+                    <LabelList label="Intellectual" items={rd.kinks.intellectual} />
+                    <LabelList label="Relational" items={rd.kinks.relational} />
+                    <LabelList label="Intensity" items={rd.kinks.intensity} />
+                    <LabelList label="Play" items={rd.kinks.play} />
+                    <LabelList label="Avoids" items={rd.kinks.avoid} />
                   </div>
                 </SectionCard>
               ) : null
             ) : (
               renderLocked("🔥", "Desires", "kinks")
             )}
+
 
             {/* Archetypes */}
             {canSee("archetypes") ? (
