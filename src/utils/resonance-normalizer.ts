@@ -40,6 +40,13 @@ function obj(v: unknown): Obj {
   return {};
 }
 
+/** Coerce legacy string kinks fields into arrays; keep existing arrays. */
+function kinkList(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map((x) => String(x)).filter(Boolean);
+  if (typeof v === "string" && v.trim()) return [v.trim()];
+  return [];
+}
+
 // ─── Format detection ─────────────────────────────────────────────────────────
 
 type SchemaFormat = "v9flat" | "oldJSON" | "oldInternal" | "unknown";
