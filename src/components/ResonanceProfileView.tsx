@@ -386,6 +386,32 @@ const LabelValue = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
+const LabelList = ({ label, items }: { label: string; items: unknown }) => {
+  const list = Array.isArray(items)
+    ? items.filter(Boolean).map(String)
+    : typeof items === "string" && items.trim()
+      ? [items]
+      : [];
+  if (!list.length) return null;
+  return (
+    <div className="py-1">
+      <div className="text-xs text-muted-foreground font-medium mb-1.5">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {list.map((entry, i) => (
+          <span
+            key={i}
+            className="text-xs text-foreground bg-secondary/60 border border-border/60 rounded-full px-2.5 py-1"
+          >
+            {entry.replace(/_/g, " ")}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const IntensityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
     <div className="flex justify-between">
@@ -977,33 +1003,25 @@ const ResonanceProfileView = ({
 
             {/* Desires */}
             {canSee("kinks") ? (
-              rd?.kinks && Object.values(rd.kinks).some(Boolean) ? (
+              rd?.kinks && Object.values(rd.kinks).some((v: any) => Array.isArray(v) ? v.length : Boolean(v)) ? (
                 <SectionCard
                   icon="🔥"
                   label="Desires"
                   description="Pleasure, power & what they need"
                 >
-                  <div className="space-y-1">
-                    <LabelValue
-                      label="Intellectual"
-                      value={rd.kinks.intellectual ?? ""}
-                    />
-                    <LabelValue
-                      label="Relational"
-                      value={rd.kinks.relational ?? ""}
-                    />
-                    <LabelValue
-                      label="Intensity"
-                      value={rd.kinks.intensity ?? ""}
-                    />
-                    <LabelValue label="Play" value={rd.kinks.play ?? ""} />
-                    <LabelValue label="Avoids" value={rd.kinks.avoid ?? ""} />
+                  <div className="space-y-3">
+                    <LabelList label="Intellectual" items={rd.kinks.intellectual} />
+                    <LabelList label="Relational" items={rd.kinks.relational} />
+                    <LabelList label="Intensity" items={rd.kinks.intensity} />
+                    <LabelList label="Play" items={rd.kinks.play} />
+                    <LabelList label="Avoids" items={rd.kinks.avoid} />
                   </div>
                 </SectionCard>
               ) : null
             ) : (
               renderLocked("🔥", "Desires", "kinks")
             )}
+
 
             {/* Archetypes */}
             {canSee("archetypes") ? (
