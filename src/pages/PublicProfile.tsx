@@ -83,16 +83,19 @@ const LabelValue = ({
   value,
 }: {
   label: string;
-  value?: string | null;
+  value?: string | string[] | null;
 }) => {
-  if (!value) return null;
+  const text = Array.isArray(value)
+    ? value.filter(Boolean).join(", ")
+    : value ?? "";
+  if (!text) return null;
   return (
     <div className="flex justify-between items-start gap-2 py-1.5">
       <span className="text-xs text-muted-foreground font-medium flex-shrink-0">
         {label}
       </span>
       <span className="text-xs text-foreground text-right">
-        {value.replace(/_/g, " ")}
+        {String(text).replace(/_/g, " ")}
       </span>
     </div>
   );
