@@ -286,6 +286,7 @@ const emptyData: ResonanceData = {
     play: [],
     avoid: [],
   },
+  desires: [],
   activationVectors: [],
   repulsionVectors: [],
   flirtInterface: { attracts: [], failsWhen: [] },
