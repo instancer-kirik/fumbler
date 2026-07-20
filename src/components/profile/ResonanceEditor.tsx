@@ -87,6 +87,14 @@ interface ResonanceData {
     play: string[];
     avoid: string[];
   };
+  desires: Array<{
+    label: string;
+    intellectual: string[];
+    relational: string[];
+    intensity: string[];
+    play: string[];
+    avoid: string[];
+  }>;
 
   // Interpersonal
   activationVectors: string[];
@@ -278,6 +286,7 @@ const emptyData: ResonanceData = {
     play: [],
     avoid: [],
   },
+  desires: [],
   activationVectors: [],
   repulsionVectors: [],
   flirtInterface: { attracts: [], failsWhen: [] },
@@ -1636,45 +1645,97 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     />
                   </EditorSection>
 
-                  {/* Desires / Kinks */}
+                  {/* Desires — list of composite entries; each has label + 5 facets */}
                   <EditorSection
                     icon="🔥"
                     label="Desires"
-                    description="Pleasure & power"
+                    description="Each desire is one thing with many facets"
                     visibility={vis("kinks")}
                     onVisibilityChange={(v) => setVis("kinks", v)}
                   >
-                    <ListField
-                      label="Intellectual"
-                      items={data.kinks.intellectual}
-                      onChange={(v) => set(["kinks", "intellectual"], v)}
-                      placeholder="What stimulates your mind..."
-                    />
-                    <ListField
-                      label="Relational"
-                      items={data.kinks.relational}
-                      onChange={(v) => set(["kinks", "relational"], v)}
-                      placeholder="What you need in connection..."
-                    />
-                    <ListField
-                      label="Intensity"
-                      items={data.kinks.intensity}
-                      onChange={(v) => set(["kinks", "intensity"], v)}
-                      placeholder="Add an intensity note..."
-                    />
-                    <ListField
-                      label="Play"
-                      items={data.kinks.play}
-                      onChange={(v) => set(["kinks", "play"], v)}
-                      placeholder="Add a play mode..."
-                    />
-                    <ListField
-                      label="Avoids"
-                      items={data.kinks.avoid}
-                      onChange={(v) => set(["kinks", "avoid"], v)}
-                      placeholder="Add something to avoid..."
-                    />
-
+                    <div className="space-y-4">
+                      {data.desires.length === 0 && (
+                        <p className="text-xs text-muted-foreground italic">
+                          No desires added yet. Each entry captures one desire across intellectual, relational, intensity, play, and avoid facets.
+                        </p>
+                      )}
+                      {data.desires.map((desire, di) => (
+                        <div
+                          key={di}
+                          className="rounded-lg border border-border/40 bg-muted/20 p-3 space-y-3"
+                        >
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={desire.label}
+                              onChange={(e) =>
+                                set(["desires", String(di), "label"], e.target.value)
+                              }
+                              placeholder="Name this desire (e.g. 'with a partner', 'clowning', 'solo creative')"
+                              className={inputClass + " flex-1"}
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                set(
+                                  ["desires"],
+                                  data.desires.filter((_, i) => i !== di),
+                                )
+                              }
+                              className="rounded-full p-1.5 hover:bg-destructive/20 transition-all flex-shrink-0"
+                              aria-label="Remove desire"
+                            >
+                              <X className="h-4 w-4 text-muted-foreground" />
+                            </button>
+                          </div>
+                          <ListField
+                            label="Intellectual"
+                            items={desire.intellectual}
+                            onChange={(v) => set(["desires", String(di), "intellectual"], v)}
+                            placeholder="What stimulates the mind here..."
+                          />
+                          <ListField
+                            label="Relational"
+                            items={desire.relational}
+                            onChange={(v) => set(["desires", String(di), "relational"], v)}
+                            placeholder="What connection looks like here..."
+                          />
+                          <ListField
+                            label="Intensity"
+                            items={desire.intensity}
+                            onChange={(v) => set(["desires", String(di), "intensity"], v)}
+                            placeholder="Add an intensity note..."
+                          />
+                          <ListField
+                            label="Play"
+                            items={desire.play}
+                            onChange={(v) => set(["desires", String(di), "play"], v)}
+                            placeholder="Add a play mode..."
+                          />
+                          <ListField
+                            label="Avoids"
+                            items={desire.avoid}
+                            onChange={(v) => set(["desires", String(di), "avoid"], v)}
+                            placeholder="Add something to avoid..."
+                          />
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          set(
+                            ["desires"],
+                            [
+                              ...data.desires,
+                              { label: "", intellectual: [], relational: [], intensity: [], play: [], avoid: [] },
+                            ],
+                          )
+                        }
+                        className="w-full text-xs font-medium py-2 rounded-md border border-dashed border-border/60 text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                      >
+                        + Add desire
+                      </button>
+                    </div>
                   </EditorSection>
                 </TabsContent>
 
