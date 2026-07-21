@@ -318,6 +318,12 @@ const emptyData: ResonanceData = {
     shirt: "", pants: "", dress: "", shoe: "", bra: "", ring: "",
     hat: "", gloves: "", waist: "", inseam: "", height: "", notes: "",
   },
+  frames: {
+    astrology: { sun: "", moon: "", rising: "", notes: "" },
+    mbti: { type: "", notes: "" },
+    enneagram: { type: "", wing: "", stack: "", notes: "" },
+    custom: [],
+  },
 
 
   reciprocityModel: "",
