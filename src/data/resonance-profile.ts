@@ -286,6 +286,12 @@ export const RESONANCE_SECTIONS = [
     description: "Who you are by context",
   },
   {
+    id: "frames",
+    label: "Frames",
+    icon: "🔮",
+    description: "Astrology, MBTI, enneagram & custom systems",
+  },
+  {
     id: "attraction",
     label: "Attraction",
     icon: "🧲",

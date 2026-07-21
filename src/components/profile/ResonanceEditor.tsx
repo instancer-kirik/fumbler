@@ -153,6 +153,14 @@ interface ResonanceData {
     notes: string;
   };
 
+  // Frames — identity systems (astrology, MBTI, enneagram, custom)
+  frames: {
+    astrology: { sun: string; moon: string; rising: string; notes: string };
+    mbti: { type: string; notes: string };
+    enneagram: { type: string; wing: string; stack: string; notes: string };
+    custom: Array<{ system: string; value: string; notes: string }>;
+  };
+
 
 
   reciprocityModel: string;
@@ -309,6 +317,12 @@ const emptyData: ResonanceData = {
   sizing: {
     shirt: "", pants: "", dress: "", shoe: "", bra: "", ring: "",
     hat: "", gloves: "", waist: "", inseam: "", height: "", notes: "",
+  },
+  frames: {
+    astrology: { sun: "", moon: "", rising: "", notes: "" },
+    mbti: { type: "", notes: "" },
+    enneagram: { type: "", wing: "", stack: "", notes: "" },
+    custom: [],
   },
 
 
@@ -1259,6 +1273,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "offering",
     "collaborations",
     "sizing",
+    "frames",
 
 
     "safety",
@@ -2130,6 +2145,90 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       placeholder="Fit preferences, brands that fit well, anything to know..."
                       multiline
                     />
+                  </EditorSection>
+
+                  {/* Frames — identity systems */}
+                  <EditorSection
+                    icon="🔮"
+                    label="Identity Frames"
+                    description="Astrology, MBTI, Enneagram, and other systems people use to describe themselves"
+                    visibility={vis("frames")}
+                    onVisibilityChange={(v) => setVis("frames", v)}
+                  >
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2">Astrology</p>
+                        <div className="grid grid-cols-3 gap-3">
+                          <TextField label="Sun" value={data.frames.astrology.sun} onChange={(v) => set(["frames","astrology","sun"], v)} placeholder="Aquarius" />
+                          <TextField label="Moon" value={data.frames.astrology.moon} onChange={(v) => set(["frames","astrology","moon"], v)} placeholder="Pisces" />
+                          <TextField label="Rising" value={data.frames.astrology.rising} onChange={(v) => set(["frames","astrology","rising"], v)} placeholder="Scorpio" />
+                        </div>
+                        <TextField label="Notes" value={data.frames.astrology.notes} onChange={(v) => set(["frames","astrology","notes"], v)} placeholder="Chart quirks, how much you buy it, etc." multiline />
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2">MBTI</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <TextField label="Type" value={data.frames.mbti.type} onChange={(v) => set(["frames","mbti","type"], v)} placeholder="INFP, ENTJ..." />
+                          <TextField label="Notes" value={data.frames.mbti.notes} onChange={(v) => set(["frames","mbti","notes"], v)} placeholder="How it shows up" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2">Enneagram</p>
+                        <div className="grid grid-cols-3 gap-3">
+                          <TextField label="Type" value={data.frames.enneagram.type} onChange={(v) => set(["frames","enneagram","type"], v)} placeholder="4, 5, 7..." />
+                          <TextField label="Wing" value={data.frames.enneagram.wing} onChange={(v) => set(["frames","enneagram","wing"], v)} placeholder="4w5" />
+                          <TextField label="Stack" value={data.frames.enneagram.stack} onChange={(v) => set(["frames","enneagram","stack"], v)} placeholder="sp/sx" />
+                        </div>
+                        <TextField label="Notes" value={data.frames.enneagram.notes} onChange={(v) => set(["frames","enneagram","notes"], v)} placeholder="Growth line, core wound, etc." multiline />
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2">Custom systems</p>
+                        <p className="text-xs text-muted-foreground mb-2">Human Design, HSP, chronotype, D&D alignment, love languages — anything</p>
+                        <div className="space-y-2">
+                          {data.frames.custom.map((f, i) => (
+                            <div key={i} className="rounded-xl bg-secondary/40 p-3 space-y-2">
+                              <div className="grid grid-cols-2 gap-2">
+                                <TextField label="System" value={f.system} onChange={(v) => {
+                                  const next = [...data.frames.custom];
+                                  next[i] = { ...next[i], system: v };
+                                  set(["frames","custom"], next);
+                                }} placeholder="Human Design" />
+                                <TextField label="Value" value={f.value} onChange={(v) => {
+                                  const next = [...data.frames.custom];
+                                  next[i] = { ...next[i], value: v };
+                                  set(["frames","custom"], next);
+                                }} placeholder="Manifesting Generator" />
+                              </div>
+                              <TextField label="Notes" value={f.notes} onChange={(v) => {
+                                const next = [...data.frames.custom];
+                                next[i] = { ...next[i], notes: v };
+                                set(["frames","custom"], next);
+                              }} placeholder="Optional" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = data.frames.custom.filter((_, j) => j !== i);
+                                  set(["frames","custom"], next);
+                                }}
+                                className="text-xs text-destructive hover:underline"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => set(["frames","custom"], [...data.frames.custom, { system: "", value: "", notes: "" }])}
+                            className="w-full rounded-xl border border-dashed border-border py-2 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/40 transition"
+                          >
+                            + Add a system
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </EditorSection>
 
 

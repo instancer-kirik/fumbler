@@ -277,6 +277,33 @@ function normalizeV9Flat(raw: Obj): Obj {
       height: str(obj(raw.sizing).height),
       notes: str(obj(raw.sizing).notes),
     },
+    frames: {
+      astrology: {
+        sun: str(obj(obj(raw.frames).astrology).sun),
+        moon: str(obj(obj(raw.frames).astrology).moon),
+        rising: str(obj(obj(raw.frames).astrology).rising),
+        notes: str(obj(obj(raw.frames).astrology).notes),
+      },
+      mbti: {
+        type: str(obj(obj(raw.frames).mbti).type),
+        notes: str(obj(obj(raw.frames).mbti).notes),
+      },
+      enneagram: {
+        type: str(obj(obj(raw.frames).enneagram).type),
+        wing: str(obj(obj(raw.frames).enneagram).wing),
+        stack: str(obj(obj(raw.frames).enneagram).stack),
+        notes: str(obj(obj(raw.frames).enneagram).notes),
+      },
+      custom: Array.isArray(obj(raw.frames).custom)
+        ? (obj(raw.frames).custom as Obj[])
+            .filter((f) => f && typeof f === "object")
+            .map((f) => ({
+              system: str(f.system),
+              value: str(f.value),
+              notes: str(f.notes),
+            }))
+        : [],
+    },
     reciprocityModel: str(raw.reciprocityModel),
     conflictStyle: str(raw.conflictStyle),
 
