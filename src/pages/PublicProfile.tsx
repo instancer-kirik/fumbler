@@ -18,20 +18,25 @@ import {
 const SECTION_KEYS: Record<string, string[]> = {
   gtky: ["getToKnowMe"],
   aura: ["aura", "aesthetics", "aliases", "persona"],
-  core: ["activationVectors", "repulsionVectors", "flirtInterface"],
+  core: ["activationVectors", "repulsionVectors", "flirtInterface", "cognitiveStyle"],
   signals: ["consumer", "trustSignals", "distrustSignals"],
   qualities: ["qualities", "introspections", "values"],
   loops: ["loops"],
   lessons: ["lessons"],
+  aspirations: ["aspirations"],
+  dreamlog: ["sleepingDreams"],
   languages: ["languages"],
-  kinks: ["kinks"],
+  kinks: ["kinks", "desires"],
   archetypes: ["archetypes"],
   attraction: ["attraction"],
   engagement: ["engagement"],
   dynamics: ["powerDynamics", "playPreferences"],
-  repulsion: ["repulsion"],
-  viability: ["viability"],
+  repulsion: ["repulsion", "repulsionVectors"],
+  viability: ["viability", "reciprocityModel", "conflictStyle", "growthVectors"],
   seeking: ["seeking"],
+  offering: ["offering"],
+  collaborations: ["collaborations"],
+  sizing: ["sizing"],
   safety: ["safety"],
   economic: ["economic"],
   connection: ["connection"],
@@ -367,13 +372,15 @@ const PublicProfile = () => {
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => {
-            // If there's browser history, go back; otherwise go to discover (signed in) or landing
-            if (window.history.length > 1) {
+            // Prefer going back within the SPA when there's app history,
+            // otherwise route to a sensible destination based on auth state.
+            const sameOriginReferrer =
+              document.referrer &&
+              document.referrer.startsWith(window.location.origin);
+            if (sameOriginReferrer) {
               navigate(-1);
             } else {
-              supabase.auth.getSession().then(({ data: { session } }) => {
-                navigate(session?.user ? "/discover" : "/");
-              });
+              navigate(viewer ? "/discover" : "/");
             }
           }}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
