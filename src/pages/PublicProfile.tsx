@@ -4,6 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 
 // Mapping from sectionVisibility keys to the top-level data keys the RPC emits.
 // The RPC only includes keys for sections the viewer is granted access to,
