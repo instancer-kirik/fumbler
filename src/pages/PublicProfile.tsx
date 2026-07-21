@@ -372,13 +372,15 @@ const PublicProfile = () => {
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => {
-            // If there's browser history, go back; otherwise go to discover (signed in) or landing
-            if (window.history.length > 1) {
+            // Prefer going back within the SPA when there's app history,
+            // otherwise route to a sensible destination based on auth state.
+            const sameOriginReferrer =
+              document.referrer &&
+              document.referrer.startsWith(window.location.origin);
+            if (sameOriginReferrer) {
               navigate(-1);
             } else {
-              supabase.auth.getSession().then(({ data: { session } }) => {
-                navigate(session?.user ? "/discover" : "/");
-              });
+              navigate(viewer ? "/discover" : "/");
             }
           }}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
