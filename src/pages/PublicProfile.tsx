@@ -756,27 +756,71 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
-          {/* Kinks / Desires */}
-          {canSee("kinks") &&
-            rd?.kinks &&
-            (rd.kinks.intellectual || rd.kinks.relational || rd.kinks.play) && (
-              <SectionCard
-                icon="🔥"
-                label="Desires"
-                description="Pleasure & power"
-              >
-                <div className="space-y-3">
-                  <LabelValue
-                    label="Intellectual"
-                    value={rd.kinks.intellectual}
-                  />
-                  <LabelValue label="Relational" value={rd.kinks.relational} />
-                  <LabelValue label="Intensity" value={rd.kinks.intensity} />
-                  <LabelValue label="Play" value={rd.kinks.play} />
-                  <LabelValue label="Avoids" value={rd.kinks.avoid} />
+          {/* Desires — prefer new desires[] array; fall back to legacy flat kinks */}
+          {canSee("kinks") && (() => {
+            const FACETS: Array<{ key: string; label: string; variant?: "default" | "warm" | "muted" }> = [
+              { key: "intellectual", label: "Intellectual" },
+              { key: "relational", label: "Relational" },
+              { key: "intensity", label: "Intensity" },
+              { key: "play", label: "Play" },
+              { key: "avoid", label: "Avoids", variant: "muted" },
+            ];
+            const toArr = (v: any): string[] =>
+              Array.isArray(v) ? v.filter(Boolean) : v ? [String(v)] : [];
+
+            const desires: any[] = Array.isArray((rd as any)?.desires)
+              ? (rd as any).desires
+              : [];
+            const hasDesires = desires.some((d) =>
+              FACETS.some((f) => toArr(d?.[f.key]).length),
+            );
+            const legacy = rd?.kinks;
+            const hasLegacy =
+              !hasDesires &&
+              legacy &&
+              FACETS.some((f) => toArr((legacy as any)?.[f.key]).length);
+            if (!hasDesires && !hasLegacy) return null;
+
+            const renderFacets = (obj: any) => (
+              <div className="space-y-2">
+                {FACETS.map((f) => {
+                  const items = toArr(obj?.[f.key]);
+                  if (!items.length) return null;
+                  return (
+                    <div key={f.key} className="space-y-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {f.label}
+                      </p>
+                      <TagList items={items} variant={f.variant ?? "default"} />
+                    </div>
+                  );
+                })}
+              </div>
+            );
+
+            return (
+              <SectionCard icon="🔥" label="Desires" description="Pleasure & power, by context">
+                <div className="space-y-4">
+                  {hasDesires
+                    ? desires.map((d, i) => {
+                        const has = FACETS.some((f) => toArr(d?.[f.key]).length);
+                        if (!has) return null;
+                        return (
+                          <div key={i} className="space-y-2">
+                            {d?.label && (
+                              <p className="text-sm font-semibold text-foreground/90">
+                                {d.label}
+                              </p>
+                            )}
+                            {renderFacets(d)}
+                          </div>
+                        );
+                      })
+                    : renderFacets(legacy)}
                 </div>
               </SectionCard>
-            )}
+            );
+          })()}
 
           {/* Archetypes */}
           {canSee("archetypes") && rd?.archetypes?.length > 0 && (
