@@ -887,6 +887,56 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
+          {/* Identity Frames */}
+          {canSee("frames") && rd?.frames && (() => {
+            const f = rd.frames;
+            const astro = f.astrology || {};
+            const hasAstro = astro.sun || astro.moon || astro.rising || astro.notes;
+            const hasMbti = f.mbti?.type || f.mbti?.notes;
+            const enn = f.enneagram || {};
+            const hasEnn = enn.type || enn.wing || enn.stack || enn.notes;
+            const custom = Array.isArray(f.custom) ? f.custom.filter((c: any) => c?.system || c?.value) : [];
+            if (!hasAstro && !hasMbti && !hasEnn && !custom.length) return null;
+            return (
+              <SectionCard icon="🔮" label="Identity Frames" description="Systems they use to describe themselves">
+                <div className="space-y-3">
+                  {hasAstro && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">Astrology</p>
+                      <LabelValue label="Sun" value={astro.sun} />
+                      <LabelValue label="Moon" value={astro.moon} />
+                      <LabelValue label="Rising" value={astro.rising} />
+                      {astro.notes && <p className="text-xs text-foreground/80 italic mt-1">{astro.notes}</p>}
+                    </div>
+                  )}
+                  {hasMbti && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">MBTI</p>
+                      <LabelValue label="Type" value={f.mbti.type} />
+                      {f.mbti.notes && <p className="text-xs text-foreground/80 italic mt-1">{f.mbti.notes}</p>}
+                    </div>
+                  )}
+                  {hasEnn && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">Enneagram</p>
+                      <LabelValue label="Type" value={enn.type} />
+                      <LabelValue label="Wing" value={enn.wing} />
+                      <LabelValue label="Stack" value={enn.stack} />
+                      {enn.notes && <p className="text-xs text-foreground/80 italic mt-1">{enn.notes}</p>}
+                    </div>
+                  )}
+                  {custom.map((c: any, i: number) => (
+                    <div key={i} className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">{c.system}</p>
+                      {c.value && <p className="text-sm text-foreground">{c.value}</p>}
+                      {c.notes && <p className="text-xs text-foreground/80 italic mt-1">{c.notes}</p>}
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            );
+          })()}
+
           {/* Attraction */}
           {canSee("attraction") &&
             rd?.attraction &&
