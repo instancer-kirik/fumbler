@@ -28,6 +28,7 @@ const SECTION_KEYS: Record<string, string[]> = {
   languages: ["languages"],
   kinks: ["kinks", "desires"],
   archetypes: ["archetypes"],
+  frames: ["frames"],
   attraction: ["attraction"],
   engagement: ["engagement"],
   dynamics: ["powerDynamics", "playPreferences"],
