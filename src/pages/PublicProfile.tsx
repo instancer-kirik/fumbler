@@ -4,6 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 
 // Mapping from sectionVisibility keys to the top-level data keys the RPC emits.
 // The RPC only includes keys for sections the viewer is granted access to,
@@ -800,27 +807,45 @@ const PublicProfile = () => {
 
             return (
               <SectionCard icon="🔥" label="Desires" description="Pleasure & power, by context">
-                <div className="space-y-4">
-                  {hasDesires
-                    ? desires.map((d, i) => {
-                        const has = FACETS.some((f) => toArr(d?.[f.key]).length);
-                        if (!has) return null;
-                        return (
-                          <div key={i} className="space-y-2">
-                            {d?.label && (
-                              <p className="text-sm font-semibold text-foreground/90">
-                                {d.label}
-                              </p>
-                            )}
+                {hasDesires ? (
+                  <Accordion type="multiple" className="space-y-2">
+                    {desires.map((d, i) => {
+                      const has = FACETS.some((f) => toArr(d?.[f.key]).length);
+                      if (!has) return null;
+                      const count = FACETS.reduce(
+                        (n, f) => n + toArr(d?.[f.key]).length,
+                        0,
+                      );
+                      return (
+                        <AccordionItem
+                          key={i}
+                          value={`desire-${i}`}
+                          className="rounded-xl border border-border/50 bg-secondary/30 px-3"
+                        >
+                          <AccordionTrigger className="py-3 hover:no-underline">
+                            <div className="flex items-center gap-2 text-left">
+                              <span className="text-sm font-semibold text-foreground/90">
+                                {d?.label || `Context ${i + 1}`}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {count} {count === 1 ? "note" : "notes"}
+                              </span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-3">
                             {renderFacets(d)}
-                          </div>
-                        );
-                      })
-                    : renderFacets(legacy)}
-                </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                ) : (
+                  renderFacets(legacy)
+                )}
               </SectionCard>
             );
           })()}
+
 
           {/* Archetypes */}
           {canSee("archetypes") && rd?.archetypes?.length > 0 && (
