@@ -153,6 +153,14 @@ interface ResonanceData {
     notes: string;
   };
 
+  // Frames — identity systems (astrology, MBTI, enneagram, custom)
+  frames: {
+    astrology: { sun: string; moon: string; rising: string; notes: string };
+    mbti: { type: string; notes: string };
+    enneagram: { type: string; wing: string; stack: string; notes: string };
+    custom: Array<{ system: string; value: string; notes: string }>;
+  };
+
 
 
   reciprocityModel: string;
