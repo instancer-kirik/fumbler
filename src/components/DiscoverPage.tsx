@@ -54,28 +54,52 @@ const DiscoverPage = () => {
     return localStorage.getItem(PIN_SELF_KEY) === "1";
   });
 
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filterVersion, setFilterVersion] = useState(0);
+
   useEffect(() => {
     const fetchProfiles = async () => {
       if (!user) return;
       setLoading(true);
+
+      // Load my own filter preferences
+      const { data: meRow } = await supabase
+        .from("profiles")
+        .select("interested_in, looking_for, age_min, age_max")
+        .eq("id", user.id)
+        .maybeSingle();
+      const me = (meRow || {}) as {
+        interested_in?: string[] | null;
+        looking_for?: string[] | null;
+        age_min?: number | null;
+        age_max?: number | null;
+      };
+
       let query = supabase
         .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age")
+        .select("id, full_name, username, avatar_url, bio, age, gender, looking_for")
         .eq("onboarding_complete", true);
 
-      if (!pinSelf) {
-        query = query.neq("id", user.id);
+      if (!pinSelf) query = query.neq("id", user.id);
+
+      if (me.age_min != null) query = query.gte("age", me.age_min);
+      if (me.age_max != null) query = query.lte("age", me.age_max);
+
+      const interested = me.interested_in || [];
+      if (interested.length > 0 && !interested.includes("Everyone")) {
+        const genders = interested.flatMap((i) => INTEREST_TO_GENDER[i] || []);
+        if (genders.length > 0) query = query.in("gender", genders);
       }
+
+      const wants = me.looking_for || [];
+      if (wants.length > 0) query = query.overlaps("looking_for", wants);
 
       const { data, error } = await query;
 
       if (!error && data) {
-        // If pinning self, put own profile first
         const mapped = data.map(dbToCardProfile);
         if (pinSelf) {
-          mapped.sort((a, b) =>
-            a.id === user.id ? -1 : b.id === user.id ? 1 : 0,
-          );
+          mapped.sort((a, b) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
         }
         setProfiles(mapped);
         setCurrentIndex(0);
@@ -83,7 +107,7 @@ const DiscoverPage = () => {
       setLoading(false);
     };
     fetchProfiles();
-  }, [user, pinSelf]);
+  }, [user, pinSelf, filterVersion]);
 
   const togglePinSelf = () => {
     setPinSelf((prev) => {
