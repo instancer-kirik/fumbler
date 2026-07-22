@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, Plus, Heart, MessageCircle, X, Search, Trash2, User, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Clock, Plus, Heart, MessageCircle, X, Search, Trash2, User, ChevronDown, ChevronUp, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
