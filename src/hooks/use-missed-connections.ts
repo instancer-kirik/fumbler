@@ -7,7 +7,7 @@ export type MCReactionKind = "relate" | "thats_me";
 
 export interface MissedConnectionRow {
   id: string;
-  author_id: string;
+  author_id: string | null;
   category: MCCategory;
   title: string;
   location_text: string;
