@@ -6147,14 +6147,20 @@ export type Database = {
       profiles: {
         Row: {
           age: number | null
+          age_max: number | null
+          age_min: number | null
           avatar_url: string | null
           bio: string | null
           contact_methods: Json | null
           created_at: string
           full_name: string | null
+          gender: string | null
           id: string
+          interested_in: string[]
           is_public: boolean | null
+          looking_for: string[]
           onboarding_complete: boolean | null
+          orientation: string | null
           profile_types: string[] | null
           resonance_data: Json | null
           role_attributes: Json | null
@@ -6163,14 +6169,20 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          age_max?: number | null
+          age_min?: number | null
           avatar_url?: string | null
           bio?: string | null
           contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
+          gender?: string | null
           id: string
+          interested_in?: string[]
           is_public?: boolean | null
+          looking_for?: string[]
           onboarding_complete?: boolean | null
+          orientation?: string | null
           profile_types?: string[] | null
           resonance_data?: Json | null
           role_attributes?: Json | null
@@ -6179,14 +6191,20 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          age_max?: number | null
+          age_min?: number | null
           avatar_url?: string | null
           bio?: string | null
           contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
+          gender?: string | null
           id?: string
+          interested_in?: string[]
           is_public?: boolean | null
+          looking_for?: string[]
           onboarding_complete?: boolean | null
+          orientation?: string | null
           profile_types?: string[] | null
           resonance_data?: Json | null
           role_attributes?: Json | null
