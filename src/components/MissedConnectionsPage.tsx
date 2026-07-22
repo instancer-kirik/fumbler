@@ -412,6 +412,23 @@ const ComposeForm = ({
         className="w-full rounded-xl bg-secondary/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none"
       />
 
+      <label className="flex items-start gap-2 rounded-xl bg-secondary/40 px-3 py-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={values.is_anonymous}
+          onChange={(e) => set("is_anonymous", e.target.checked)}
+          className="mt-0.5 accent-primary"
+        />
+        <span className="flex-1 text-xs text-foreground">
+          <span className="flex items-center gap-1.5 font-semibold">
+            <EyeOff className="h-3 w-3" /> Post anonymously
+          </span>
+          <span className="text-[10px] text-muted-foreground">
+            Your @username won't appear on the post. You can still see and manage it from "your posts".
+          </span>
+        </span>
+      </label>
+
       <div className="flex justify-end gap-2">
         <button
           type="button"
