@@ -247,6 +247,29 @@ const DiscoverPage = () => {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="px-5 pb-2">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, bio, keywords…"
+            className="w-full rounded-full bg-secondary py-2 pl-9 pr-9 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Card stack */}
       <div className="relative mx-auto w-full max-w-sm flex-1 px-4">
         <div className="relative h-[65vh] w-full">
