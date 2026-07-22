@@ -47,16 +47,24 @@ export function useMissedConnections(filter?: { category?: MCCategory | "all"; c
     queryKey: ["missed-connections", filter?.category ?? "all", filter?.city ?? "", user?.id ?? "anon"],
     queryFn: async (): Promise<MissedConnectionWithReactions[]> => {
       let query = (supabase.from("missed_connections") as any)
-        .select("*, author:profiles!missed_connections_author_id_fkey(username, full_name, avatar_url)")
+        .select("*")
         .order("created_at", { ascending: false })
         .limit(200);
 
       if (filter?.category && filter.category !== "all") query = query.eq("category", filter.category);
       if (filter?.city && filter.city.trim()) query = query.ilike("city", `%${filter.city.trim()}%`);
 
-      const { data: posts, error } = await query;
+      const { data: rawPosts, error } = await query;
       if (error) throw error;
-      if (!posts || posts.length === 0) return [];
+      if (!rawPosts || rawPosts.length === 0) return [];
+
+      const authorIds = Array.from(new Set(rawPosts.map((p: any) => p.author_id)));
+      const { data: authors } = await (supabase.from("profiles") as any)
+        .select("id, username, full_name, avatar_url")
+        .in("id", authorIds);
+      const authorMap = new Map<string, any>();
+      for (const a of authors || []) authorMap.set(a.id, a);
+      const posts = rawPosts.map((p: any) => ({ ...p, author: authorMap.get(p.author_id) || null }));
 
       const ids = posts.map((p: any) => p.id);
       const { data: reactions } = await (supabase.from("missed_connection_reactions") as any)
