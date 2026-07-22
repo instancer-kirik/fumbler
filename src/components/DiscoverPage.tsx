@@ -5,9 +5,17 @@ import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
 import HamburgerMenu from "./HamburgerMenu";
+import DiscoverFiltersSheet from "./DiscoverFiltersSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
+
+// Map "Interested in" preferences → gender values on candidate profiles
+const INTEREST_TO_GENDER: Record<string, string[]> = {
+  Women: ["Woman"],
+  Men: ["Man"],
+  "Non-binary": ["Non-binary", "Trans", "Other"],
+};
 
 // Build a minimal ResonanceProfile from DB row for the card stack
 const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
