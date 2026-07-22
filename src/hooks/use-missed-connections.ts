@@ -7,7 +7,7 @@ export type MCReactionKind = "relate" | "thats_me";
 
 export interface MissedConnectionRow {
   id: string;
-  author_id: string;
+  author_id: string | null;
   category: MCCategory;
   title: string;
   location_text: string;
@@ -47,7 +47,8 @@ export function useMissedConnections(filter?: { category?: MCCategory | "all"; c
   return useQuery({
     queryKey: ["missed-connections", filter?.category ?? "all", filter?.city ?? "", user?.id ?? "anon"],
     queryFn: async (): Promise<MissedConnectionWithReactions[]> => {
-      let query = (supabase.from("missed_connections") as any)
+      // Read via the privacy view: server nulls author_id when is_anonymous=true (except for the author)
+      let query = (supabase.from("missed_connections_public") as any)
         .select("*")
         .order("created_at", { ascending: false })
         .limit(200);
@@ -59,13 +60,15 @@ export function useMissedConnections(filter?: { category?: MCCategory | "all"; c
       if (error) throw error;
       if (!rawPosts || rawPosts.length === 0) return [];
 
-      const authorIds = Array.from(new Set(rawPosts.map((p: any) => p.author_id)));
-      const { data: authors } = await (supabase.from("profiles") as any)
-        .select("id, username, full_name, avatar_url")
-        .in("id", authorIds);
+      const authorIds = Array.from(new Set(rawPosts.map((p: any) => p.author_id).filter(Boolean)));
+      const { data: authors } = authorIds.length
+        ? await (supabase.from("profiles") as any)
+            .select("id, username, full_name, avatar_url")
+            .in("id", authorIds)
+        : { data: [] as any[] };
       const authorMap = new Map<string, any>();
       for (const a of authors || []) authorMap.set(a.id, a);
-      const posts = rawPosts.map((p: any) => ({ ...p, author: authorMap.get(p.author_id) || null }));
+      const posts = rawPosts.map((p: any) => ({ ...p, author: p.author_id ? authorMap.get(p.author_id) || null : null }));
 
       const ids = posts.map((p: any) => p.id);
       const { data: reactions } = await (supabase.from("missed_connection_reactions") as any)
