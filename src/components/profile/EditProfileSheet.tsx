@@ -26,7 +26,8 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
+  const [gender, setGender] = useState<string[]>([]);
+  const [genderDescription, setGenderDescription] = useState("");
   const [orientation, setOrientation] = useState("");
   const [interestedIn, setInterestedIn] = useState<string[]>([]);
   const [lookingFor, setLookingFor] = useState<string[]>([]);
@@ -44,12 +45,13 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
     (async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("gender, orientation, interested_in, looking_for, age_min, age_max")
+        .select("gender, gender_description, orientation, interested_in, looking_for, age_min, age_max")
         .eq("id", profile.id)
         .maybeSingle();
       const row = data as any;
       if (row) {
-        setGender(row.gender || "");
+        setGender(Array.isArray(row.gender) ? row.gender : row.gender ? [row.gender] : []);
+        setGenderDescription(row.gender_description || "");
         setOrientation(row.orientation || "");
         setInterestedIn(row.interested_in || []);
         setLookingFor(row.looking_for || []);
