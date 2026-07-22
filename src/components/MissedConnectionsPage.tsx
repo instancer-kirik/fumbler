@@ -180,8 +180,17 @@ const MissedConnectionsPage = () => {
 
                   {/* author + time */}
                   <div className="mb-3 flex items-center gap-2 text-[10px] text-muted-foreground">
-                    <User className="h-3 w-3" />
-                    <span>{p.author?.username ? `@${p.author.username}` : "anonymous"}</span>
+                    {p.is_anonymous ? (
+                      <>
+                        <EyeOff className="h-3 w-3" />
+                        <span className="italic">posted anonymously</span>
+                      </>
+                    ) : (
+                      <>
+                        <User className="h-3 w-3" />
+                        <span>{p.author?.username ? `@${p.author.username}` : "anonymous"}</span>
+                      </>
+                    )}
                     <span>·</span>
                     <span>{timeAgo(p.created_at)}</span>
                     {isMine && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-semibold text-primary-foreground">your post</span>}
