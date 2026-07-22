@@ -15,6 +15,7 @@ export interface MissedConnectionRow {
   encounter_time: string | null;
   description: string;
   looking_for: string | null;
+  is_anonymous: boolean;
   created_at: string;
   updated_at: string;
   author?: {
@@ -110,6 +111,7 @@ export function useCreateMissedConnection() {
       encounter_time?: string;
       description: string;
       looking_for?: string;
+      is_anonymous?: boolean;
     }) => {
       if (!user) throw new Error("You must be signed in to post");
       const { data, error } = await (supabase.from("missed_connections") as any)
@@ -122,6 +124,7 @@ export function useCreateMissedConnection() {
           encounter_time: input.encounter_time?.trim() || null,
           description: input.description.trim(),
           looking_for: input.looking_for?.trim() || null,
+          is_anonymous: !!input.is_anonymous,
         })
         .select()
         .single();

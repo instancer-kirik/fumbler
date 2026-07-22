@@ -4776,6 +4776,7 @@ export type Database = {
           description: string
           encounter_time: string | null
           id: string
+          is_anonymous: boolean
           location_text: string
           looking_for: string | null
           title: string
@@ -4789,6 +4790,7 @@ export type Database = {
           description: string
           encounter_time?: string | null
           id?: string
+          is_anonymous?: boolean
           location_text: string
           looking_for?: string | null
           title: string
@@ -4802,6 +4804,7 @@ export type Database = {
           description?: string
           encounter_time?: string | null
           id?: string
+          is_anonymous?: boolean
           location_text?: string
           looking_for?: string | null
           title?: string

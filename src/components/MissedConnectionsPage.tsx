@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, Plus, Heart, MessageCircle, X, Search, Trash2, User, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Clock, Plus, Heart, MessageCircle, X, Search, Trash2, User, ChevronDown, ChevronUp, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
@@ -180,8 +180,17 @@ const MissedConnectionsPage = () => {
 
                   {/* author + time */}
                   <div className="mb-3 flex items-center gap-2 text-[10px] text-muted-foreground">
-                    <User className="h-3 w-3" />
-                    <span>{p.author?.username ? `@${p.author.username}` : "anonymous"}</span>
+                    {p.is_anonymous ? (
+                      <>
+                        <EyeOff className="h-3 w-3" />
+                        <span className="italic">posted anonymously</span>
+                      </>
+                    ) : (
+                      <>
+                        <User className="h-3 w-3" />
+                        <span>{p.author?.username ? `@${p.author.username}` : "anonymous"}</span>
+                      </>
+                    )}
                     <span>·</span>
                     <span>{timeAgo(p.created_at)}</span>
                     {isMine && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-semibold text-primary-foreground">your post</span>}
@@ -294,6 +303,7 @@ interface ComposeValues {
   encounter_time?: string;
   description: string;
   looking_for?: string;
+  is_anonymous: boolean;
 }
 
 const ComposeForm = ({
@@ -313,6 +323,7 @@ const ComposeForm = ({
     encounter_time: "",
     description: "",
     looking_for: "",
+    is_anonymous: false,
   });
 
   const set = <K extends keyof ComposeValues>(k: K, v: ComposeValues[K]) =>
@@ -400,6 +411,23 @@ const ComposeForm = ({
         placeholder="Recognition tag (optional) — 'You: green jacket. Me: spilled latte.'"
         className="w-full rounded-xl bg-secondary/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none"
       />
+
+      <label className="flex items-start gap-2 rounded-xl bg-secondary/40 px-3 py-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={values.is_anonymous}
+          onChange={(e) => set("is_anonymous", e.target.checked)}
+          className="mt-0.5 accent-primary"
+        />
+        <span className="flex-1 text-xs text-foreground">
+          <span className="flex items-center gap-1.5 font-semibold">
+            <EyeOff className="h-3 w-3" /> Post anonymously
+          </span>
+          <span className="text-[10px] text-muted-foreground">
+            Your @username won't appear on the post. You can still see and manage it from "your posts".
+          </span>
+        </span>
+      </label>
 
       <div className="flex justify-end gap-2">
         <button
