@@ -15,6 +15,7 @@ export interface MissedConnectionRow {
   encounter_time: string | null;
   description: string;
   looking_for: string | null;
+  is_anonymous: boolean;
   created_at: string;
   updated_at: string;
   author?: {

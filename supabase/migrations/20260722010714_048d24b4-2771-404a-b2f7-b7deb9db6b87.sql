@@ -1,0 +1,1 @@
+ALTER TABLE public.missed_connections ADD COLUMN IF NOT EXISTS is_anonymous boolean NOT NULL DEFAULT false;
