@@ -4711,6 +4711,126 @@ export type Database = {
           },
         ]
       }
+      missed_connection_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["missed_connection_reaction_kind"]
+          missed_connection_id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["missed_connection_reaction_kind"]
+          missed_connection_id: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["missed_connection_reaction_kind"]
+          missed_connection_id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missed_connection_reactions_missed_connection_id_fkey"
+            columns: ["missed_connection_id"]
+            isOneToOne: false
+            referencedRelation: "missed_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missed_connection_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missed_connection_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missed_connection_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missed_connections: {
+        Row: {
+          author_id: string
+          category: Database["public"]["Enums"]["missed_connection_category"]
+          city: string | null
+          created_at: string
+          description: string
+          encounter_time: string | null
+          id: string
+          location_text: string
+          looking_for: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          category: Database["public"]["Enums"]["missed_connection_category"]
+          city?: string | null
+          created_at?: string
+          description: string
+          encounter_time?: string | null
+          id?: string
+          location_text: string
+          looking_for?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          category?: Database["public"]["Enums"]["missed_connection_category"]
+          city?: string | null
+          created_at?: string
+          description?: string
+          encounter_time?: string | null
+          id?: string
+          location_text?: string
+          looking_for?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missed_connections_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missed_connections_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missed_connections_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       names: {
         Row: {
           aliases: string[] | null
@@ -10761,6 +10881,14 @@ export type Database = {
         | "misc"
       game_jam_status: "upcoming" | "active" | "completed"
       message_sender_kind: "user" | "bot" | "system"
+      missed_connection_category:
+        | "romantic"
+        | "friendly"
+        | "platonic"
+        | "funny"
+        | "collab"
+        | "lost_found"
+      missed_connection_reaction_kind: "relate" | "thats_me"
       panel_rsvp_status: "interested" | "going" | "checked_in" | "cancelled"
       panel_speaker_role: "host" | "speaker" | "moderator"
       panel_status: "draft" | "scheduled" | "live" | "ended" | "cancelled"
@@ -10966,6 +11094,15 @@ export const Constants = {
       ],
       game_jam_status: ["upcoming", "active", "completed"],
       message_sender_kind: ["user", "bot", "system"],
+      missed_connection_category: [
+        "romantic",
+        "friendly",
+        "platonic",
+        "funny",
+        "collab",
+        "lost_found",
+      ],
+      missed_connection_reaction_kind: ["relate", "thats_me"],
       panel_rsvp_status: ["interested", "going", "checked_in", "cancelled"],
       panel_speaker_role: ["host", "speaker", "moderator"],
       panel_status: ["draft", "scheduled", "live", "ended", "cancelled"],
