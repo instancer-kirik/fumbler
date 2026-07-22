@@ -6154,7 +6154,8 @@ export type Database = {
           contact_methods: Json | null
           created_at: string
           full_name: string | null
-          gender: string | null
+          gender: string[]
+          gender_description: string | null
           id: string
           interested_in: string[]
           is_public: boolean | null
@@ -6176,7 +6177,8 @@ export type Database = {
           contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
-          gender?: string | null
+          gender?: string[]
+          gender_description?: string | null
           id: string
           interested_in?: string[]
           is_public?: boolean | null
@@ -6198,7 +6200,8 @@ export type Database = {
           contact_methods?: Json | null
           created_at?: string
           full_name?: string | null
-          gender?: string | null
+          gender?: string[]
+          gender_description?: string | null
           id?: string
           interested_in?: string[]
           is_public?: boolean | null

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sliders, Menu, Pin } from "lucide-react";
+import { Sliders, Menu, Pin, Search, X } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
@@ -12,10 +12,12 @@ import type { ResonanceProfile } from "@/data/resonance-profile";
 
 // Map "Interested in" preferences → gender values on candidate profiles
 const INTEREST_TO_GENDER: Record<string, string[]> = {
-  Women: ["Woman"],
-  Men: ["Man"],
+  Women: ["Woman", "F"],
+  Men: ["Man", "M"],
   "Non-binary": ["Non-binary", "Trans", "Other"],
 };
+
+const SEARCH_KEY = "fumbler.discover.search";
 
 // Build a minimal ResonanceProfile from DB row for the card stack
 const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
@@ -56,6 +58,19 @@ const DiscoverPage = () => {
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filterVersion, setFilterVersion] = useState(0);
+  const [search, setSearch] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem(SEARCH_KEY) || "";
+  });
+  const [searchDebounced, setSearchDebounced] = useState(search);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearchDebounced(search);
+      if (typeof window !== "undefined") localStorage.setItem(SEARCH_KEY, search);
+    }, 250);
+    return () => clearTimeout(t);
+  }, [search]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -75,31 +90,51 @@ const DiscoverPage = () => {
         age_max?: number | null;
       };
 
-      let query = supabase
+      let query: any = supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age, gender, looking_for")
         .eq("onboarding_complete", true);
 
       if (!pinSelf) query = query.neq("id", user.id);
 
-      if (me.age_min != null) query = query.gte("age", me.age_min);
-      if (me.age_max != null) query = query.lte("age", me.age_max);
+      // Age range — allow null ages through
+      if (me.age_min != null)
+        query = query.or(`age.is.null,age.gte.${me.age_min}`);
+      if (me.age_max != null)
+        query = query.or(`age.is.null,age.lte.${me.age_max}`);
 
+      // Interested in → gender array overlap, null/empty allowed through
       const interested = me.interested_in || [];
       if (interested.length > 0 && !interested.includes("Everyone")) {
         const genders = interested.flatMap((i) => INTEREST_TO_GENDER[i] || []);
-        if (genders.length > 0) query = query.in("gender", genders);
+        if (genders.length > 0) {
+          const arr = `{${genders.join(",")}}`;
+          query = query.or(`gender.eq.{},gender.ov.${arr}`);
+        }
       }
 
+      // Looking for overlap — null/empty allowed through
       const wants = me.looking_for || [];
-      if (wants.length > 0) query = query.overlaps("looking_for", wants);
+      if (wants.length > 0) {
+        const arr = `{${wants.join(",")}}`;
+        query = query.or(`looking_for.eq.{},looking_for.ov.${arr}`);
+      }
+
+      // Keyword search across name/username/bio
+      const q = searchDebounced.trim();
+      if (q.length > 0) {
+        const like = `%${q.replace(/[%,]/g, "")}%`;
+        query = query.or(
+          `full_name.ilike.${like},username.ilike.${like},bio.ilike.${like}`,
+        );
+      }
 
       const { data, error } = await query;
 
       if (!error && data) {
         const mapped = data.map(dbToCardProfile);
         if (pinSelf) {
-          mapped.sort((a, b) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
+          mapped.sort((a: any, b: any) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
         }
         setProfiles(mapped);
         setCurrentIndex(0);
@@ -107,7 +142,7 @@ const DiscoverPage = () => {
       setLoading(false);
     };
     fetchProfiles();
-  }, [user, pinSelf, filterVersion]);
+  }, [user, pinSelf, filterVersion, searchDebounced]);
 
   const togglePinSelf = () => {
     setPinSelf((prev) => {
@@ -209,6 +244,29 @@ const DiscoverPage = () => {
           >
             <Sliders className="h-5 w-5 text-foreground" />
           </button>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="px-5 pb-2">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, bio, keywords…"
+            className="w-full rounded-full bg-secondary py-2 pl-9 pr-9 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 

@@ -16,7 +16,7 @@ interface EditProfileSheetProps {
   onSaved: () => void;
 }
 
-const GENDERS = ["Woman", "Man", "Non-binary", "Trans", "Other", "Prefer not to say"];
+const GENDERS = ["Woman", "Man", "Non-binary", "Trans", "Other"];
 const ORIENTATIONS = ["Straight", "Gay", "Lesbian", "Bisexual", "Pansexual", "Asexual", "Queer", "Other"];
 const INTERESTED_IN = ["Women", "Men", "Non-binary", "Everyone"];
 const LOOKING_FOR = ["Platonic", "Romantic", "Casual", "Serious", "Play", "Collab"];
@@ -26,7 +26,8 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
+  const [gender, setGender] = useState<string[]>([]);
+  const [genderDescription, setGenderDescription] = useState("");
   const [orientation, setOrientation] = useState("");
   const [interestedIn, setInterestedIn] = useState<string[]>([]);
   const [lookingFor, setLookingFor] = useState<string[]>([]);
@@ -44,12 +45,13 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
     (async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("gender, orientation, interested_in, looking_for, age_min, age_max")
+        .select("gender, gender_description, orientation, interested_in, looking_for, age_min, age_max")
         .eq("id", profile.id)
         .maybeSingle();
       const row = data as any;
       if (row) {
-        setGender(row.gender || "");
+        setGender(Array.isArray(row.gender) ? row.gender : row.gender ? [row.gender] : []);
+        setGenderDescription(row.gender_description || "");
         setOrientation(row.orientation || "");
         setInterestedIn(row.interested_in || []);
         setLookingFor(row.looking_for || []);
@@ -71,7 +73,8 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
       username: username || null,
       bio: bio || null,
       age: age ? parseInt(age) : null,
-      gender: gender || null,
+      gender,
+      gender_description: genderDescription || null,
       orientation: orientation || null,
       interested_in: interestedIn,
       looking_for: lookingFor,
@@ -136,14 +139,30 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
           <div className="pt-2 border-t border-border" />
 
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Gender</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              Gender identity
+            </label>
+            <p className="text-[11px] text-muted-foreground mb-2">
+              Shown on your profile. Pick all that apply.
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {GENDERS.map((g) => (
-                <Chip key={g} active={gender === g} onClick={() => setGender(gender === g ? "" : g)}>
+                <Chip
+                  key={g}
+                  active={gender.includes(g)}
+                  onClick={() => toggle(gender, g, setGender)}
+                >
                   {g}
                 </Chip>
               ))}
             </div>
+            <input
+              value={genderDescription}
+              onChange={(e) => setGenderDescription(e.target.value)}
+              placeholder="Describe your gender (optional)"
+              maxLength={120}
+              className={inputClass + " mt-2"}
+            />
           </div>
 
           <div>
