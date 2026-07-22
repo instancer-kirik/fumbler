@@ -58,6 +58,19 @@ const DiscoverPage = () => {
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filterVersion, setFilterVersion] = useState(0);
+  const [search, setSearch] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem(SEARCH_KEY) || "";
+  });
+  const [searchDebounced, setSearchDebounced] = useState(search);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearchDebounced(search);
+      if (typeof window !== "undefined") localStorage.setItem(SEARCH_KEY, search);
+    }, 250);
+    return () => clearTimeout(t);
+  }, [search]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -77,31 +90,51 @@ const DiscoverPage = () => {
         age_max?: number | null;
       };
 
-      let query = supabase
+      let query: any = supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age, gender, looking_for")
         .eq("onboarding_complete", true);
 
       if (!pinSelf) query = query.neq("id", user.id);
 
-      if (me.age_min != null) query = query.gte("age", me.age_min);
-      if (me.age_max != null) query = query.lte("age", me.age_max);
+      // Age range — allow null ages through
+      if (me.age_min != null)
+        query = query.or(`age.is.null,age.gte.${me.age_min}`);
+      if (me.age_max != null)
+        query = query.or(`age.is.null,age.lte.${me.age_max}`);
 
+      // Interested in → gender array overlap, null/empty allowed through
       const interested = me.interested_in || [];
       if (interested.length > 0 && !interested.includes("Everyone")) {
         const genders = interested.flatMap((i) => INTEREST_TO_GENDER[i] || []);
-        if (genders.length > 0) query = query.in("gender", genders);
+        if (genders.length > 0) {
+          const arr = `{${genders.join(",")}}`;
+          query = query.or(`gender.eq.{},gender.ov.${arr}`);
+        }
       }
 
+      // Looking for overlap — null/empty allowed through
       const wants = me.looking_for || [];
-      if (wants.length > 0) query = query.overlaps("looking_for", wants);
+      if (wants.length > 0) {
+        const arr = `{${wants.join(",")}}`;
+        query = query.or(`looking_for.eq.{},looking_for.ov.${arr}`);
+      }
+
+      // Keyword search across name/username/bio
+      const q = searchDebounced.trim();
+      if (q.length > 0) {
+        const like = `%${q.replace(/[%,]/g, "")}%`;
+        query = query.or(
+          `full_name.ilike.${like},username.ilike.${like},bio.ilike.${like}`,
+        );
+      }
 
       const { data, error } = await query;
 
       if (!error && data) {
         const mapped = data.map(dbToCardProfile);
         if (pinSelf) {
-          mapped.sort((a, b) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
+          mapped.sort((a: any, b: any) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
         }
         setProfiles(mapped);
         setCurrentIndex(0);
@@ -109,7 +142,7 @@ const DiscoverPage = () => {
       setLoading(false);
     };
     fetchProfiles();
-  }, [user, pinSelf, filterVersion]);
+  }, [user, pinSelf, filterVersion, searchDebounced]);
 
   const togglePinSelf = () => {
     setPinSelf((prev) => {
