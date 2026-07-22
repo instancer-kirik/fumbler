@@ -139,14 +139,30 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
           <div className="pt-2 border-t border-border" />
 
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Gender</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              Gender identity
+            </label>
+            <p className="text-[11px] text-muted-foreground mb-2">
+              Shown on your profile. Pick all that apply.
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {GENDERS.map((g) => (
-                <Chip key={g} active={gender === g} onClick={() => setGender(gender === g ? "" : g)}>
+                <Chip
+                  key={g}
+                  active={gender.includes(g)}
+                  onClick={() => toggle(gender, g, setGender)}
+                >
                   {g}
                 </Chip>
               ))}
             </div>
+            <input
+              value={genderDescription}
+              onChange={(e) => setGenderDescription(e.target.value)}
+              placeholder="Describe your gender (optional)"
+              maxLength={120}
+              className={inputClass + " mt-2"}
+            />
           </div>
 
           <div>
