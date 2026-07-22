@@ -12,10 +12,12 @@ import type { ResonanceProfile } from "@/data/resonance-profile";
 
 // Map "Interested in" preferences → gender values on candidate profiles
 const INTEREST_TO_GENDER: Record<string, string[]> = {
-  Women: ["Woman"],
-  Men: ["Man"],
+  Women: ["Woman", "F"],
+  Men: ["Man", "M"],
   "Non-binary": ["Non-binary", "Trans", "Other"],
 };
+
+const SEARCH_KEY = "fumbler.discover.search";
 
 // Build a minimal ResonanceProfile from DB row for the card stack
 const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
