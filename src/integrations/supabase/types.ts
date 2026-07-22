@@ -4745,6 +4745,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "missed_connection_reactions_missed_connection_id_fkey"
+            columns: ["missed_connection_id"]
+            isOneToOne: false
+            referencedRelation: "missed_connections_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "missed_connection_reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -10099,6 +10106,57 @@ export type Database = {
           target_word_count?: number | null
           title?: string | null
           word_count?: number | null
+        }
+        Relationships: []
+      }
+      missed_connections_public: {
+        Row: {
+          author_id: string | null
+          category:
+            | Database["public"]["Enums"]["missed_connection_category"]
+            | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          encounter_time: string | null
+          id: string | null
+          is_anonymous: boolean | null
+          location_text: string | null
+          looking_for: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          author_id?: never
+          category?:
+            | Database["public"]["Enums"]["missed_connection_category"]
+            | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          encounter_time?: string | null
+          id?: string | null
+          is_anonymous?: boolean | null
+          location_text?: string | null
+          looking_for?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: never
+          category?:
+            | Database["public"]["Enums"]["missed_connection_category"]
+            | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          encounter_time?: string | null
+          id?: string | null
+          is_anonymous?: boolean | null
+          location_text?: string | null
+          looking_for?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
