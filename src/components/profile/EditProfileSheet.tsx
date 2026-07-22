@@ -16,7 +16,7 @@ interface EditProfileSheetProps {
   onSaved: () => void;
 }
 
-const GENDERS = ["Woman", "Man", "Non-binary", "Trans", "Other", "Prefer not to say"];
+const GENDERS = ["Woman", "Man", "Non-binary", "Trans", "Other"];
 const ORIENTATIONS = ["Straight", "Gay", "Lesbian", "Bisexual", "Pansexual", "Asexual", "Queer", "Other"];
 const INTERESTED_IN = ["Women", "Men", "Non-binary", "Everyone"];
 const LOOKING_FOR = ["Platonic", "Romantic", "Casual", "Serious", "Play", "Collab"];
