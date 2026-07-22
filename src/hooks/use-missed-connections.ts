@@ -47,7 +47,8 @@ export function useMissedConnections(filter?: { category?: MCCategory | "all"; c
   return useQuery({
     queryKey: ["missed-connections", filter?.category ?? "all", filter?.city ?? "", user?.id ?? "anon"],
     queryFn: async (): Promise<MissedConnectionWithReactions[]> => {
-      let query = (supabase.from("missed_connections") as any)
+      // Read via the privacy view: server nulls author_id when is_anonymous=true (except for the author)
+      let query = (supabase.from("missed_connections_public") as any)
         .select("*")
         .order("created_at", { ascending: false })
         .limit(200);
