@@ -60,13 +60,15 @@ export function useMissedConnections(filter?: { category?: MCCategory | "all"; c
       if (error) throw error;
       if (!rawPosts || rawPosts.length === 0) return [];
 
-      const authorIds = Array.from(new Set(rawPosts.map((p: any) => p.author_id)));
-      const { data: authors } = await (supabase.from("profiles") as any)
-        .select("id, username, full_name, avatar_url")
-        .in("id", authorIds);
+      const authorIds = Array.from(new Set(rawPosts.map((p: any) => p.author_id).filter(Boolean)));
+      const { data: authors } = authorIds.length
+        ? await (supabase.from("profiles") as any)
+            .select("id, username, full_name, avatar_url")
+            .in("id", authorIds)
+        : { data: [] as any[] };
       const authorMap = new Map<string, any>();
       for (const a of authors || []) authorMap.set(a.id, a);
-      const posts = rawPosts.map((p: any) => ({ ...p, author: authorMap.get(p.author_id) || null }));
+      const posts = rawPosts.map((p: any) => ({ ...p, author: p.author_id ? authorMap.get(p.author_id) || null : null }));
 
       const ids = posts.map((p: any) => p.id);
       const { data: reactions } = await (supabase.from("missed_connection_reactions") as any)
