@@ -303,6 +303,7 @@ interface ComposeValues {
   encounter_time?: string;
   description: string;
   looking_for?: string;
+  is_anonymous: boolean;
 }
 
 const ComposeForm = ({
@@ -322,6 +323,7 @@ const ComposeForm = ({
     encounter_time: "",
     description: "",
     looking_for: "",
+    is_anonymous: false,
   });
 
   const set = <K extends keyof ComposeValues>(k: K, v: ComposeValues[K]) =>
