@@ -203,7 +203,10 @@ const DiscoverPage = () => {
           >
             <Menu className="h-5 w-5 text-foreground" />
           </button>
-          <button className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80">
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
+          >
             <Sliders className="h-5 w-5 text-foreground" />
           </button>
         </div>
