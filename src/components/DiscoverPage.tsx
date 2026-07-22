@@ -277,6 +277,11 @@ const DiscoverPage = () => {
         onMissedConnections={() => setDrawerOpen(true)}
       />
       <MissedConnectionsDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
+      <DiscoverFiltersSheet
+        open={filtersOpen}
+        onOpenChange={setFiltersOpen}
+        onSaved={() => setFilterVersion((v) => v + 1)}
+      />
     </div>
   );
 };
