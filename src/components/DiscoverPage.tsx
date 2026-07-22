@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sliders, Menu, Pin } from "lucide-react";
+import { Sliders, Menu, Pin, Search, X } from "lucide-react";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
