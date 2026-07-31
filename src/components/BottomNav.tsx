@@ -1,9 +1,10 @@
-import { Compass, Heart, MessageCircle, User } from "lucide-react";
+import { Compass, Heart, ClipboardList, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { id: "discover", icon: Compass, label: "Discover", path: "/discover" },
   { id: "matches", icon: Heart, label: "Matches", path: "/matches" },
+  { id: "people", icon: ClipboardList, label: "People", path: "/people" },
   { id: "profile", icon: User, label: "Profile", path: "/profile" },
 ];
 
