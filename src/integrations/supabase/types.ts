@@ -5277,6 +5277,135 @@ export type Database = {
           },
         ]
       }
+      people: {
+        Row: {
+          avatar_url: string | null
+          contact_channel: string | null
+          contact_value: string | null
+          created_at: string
+          display_name: string
+          handle: string | null
+          id: string
+          intents: string[]
+          last_touched_at: string | null
+          link_url: string | null
+          next_action: string | null
+          next_action_due: string | null
+          notes: string | null
+          owner_id: string
+          priority: string
+          profile_id: string | null
+          reveal_to_person: boolean
+          status: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          contact_channel?: string | null
+          contact_value?: string | null
+          created_at?: string
+          display_name: string
+          handle?: string | null
+          id?: string
+          intents?: string[]
+          last_touched_at?: string | null
+          link_url?: string | null
+          next_action?: string | null
+          next_action_due?: string | null
+          notes?: string | null
+          owner_id?: string
+          priority?: string
+          profile_id?: string | null
+          reveal_to_person?: boolean
+          status?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          contact_channel?: string | null
+          contact_value?: string | null
+          created_at?: string
+          display_name?: string
+          handle?: string | null
+          id?: string
+          intents?: string[]
+          last_touched_at?: string | null
+          link_url?: string | null
+          next_action?: string | null
+          next_action_due?: string | null
+          notes?: string | null
+          owner_id?: string
+          priority?: string
+          profile_id?: string | null
+          reveal_to_person?: boolean
+          status?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      people_interactions: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          note: string | null
+          occurred_at: string
+          owner_id: string
+          person_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string | null
+          occurred_at?: string
+          owner_id?: string
+          person_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string | null
+          occurred_at?: string
+          owner_id?: string
+          person_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_interactions_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_profiles: {
         Row: {
           avatar_url: string | null
