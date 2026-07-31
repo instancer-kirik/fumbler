@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import DiscoverPage from "@/components/DiscoverPage";
 import MatchesPage from "@/components/MatchesPage";
 import ProfilePage from "@/components/ProfilePage";
+import PeoplePage from "@/components/PeoplePage";
 import PublicProfile from "@/pages/PublicProfile";
 import AppLayout from "@/components/AppLayout";
 import About from "./pages/About";
