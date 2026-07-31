@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import DiscoverPage from "@/components/DiscoverPage";
 import MatchesPage from "@/components/MatchesPage";
 import ProfilePage from "@/components/ProfilePage";
+import PeoplePage from "@/components/PeoplePage";
 import PublicProfile from "@/pages/PublicProfile";
 import AppLayout from "@/components/AppLayout";
 import About from "./pages/About";
@@ -64,7 +65,9 @@ const App = () => (
             >
               <Route path="/discover" element={<DiscoverPage />} />
               <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/people" element={<PeoplePage />} />
               <Route path="/profile" element={<ProfilePage />} />
+
             </Route>
 
             <Route path="*" element={<NotFound />} />
