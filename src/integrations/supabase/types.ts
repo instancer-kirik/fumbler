@@ -157,6 +157,59 @@ export type Database = {
           },
         ]
       }
+      commit_activity: {
+        Row: {
+          commit_author: string | null
+          commit_date: string
+          commit_hash: string
+          commit_message: string
+          commit_url: string
+          created_at: string
+          id: string
+          project_id: string | null
+          provider: string
+          repo_name: string
+          repo_owner: string
+          updated_at: string
+        }
+        Insert: {
+          commit_author?: string | null
+          commit_date: string
+          commit_hash: string
+          commit_message: string
+          commit_url: string
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          provider: string
+          repo_name: string
+          repo_owner: string
+          updated_at?: string
+        }
+        Update: {
+          commit_author?: string | null
+          commit_date?: string
+          commit_hash?: string
+          commit_message?: string
+          commit_url?: string
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          provider?: string
+          repo_name?: string
+          repo_owner?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commit_activity_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       communities: {
         Row: {
           category: string | null
@@ -6915,7 +6968,9 @@ export type Database = {
           featured: boolean | null
           featured_order: number | null
           features: string[] | null
+          home_url: string | null
           id: string
+          image_url: string | null
           is_public: boolean
           name: string
           owner_id: string | null
@@ -6937,7 +6992,9 @@ export type Database = {
           featured?: boolean | null
           featured_order?: number | null
           features?: string[] | null
+          home_url?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean
           name: string
           owner_id?: string | null
@@ -6959,7 +7016,9 @@ export type Database = {
           featured?: boolean | null
           featured_order?: number | null
           features?: string[] | null
+          home_url?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean
           name?: string
           owner_id?: string | null
@@ -10276,7 +10335,9 @@ export type Database = {
           emoji: string | null
           featured: boolean | null
           features: string[] | null
+          home_url: string | null
           id: string | null
+          image_url: string | null
           is_public: boolean | null
           name: string | null
           owner_id: string | null
