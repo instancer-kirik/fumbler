@@ -42,16 +42,29 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const toggle = (arr: string[], v: string, setter: (a: string[]) => void) =>
     setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
+  const clampAge = (v: string): number | null => {
+    if (!v) return null;
+    const n = parseInt(v);
+    if (Number.isNaN(n)) return null;
+    return Math.min(120, Math.max(18, n));
+  };
+
   const handleSave = async () => {
     if (!user) return;
+    const minVal = clampAge(ageMin);
+    const maxVal = clampAge(ageMax);
+    if (minVal !== null && maxVal !== null && minVal > maxVal) {
+      toast.error("Minimum age can't be greater than maximum age");
+      return;
+    }
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
       .update({
         interested_in: interestedIn,
         looking_for: lookingFor,
-        age_min: ageMin ? parseInt(ageMin) : null,
-        age_max: ageMax ? parseInt(ageMax) : null,
+        age_min: minVal,
+        age_max: maxVal,
       } as any)
       .eq("id", user.id);
     setSaving(false);
