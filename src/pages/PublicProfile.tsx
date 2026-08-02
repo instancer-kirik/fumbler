@@ -989,7 +989,7 @@ const PublicProfile = () => {
               rd.consumer.distrustSignals?.length > 0) && (
               <SectionCard
                 icon="🔎"
-                label="Signals"
+                label="Trust"
                 description="Trust & distrust signals"
               >
                 <div className="space-y-3">

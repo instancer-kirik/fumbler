@@ -808,7 +808,7 @@ const ResonanceProfileView = ({
               rd?.consumer?.distrustSignals?.length ? (
                 <SectionCard
                   icon="🔎"
-                  label="Signals"
+                  label="Trust"
                   description="Trust & distrust signals they emit"
                 >
                   <div className="space-y-3">
@@ -838,7 +838,7 @@ const ResonanceProfileView = ({
                 </SectionCard>
               ) : null
             ) : (
-              renderLocked("🔎", "Signals", "signals")
+              renderLocked("🔎", "Trust", "signals")
             )}
 
             {/* Qualities & Introspections */}
