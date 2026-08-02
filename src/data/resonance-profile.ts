@@ -245,7 +245,7 @@ export const RESONANCE_SECTIONS = [
   },
   {
     id: "signals",
-    label: "Trust+Consumer",
+    label: "Signals",
     icon: "🔎",
     description: "Trust & distrust signals you emit",
   },

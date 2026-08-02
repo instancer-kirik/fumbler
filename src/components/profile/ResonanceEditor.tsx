@@ -1494,7 +1494,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                   {/* Trust+Consumer (consumer) */}
                   <EditorSection
                     icon="🔎"
-                    label="Trust+Consumer"
+                    label="Signals"
                     description="Trust & distrust signals"
                     visibility={vis("signals")}
                     onVisibilityChange={(v) => setVis("signals", v)}
@@ -2252,7 +2252,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                   {/* Safety + Trust */}
                   <EditorSection
                     icon="🛡️"
-                    label="Safety & Trust"
+                    label="Safety & Consent"
                     description="Consent, boundaries & accountability"
                     visibility={vis("safety")}
                     onVisibilityChange={(v) => setVis("safety", v)}
