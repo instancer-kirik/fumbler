@@ -751,7 +751,7 @@ const ResonanceProfileView = ({
             {canSee("core") ? (
               <SectionCard
                 icon="🎯"
-                label="Core Resonance"
+                label="Resonances"
                 description="Activation, repulsion & flirt interface"
                 defaultOpen
               >
@@ -799,7 +799,7 @@ const ResonanceProfileView = ({
                 </div>
               </SectionCard>
             ) : (
-              renderLocked("🎯", "Core Resonance", "core")
+              renderLocked("🎯", "Resonances", "core")
             )}
 
             {/* Consumer Interface */}

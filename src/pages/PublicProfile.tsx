@@ -573,13 +573,13 @@ const PublicProfile = () => {
               </SectionCard>
             )}
 
-          {/* Core Resonance — flat activationVectors + flirtInterface */}
+          {/* Resonances — flat activationVectors + flirtInterface */}
           {canSee("core") &&
             (rd?.activationVectors?.length > 0 ||
               rd?.flirtInterface?.attracts?.length > 0) && (
               <SectionCard
                 icon="🎯"
-                label="Core Resonance"
+                label="Resonances"
                 description="How they engage"
                 defaultOpen
               >
@@ -607,43 +607,6 @@ const PublicProfile = () => {
                       </p>
                       <TagList
                         items={rd.flirtInterface.failsWhen}
-                        variant="muted"
-                      />
-                    </div>
-                  )}
-                </div>
-              </SectionCard>
-            )}
-
-          {/* Trust+Consumer */}
-          {canSee("signals") &&
-            rd?.consumer &&
-            (rd.consumer.trustSignals?.length > 0 ||
-              rd.consumer.distrustSignals?.length > 0) && (
-              <SectionCard
-                icon="🔎"
-                label="Trust+Consumer"
-                description="Trust & distrust signals"
-              >
-                <div className="space-y-3">
-                  {rd.consumer.trustSignals?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        🟢 Trust signals
-                      </p>
-                      <TagList
-                        items={rd.consumer.trustSignals}
-                        variant="warm"
-                      />
-                    </div>
-                  )}
-                  {rd.consumer.distrustSignals?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        🔴 Distrust signals
-                      </p>
-                      <TagList
-                        items={rd.consumer.distrustSignals}
                         variant="muted"
                       />
                     </div>
@@ -690,28 +653,6 @@ const PublicProfile = () => {
                 </div>
               </SectionCard>
             )}
-
-          {/* Loops */}
-          {canSee("loops") && rd?.loops?.length > 0 && (
-            <SectionCard
-              icon="🔄"
-              label="Loops"
-              description="Behavioral recursion"
-            >
-              <QuoteList items={rd.loops} />
-            </SectionCard>
-          )}
-
-          {/* Lessons */}
-          {canSee("lessons") && rd?.lessons?.length > 0 && (
-            <SectionCard
-              icon="💡"
-              label="Lessons"
-              description="Integrated wisdom"
-            >
-              <QuoteList items={rd.lessons} />
-            </SectionCard>
-          )}
 
           {/* Languages */}
           {canSee("languages") && rd?.languages && (
@@ -765,6 +706,132 @@ const PublicProfile = () => {
                       items={rd.languages.creativeExpression}
                       variant="muted"
                     />
+                  </div>
+                )}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Archetypes */}
+          {canSee("archetypes") && rd?.archetypes?.length > 0 && (
+            <SectionCard
+              icon="🎭"
+              label="Archetypes"
+              description="Who they are by context"
+            >
+              <div className="space-y-2">
+                {rd.archetypes.map((arch: any, i: number) => (
+                  <div
+                    key={arch.name || i}
+                    className="rounded-xl bg-secondary/50 p-3"
+                  >
+                    <p className="text-sm font-medium text-foreground">
+                      {arch.name}
+                    </p>
+                    {arch.definition && (
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {arch.definition}
+                      </p>
+                    )}
+                    {arch.activationContext && (
+                      <p className="text-xs text-primary/70 mt-0.5">
+                        → {arch.activationContext}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Identity Frames */}
+          {canSee("frames") && rd?.frames && (() => {
+            const f = rd.frames;
+            const astro = f.astrology || {};
+            const hasAstro = astro.sun || astro.moon || astro.rising || astro.notes;
+            const hasMbti = f.mbti?.type || f.mbti?.notes;
+            const enn = f.enneagram || {};
+            const hasEnn = enn.type || enn.wing || enn.stack || enn.notes;
+            const custom = Array.isArray(f.custom) ? f.custom.filter((c: any) => c?.system || c?.value) : [];
+            if (!hasAstro && !hasMbti && !hasEnn && !custom.length) return null;
+            return (
+              <SectionCard icon="🔮" label="Identity Frames" description="Systems they use to describe themselves">
+                <div className="space-y-3">
+                  {hasAstro && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">Astrology</p>
+                      <LabelValue label="Sun" value={astro.sun} />
+                      <LabelValue label="Moon" value={astro.moon} />
+                      <LabelValue label="Rising" value={astro.rising} />
+                      {astro.notes && <p className="text-xs text-foreground/80 italic mt-1">{astro.notes}</p>}
+                    </div>
+                  )}
+                  {hasMbti && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">MBTI</p>
+                      <LabelValue label="Type" value={f.mbti.type} />
+                      {f.mbti.notes && <p className="text-xs text-foreground/80 italic mt-1">{f.mbti.notes}</p>}
+                    </div>
+                  )}
+                  {hasEnn && (
+                    <div className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">Enneagram</p>
+                      <LabelValue label="Type" value={enn.type} />
+                      <LabelValue label="Wing" value={enn.wing} />
+                      <LabelValue label="Stack" value={enn.stack} />
+                      {enn.notes && <p className="text-xs text-foreground/80 italic mt-1">{enn.notes}</p>}
+                    </div>
+                  )}
+                  {custom.map((c: any, i: number) => (
+                    <div key={i} className="rounded-xl bg-secondary/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">{c.system}</p>
+                      {c.value && <p className="text-sm text-foreground">{c.value}</p>}
+                      {c.notes && <p className="text-xs text-foreground/80 italic mt-1">{c.notes}</p>}
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            );
+          })()}
+
+          {/* Seeking */}
+          {canSee("seeking") && rd?.seeking && (
+            <SectionCard
+              icon="🧭"
+              label="Seeking"
+              description="What they're looking for"
+            >
+              <div className="space-y-3">
+                {rd.seeking.archetypes?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Seeking archetypes
+                    </p>
+                    <TagList items={rd.seeking.archetypes} variant="warm" />
+                  </div>
+                )}
+                {rd.seeking.kinks?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Seeking kinks
+                    </p>
+                    <TagList items={rd.seeking.kinks} />
+                  </div>
+                )}
+                {rd.seeking.nonNegotiables?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Non-negotiables
+                    </p>
+                    <TagList items={rd.seeking.nonNegotiables} variant="warm" />
+                  </div>
+                )}
+                {rd.seeking.niceToHaves?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Nice to haves
+                    </p>
+                    <TagList items={rd.seeking.niceToHaves} variant="muted" />
                   </div>
                 )}
               </div>
@@ -855,94 +922,169 @@ const PublicProfile = () => {
           })()}
 
 
-          {/* Archetypes */}
-          {canSee("archetypes") && rd?.archetypes?.length > 0 && (
+          {/* Trust+Consumer */}
+          {canSee("signals") &&
+            rd?.consumer &&
+            (rd.consumer.trustSignals?.length > 0 ||
+              rd.consumer.distrustSignals?.length > 0) && (
+              <SectionCard
+                icon="🔎"
+                label="Trust+Consumer"
+                description="Trust & distrust signals"
+              >
+                <div className="space-y-3">
+                  {rd.consumer.trustSignals?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🟢 Trust signals
+                      </p>
+                      <TagList
+                        items={rd.consumer.trustSignals}
+                        variant="warm"
+                      />
+                    </div>
+                  )}
+                  {rd.consumer.distrustSignals?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🔴 Distrust signals
+                      </p>
+                      <TagList
+                        items={rd.consumer.distrustSignals}
+                        variant="muted"
+                      />
+                    </div>
+                  )}
+                </div>
+              </SectionCard>
+            )}
+
+          {/* Safety */}
+          {canSee("safety") && rd?.safety && (
             <SectionCard
-              icon="🎭"
-              label="Archetypes"
-              description="Who they are by context"
+              icon="🛡️"
+              label="Safety & Trust"
+              description="Consent, boundaries & accountability"
             >
-              <div className="space-y-2">
-                {rd.archetypes.map((arch: any, i: number) => (
-                  <div
-                    key={arch.name || i}
-                    className="rounded-xl bg-secondary/50 p-3"
-                  >
-                    <p className="text-sm font-medium text-foreground">
-                      {arch.name}
+              <div className="space-y-3">
+                {rd.safety.consentFrameworks?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Consent frameworks
                     </p>
-                    {arch.definition && (
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {arch.definition}
-                      </p>
-                    )}
-                    {arch.activationContext && (
-                      <p className="text-xs text-primary/70 mt-0.5">
-                        → {arch.activationContext}
-                      </p>
-                    )}
+                    <TagList
+                      items={rd.safety.consentFrameworks}
+                      variant="warm"
+                    />
                   </div>
-                ))}
+                )}
+                {rd.safety.hardBoundaries?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Hard boundaries
+                    </p>
+                    <TagList items={rd.safety.hardBoundaries} variant="muted" />
+                  </div>
+                )}
+                {rd.safety.accountability?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-1.5">
+                      Accountability
+                    </p>
+                    <TagList items={rd.safety.accountability} />
+                  </div>
+                )}
+                <LabelValue
+                  label="Safe sex"
+                  value={rd.safety.safeSexPractices}
+                />
+                <LabelValue
+                  label="Substances"
+                  value={rd.safety.substanceClarity}
+                />
+                {rd.safety.referencesAvailable && (
+                  <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                    ✅ References available
+                  </span>
+                )}
               </div>
             </SectionCard>
           )}
 
-          {/* Identity Frames */}
-          {canSee("frames") && rd?.frames && (() => {
-            const f = rd.frames;
-            const astro = f.astrology || {};
-            const hasAstro = astro.sun || astro.moon || astro.rising || astro.notes;
-            const hasMbti = f.mbti?.type || f.mbti?.notes;
-            const enn = f.enneagram || {};
-            const hasEnn = enn.type || enn.wing || enn.stack || enn.notes;
-            const custom = Array.isArray(f.custom) ? f.custom.filter((c: any) => c?.system || c?.value) : [];
-            if (!hasAstro && !hasMbti && !hasEnn && !custom.length) return null;
-            return (
-              <SectionCard icon="🔮" label="Identity Frames" description="Systems they use to describe themselves">
+          {/* Repulsion Vectors */}
+          {canSee("repulsion") &&
+            (rd?.repulsionVectors?.length > 0 ||
+              rd?.repulsion?.hardStops?.length > 0) && (
+              <SectionCard
+                icon="🚧"
+                label="Repulsion Vectors"
+                description="Hard stops & flags"
+              >
                 <div className="space-y-3">
-                  {hasAstro && (
-                    <div className="rounded-xl bg-secondary/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-1">Astrology</p>
-                      <LabelValue label="Sun" value={astro.sun} />
-                      <LabelValue label="Moon" value={astro.moon} />
-                      <LabelValue label="Rising" value={astro.rising} />
-                      {astro.notes && <p className="text-xs text-foreground/80 italic mt-1">{astro.notes}</p>}
+                  {rd.repulsionVectors?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🚫 Repels
+                      </p>
+                      <TagList items={rd.repulsionVectors} variant="muted" />
                     </div>
                   )}
-                  {hasMbti && (
-                    <div className="rounded-xl bg-secondary/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-1">MBTI</p>
-                      <LabelValue label="Type" value={f.mbti.type} />
-                      {f.mbti.notes && <p className="text-xs text-foreground/80 italic mt-1">{f.mbti.notes}</p>}
+                  {rd.repulsion?.hardStops?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🛑 Hard stops
+                      </p>
+                      <TagList items={rd.repulsion.hardStops} variant="muted" />
                     </div>
                   )}
-                  {hasEnn && (
-                    <div className="rounded-xl bg-secondary/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-1">Enneagram</p>
-                      <LabelValue label="Type" value={enn.type} />
-                      <LabelValue label="Wing" value={enn.wing} />
-                      <LabelValue label="Stack" value={enn.stack} />
-                      {enn.notes && <p className="text-xs text-foreground/80 italic mt-1">{enn.notes}</p>}
+                  {rd.repulsion?.yellowFlags?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        ⚠️ Yellow flags
+                      </p>
+                      <TagList items={rd.repulsion.yellowFlags} />
                     </div>
                   )}
-                  {custom.map((c: any, i: number) => (
-                    <div key={i} className="rounded-xl bg-secondary/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-1">{c.system}</p>
-                      {c.value && <p className="text-sm text-foreground">{c.value}</p>}
-                      {c.notes && <p className="text-xs text-foreground/80 italic mt-1">{c.notes}</p>}
+                  {rd.repulsion?.patternConcerns?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        🔍 Pattern concerns
+                      </p>
+                      <TagList items={rd.repulsion.patternConcerns} />
                     </div>
-                  ))}
+                  )}
                 </div>
               </SectionCard>
-            );
-          })()}
+            )}
+
+          {/* Loops */}
+          {canSee("loops") && rd?.loops?.length > 0 && (
+            <SectionCard
+              icon="🔄"
+              label="Loops"
+              description="Behavioral recursion"
+            >
+              <QuoteList items={rd.loops} />
+            </SectionCard>
+          )}
+
+          {/* Lessons */}
+          {canSee("lessons") && rd?.lessons?.length > 0 && (
+            <SectionCard
+              icon="💡"
+              label="Lessons"
+              description="Integrated wisdom"
+            >
+              <QuoteList items={rd.lessons} />
+            </SectionCard>
+          )}
 
           {/* Attraction */}
           {canSee("attraction") &&
             rd?.attraction &&
             (rd.attraction.slowBurn ||
               rd.attraction.fastHook ||
-              rd.attraction.whatDrawsIn?.length) && (
+              (rd.attraction.whatDrawsIn?.length ?? 0) > 0) && (
               <SectionCard
                 icon="🧲"
                 label="Attraction Gradient"
@@ -1083,52 +1225,6 @@ const PublicProfile = () => {
               </SectionCard>
             )}
 
-          {/* Repulsion Vectors */}
-          {canSee("repulsion") &&
-            (rd?.repulsionVectors?.length > 0 ||
-              rd?.repulsion?.hardStops?.length > 0) && (
-              <SectionCard
-                icon="🚧"
-                label="Repulsion Vectors"
-                description="Hard stops & flags"
-              >
-                <div className="space-y-3">
-                  {rd.repulsionVectors?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        🚫 Repels
-                      </p>
-                      <TagList items={rd.repulsionVectors} variant="muted" />
-                    </div>
-                  )}
-                  {rd.repulsion?.hardStops?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        🛑 Hard stops
-                      </p>
-                      <TagList items={rd.repulsion.hardStops} variant="muted" />
-                    </div>
-                  )}
-                  {rd.repulsion?.yellowFlags?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        ⚠️ Yellow flags
-                      </p>
-                      <TagList items={rd.repulsion.yellowFlags} />
-                    </div>
-                  )}
-                  {rd.repulsion?.patternConcerns?.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-foreground mb-1.5">
-                        🔍 Pattern concerns
-                      </p>
-                      <TagList items={rd.repulsion.patternConcerns} />
-                    </div>
-                  )}
-                </div>
-              </SectionCard>
-            )}
-
           {/* Availability */}
           {canSee("viability") && rd?.viability && (
             <SectionCard
@@ -1174,98 +1270,43 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
-          {/* Seeking */}
-          {canSee("seeking") && rd?.seeking && (
+          {/* Connection */}
+          {canSee("connection") && rd?.connection && (
             <SectionCard
-              icon="🧭"
-              label="Seeking"
-              description="What they're looking for"
+              icon="📡"
+              label="Connection"
+              description="Logistics & preferences"
             >
               <div className="space-y-3">
-                {rd.seeking.archetypes?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Seeking archetypes
-                    </p>
-                    <TagList items={rd.seeking.archetypes} variant="warm" />
-                  </div>
-                )}
-                {rd.seeking.kinks?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Seeking kinks
-                    </p>
-                    <TagList items={rd.seeking.kinks} />
-                  </div>
-                )}
-                {rd.seeking.nonNegotiables?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Non-negotiables
-                    </p>
-                    <TagList items={rd.seeking.nonNegotiables} variant="warm" />
-                  </div>
-                )}
-                {rd.seeking.niceToHaves?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Nice to haves
-                    </p>
-                    <TagList items={rd.seeking.niceToHaves} variant="muted" />
-                  </div>
-                )}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Safety */}
-          {canSee("safety") && rd?.safety && (
-            <SectionCard
-              icon="🛡️"
-              label="Safety & Trust"
-              description="Consent, boundaries & accountability"
-            >
-              <div className="space-y-3">
-                {rd.safety.consentFrameworks?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Consent frameworks
-                    </p>
-                    <TagList
-                      items={rd.safety.consentFrameworks}
-                      variant="warm"
-                    />
-                  </div>
-                )}
-                {rd.safety.hardBoundaries?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Hard boundaries
-                    </p>
-                    <TagList items={rd.safety.hardBoundaries} variant="muted" />
-                  </div>
-                )}
-                {rd.safety.accountability?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-foreground mb-1.5">
-                      Accountability
-                    </p>
-                    <TagList items={rd.safety.accountability} />
-                  </div>
-                )}
                 <LabelValue
-                  label="Safe sex"
-                  value={rd.safety.safeSexPractices}
+                  label="Primary channel"
+                  value={rd.connection.channelPrimary}
                 />
                 <LabelValue
-                  label="Substances"
-                  value={rd.safety.substanceClarity}
+                  label="Secondary channel"
+                  value={rd.connection.channelSecondary}
                 />
-                {rd.safety.referencesAvailable && (
-                  <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                    ✅ References available
-                  </span>
-                )}
+                <LabelValue
+                  label="Contact etiquette"
+                  value={rd.connection.contactEtiquette}
+                />
+                <LabelValue
+                  label="Response time"
+                  value={rd.connection.responseTimeExpectations}
+                />
+                <LabelValue
+                  label="Frequency"
+                  value={rd.connection.frequencyOfContact}
+                />
+                <LabelValue
+                  label="Meeting"
+                  value={rd.connection.meetingModality}
+                />
+                <LabelValue label="Location" value={rd.connection.location} />
+                <LabelValue
+                  label="Travel"
+                  value={rd.connection.willingToTravel}
+                />
               </div>
             </SectionCard>
           )}
@@ -1313,47 +1354,6 @@ const PublicProfile = () => {
                 </div>
               </SectionCard>
             )}
-
-          {/* Connection */}
-          {canSee("connection") && rd?.connection && (
-            <SectionCard
-              icon="📡"
-              label="Connection"
-              description="Logistics & preferences"
-            >
-              <div className="space-y-3">
-                <LabelValue
-                  label="Primary channel"
-                  value={rd.connection.channelPrimary}
-                />
-                <LabelValue
-                  label="Secondary channel"
-                  value={rd.connection.channelSecondary}
-                />
-                <LabelValue
-                  label="Contact etiquette"
-                  value={rd.connection.contactEtiquette}
-                />
-                <LabelValue
-                  label="Response time"
-                  value={rd.connection.responseTimeExpectations}
-                />
-                <LabelValue
-                  label="Frequency"
-                  value={rd.connection.frequencyOfContact}
-                />
-                <LabelValue
-                  label="Meeting"
-                  value={rd.connection.meetingModality}
-                />
-                <LabelValue label="Location" value={rd.connection.location} />
-                <LabelValue
-                  label="Travel"
-                  value={rd.connection.willingToTravel}
-                />
-              </div>
-            </SectionCard>
-          )}
 
           {/* Content */}
           {canSee("content") &&

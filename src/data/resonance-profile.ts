@@ -239,7 +239,7 @@ export const RESONANCE_SECTIONS = [
   },
   {
     id: "core",
-    label: "Core Resonance",
+    label: "Resonances",
     icon: "🎯",
     description: "Activation, repulsion & flirt interface",
   },
