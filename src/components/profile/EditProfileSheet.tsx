@@ -65,21 +65,34 @@ const EditProfileSheet = ({ open, onOpenChange, profile, onSaved }: EditProfileS
     setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   };
 
+  const clampAge = (v: string): number | null => {
+    if (!v) return null;
+    const n = parseInt(v);
+    if (Number.isNaN(n)) return null;
+    return Math.min(120, Math.max(18, n));
+  };
+
   const handleSave = async () => {
     if (!profile) return;
+    const minVal = clampAge(ageMin);
+    const maxVal = clampAge(ageMax);
+    if (minVal !== null && maxVal !== null && minVal > maxVal) {
+      toast.error("Minimum age can't be greater than maximum age");
+      return;
+    }
     setSaving(true);
     const patch: any = {
       full_name: name || null,
       username: username || null,
       bio: bio || null,
-      age: age ? parseInt(age) : null,
+      age: clampAge(age),
       gender,
       gender_description: genderDescription || null,
       orientation: orientation || null,
       interested_in: interestedIn,
       looking_for: lookingFor,
-      age_min: ageMin ? parseInt(ageMin) : null,
-      age_max: ageMax ? parseInt(ageMax) : null,
+      age_min: minVal,
+      age_max: maxVal,
     };
     const { error } = await supabase.from("profiles").update(patch).eq("id", profile.id);
     setSaving(false);
