@@ -160,18 +160,18 @@ const SectionCard = ({
   return (
     <motion.div
       layout
-      className="rounded-2xl bg-card border border-border overflow-hidden"
+      className="rounded-xl bg-card border border-border overflow-hidden"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-3 p-4 text-left"
+        className="flex w-full items-center gap-3 px-4 py-2.5 text-left"
       >
-        <span className="text-xl">{icon}</span>
+        <span className="text-lg leading-none">{icon}</span>
         <div className="flex-1 min-w-0">
-          <p className="font-display font-semibold text-foreground text-sm">
+          <p className="font-display font-semibold text-foreground text-sm leading-tight">
             {label}
           </p>
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-xs text-muted-foreground leading-tight">{description}</p>
         </div>
         <ChevronRight
           className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
