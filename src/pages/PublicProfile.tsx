@@ -490,7 +490,7 @@ const PublicProfile = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-1.5">
           {/* Bio from discovery */}
           {canSee("discovery") && rd?.discovery?.introduction?.writtenBio && (
             <div className="rounded-2xl gradient-warm p-4">
