@@ -1467,7 +1467,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                   {/* Core Resonance — now uses flat activationVectors / flirtInterface */}
                   <EditorSection
                     icon="🎯"
-                    label="Core Resonance"
+                    label="Resonances"
                     description="Activation, flirt & signal"
                     defaultOpen
                     visibility={vis("core")}
