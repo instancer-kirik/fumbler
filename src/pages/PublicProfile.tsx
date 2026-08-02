@@ -1447,6 +1447,115 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
+          {/* Aesthetics */}
+          {canSee("aura") && rd?.aesthetics?.length > 0 && (
+            <SectionCard
+              icon="🎨"
+              label="Aesthetics"
+              description="Visual & sensory palette"
+            >
+              <TagList items={rd.aesthetics} variant="warm" />
+            </SectionCard>
+          )}
+
+          {/* Aliases */}
+          {canSee("aura") && rd?.aliases?.length > 0 && (
+            <SectionCard
+              icon="🏷️"
+              label="Aliases"
+              description="Other names they go by"
+            >
+              <TagList items={rd.aliases} variant="muted" />
+            </SectionCard>
+          )}
+
+          {/* Offering / Roles */}
+          {canSee("offering") &&
+            (rd?.offering?.roles?.length > 0 || rd?.offering?.notes) && (
+              <SectionCard
+                icon="🎁"
+                label="Offering / Roles"
+                description="Roles they're up for"
+              >
+                <div className="space-y-3">
+                  {rd.offering.roles?.length > 0 && (
+                    <TagList items={rd.offering.roles} variant="warm" />
+                  )}
+                  <LabelValue label="Notes" value={rd.offering.notes} />
+                </div>
+              </SectionCard>
+            )}
+
+          {/* Collaborations */}
+          {canSee("collaborations") && rd?.collaborations?.length > 0 && (
+            <SectionCard
+              icon="🤝"
+              label="Collaborations"
+              description="Projects & formations they want"
+            >
+              <div className="space-y-3">
+                {rd.collaborations.map((c: any, i: number) => (
+                  <div key={i} className="rounded-xl bg-secondary/50 p-3">
+                    <p className="text-sm font-medium text-foreground">
+                      {c.kind || "Collaboration"}
+                    </p>
+                    <LabelValue label="Role" value={c.role} />
+                    <LabelValue label="Looking for" value={c.lookingFor} />
+                    <LabelValue label="Notes" value={c.notes} />
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Aspirations */}
+          {canSee("aspirations") && rd?.aspirations?.length > 0 && (
+            <SectionCard
+              icon="🌅"
+              label="Aspirations"
+              description="Waking dreams & direction"
+            >
+              <QuoteList items={rd.aspirations} />
+            </SectionCard>
+          )}
+
+          {/* Dream Log */}
+          {canSee("dreamlog") && rd?.sleepingDreams?.length > 0 && (
+            <SectionCard
+              icon="🌙"
+              label="Dream Log"
+              description="Adventures while sleeping"
+            >
+              <QuoteList items={rd.sleepingDreams} />
+            </SectionCard>
+          )}
+
+          {/* Sizing */}
+          {canSee("sizing") &&
+            rd?.sizing &&
+            Object.values(rd.sizing).some((v) => v) && (
+              <SectionCard
+                icon="📏"
+                label="Sizing"
+                description="For gifts & dress-up"
+              >
+                <div className="space-y-2">
+                  <LabelValue label="Shirt" value={rd.sizing.shirt} />
+                  <LabelValue label="Pants" value={rd.sizing.pants} />
+                  <LabelValue label="Dress" value={rd.sizing.dress} />
+                  <LabelValue label="Shoe" value={rd.sizing.shoe} />
+                  <LabelValue label="Bra" value={rd.sizing.bra} />
+                  <LabelValue label="Ring" value={rd.sizing.ring} />
+                  <LabelValue label="Hat" value={rd.sizing.hat} />
+                  <LabelValue label="Gloves" value={rd.sizing.gloves} />
+                  <LabelValue label="Waist" value={rd.sizing.waist} />
+                  <LabelValue label="Inseam" value={rd.sizing.inseam} />
+                  <LabelValue label="Height" value={rd.sizing.height} />
+                  <LabelValue label="Notes" value={rd.sizing.notes} />
+                </div>
+              </SectionCard>
+            )}
+
           {/* CTA for unauthenticated */}
           <div className="rounded-2xl bg-card border border-border p-5 text-center mt-2">
             <p className="text-sm font-medium text-foreground mb-1">
