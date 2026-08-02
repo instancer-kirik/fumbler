@@ -808,7 +808,7 @@ const ResonanceProfileView = ({
               rd?.consumer?.distrustSignals?.length ? (
                 <SectionCard
                   icon="🔎"
-                  label="Consumer Interface"
+                  label="Signals"
                   description="Trust & distrust signals they emit"
                 >
                   <div className="space-y-3">
@@ -838,7 +838,7 @@ const ResonanceProfileView = ({
                 </SectionCard>
               ) : null
             ) : (
-              renderLocked("🔎", "Consumer Interface", "signals")
+              renderLocked("🔎", "Signals", "signals")
             )}
 
             {/* Qualities & Introspections */}
@@ -1566,7 +1566,7 @@ const ResonanceProfileView = ({
             {canSee("safety") ? (
               <SectionCard
                 icon="🛡️"
-                label="Safety & Trust"
+                label="Safety & Consent"
                 description="Consent, boundaries & accountability"
               >
                 <div className="space-y-3">
@@ -1622,7 +1622,7 @@ const ResonanceProfileView = ({
                 </div>
               </SectionCard>
             ) : (
-              renderLocked("🛡️", "Safety & Trust", "safety")
+              renderLocked("🛡️", "Safety & Consent", "safety")
             )}
 
             {/* Economic */}
