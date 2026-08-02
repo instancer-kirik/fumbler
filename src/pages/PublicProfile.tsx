@@ -963,7 +963,7 @@ const PublicProfile = () => {
           {canSee("safety") && rd?.safety && (
             <SectionCard
               icon="🛡️"
-              label="Safety & Trust"
+              label="Safety & Consent"
               description="Consent, boundaries & accountability"
             >
               <div className="space-y-3">
