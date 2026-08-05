@@ -392,6 +392,8 @@ function normalizeV9Flat(raw: Obj): Obj {
       height: gtky.height ?? null,
       build: str(gtky.build),
       favoriteMedia: arr(gtky.favoriteMedia),
+      favoriteFlowers: arr(gtky.favoriteFlowers),
+      dateIdeas: arr(gtky.dateIdeas),
       currentObsession: str(gtky.currentObsession),
       idealWeekend: str(gtky.idealWeekend),
     },
