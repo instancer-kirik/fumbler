@@ -165,6 +165,8 @@ interface ResonanceData {
     height?: string | null;
     build?: string;
     favoriteMedia?: string[];
+    favoriteFlowers?: string[];
+    dateIdeas?: string[];
     currentObsession?: string;
     idealWeekend?: string;
   };
@@ -673,6 +675,28 @@ const ResonanceProfileView = ({
                         </p>
                         <TagList
                           items={rd.getToKnowMe.favoriteMedia}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.getToKnowMe.favoriteFlowers?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Favorite flowers
+                        </p>
+                        <TagList
+                          items={rd.getToKnowMe.favoriteFlowers}
+                          variant="warm"
+                        />
+                      </div>
+                    ) : null}
+                    {rd.getToKnowMe.dateIdeas?.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-1.5">
+                          Date ideas
+                        </p>
+                        <TagList
+                          items={rd.getToKnowMe.dateIdeas}
                           variant="warm"
                         />
                       </div>

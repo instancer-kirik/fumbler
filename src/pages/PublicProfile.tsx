@@ -530,6 +530,22 @@ const PublicProfile = () => {
                       <TagList items={rd.getToKnowMe.favoriteMedia} />
                     </div>
                   )}
+                  {rd.getToKnowMe.favoriteFlowers?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Favorite flowers
+                      </p>
+                      <TagList items={rd.getToKnowMe.favoriteFlowers} />
+                    </div>
+                  )}
+                  {rd.getToKnowMe.dateIdeas?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">
+                        Date ideas
+                      </p>
+                      <TagList items={rd.getToKnowMe.dateIdeas} />
+                    </div>
+                  )}
                 </div>
               </SectionCard>
             )}
