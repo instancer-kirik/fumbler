@@ -219,6 +219,8 @@ interface ResonanceData {
     height: string | null;
     build: string;
     favoriteMedia: string[];
+    favoriteFlowers: string[];
+    dateIdeas: string[];
     currentObsession: string;
     idealWeekend: string;
   };
@@ -376,6 +378,8 @@ const emptyData: ResonanceData = {
     height: null,
     build: "",
     favoriteMedia: [],
+    favoriteFlowers: [],
+    dateIdeas: [],
     currentObsession: "",
     idealWeekend: "",
   },
