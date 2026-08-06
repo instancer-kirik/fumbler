@@ -1713,6 +1713,119 @@ export type Database = {
         }
         Relationships: []
       }
+      game_match_participants: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          match_id: string
+          result: string | null
+          role: Database["public"]["Enums"]["game_participant_role"]
+          score: number | null
+          status: Database["public"]["Enums"]["game_participant_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          match_id: string
+          result?: string | null
+          role?: Database["public"]["Enums"]["game_participant_role"]
+          score?: number | null
+          status?: Database["public"]["Enums"]["game_participant_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          match_id?: string
+          result?: string | null
+          role?: Database["public"]["Enums"]["game_participant_role"]
+          score?: number | null
+          status?: Database["public"]["Enums"]["game_participant_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_match_participants_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "game_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_matches: {
+        Row: {
+          activity: Database["public"]["Enums"]["game_activity"]
+          created_at: string
+          duration_min: number
+          format: string | null
+          game_title: string | null
+          host_id: string
+          id: string
+          is_public: boolean
+          lobby_url: string | null
+          location: string | null
+          max_players: number
+          notes: string | null
+          platform: string | null
+          skill_level: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["game_match_status"]
+          timezone: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activity?: Database["public"]["Enums"]["game_activity"]
+          created_at?: string
+          duration_min?: number
+          format?: string | null
+          game_title?: string | null
+          host_id: string
+          id?: string
+          is_public?: boolean
+          lobby_url?: string | null
+          location?: string | null
+          max_players?: number
+          notes?: string | null
+          platform?: string | null
+          skill_level?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["game_match_status"]
+          timezone?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activity?: Database["public"]["Enums"]["game_activity"]
+          created_at?: string
+          duration_min?: number
+          format?: string | null
+          game_title?: string | null
+          host_id?: string
+          id?: string
+          is_public?: boolean
+          lobby_url?: string | null
+          location?: string | null
+          max_players?: number
+          notes?: string | null
+          platform?: string | null
+          skill_level?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["game_match_status"]
+          timezone?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       games: {
         Row: {
           created_at: string
@@ -10963,6 +11076,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_game_match_participant: {
+        Args: { _match_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_my_content: {
         Args: {
           _content_id: string
@@ -11151,7 +11268,22 @@ export type Database = {
         | "power"
         | "signage"
         | "misc"
+      game_activity: "tennis" | "dnd" | "racing" | "fighting" | "other"
       game_jam_status: "upcoming" | "active" | "completed"
+      game_match_status:
+        | "open"
+        | "full"
+        | "confirmed"
+        | "live"
+        | "completed"
+        | "cancelled"
+      game_participant_role:
+        | "host"
+        | "player"
+        | "spectator"
+        | "dungeon_master"
+        | "referee"
+      game_participant_status: "joined" | "waitlist" | "declined" | "no_show"
       message_sender_kind: "user" | "bot" | "system"
       missed_connection_category:
         | "romantic"
@@ -11364,7 +11496,24 @@ export const Constants = {
         "signage",
         "misc",
       ],
+      game_activity: ["tennis", "dnd", "racing", "fighting", "other"],
       game_jam_status: ["upcoming", "active", "completed"],
+      game_match_status: [
+        "open",
+        "full",
+        "confirmed",
+        "live",
+        "completed",
+        "cancelled",
+      ],
+      game_participant_role: [
+        "host",
+        "player",
+        "spectator",
+        "dungeon_master",
+        "referee",
+      ],
+      game_participant_status: ["joined", "waitlist", "declined", "no_show"],
       message_sender_kind: ["user", "bot", "system"],
       missed_connection_category: [
         "romantic",
