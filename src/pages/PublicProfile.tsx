@@ -17,6 +17,9 @@ import {
 // so we capture which keys were present in the raw response before normalization.
 const SECTION_KEYS: Record<string, string[]> = {
   gtky: ["getToKnowMe"],
+  faveth: ["faveth"],
+  skills: ["skills"],
+
   aura: ["aura", "aesthetics", "aliases", "persona"],
   core: ["activationVectors", "repulsionVectors", "flirtInterface", "cognitiveStyle"],
   signals: ["consumer", "trustSignals", "distrustSignals"],
