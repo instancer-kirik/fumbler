@@ -694,7 +694,6 @@ const ResonanceProfileView = ({
                   icon="🌷"
                   label="Faveth"
                   description="Preferred, significant, otherwise important"
-                  sectionId="faveth"
                 >
                   <div className="space-y-3">
                     {[
@@ -737,7 +736,6 @@ const ResonanceProfileView = ({
                   icon="🛠"
                   label="Skills"
                   description="What they do, teach, or want to learn"
-                  sectionId="skills"
                 >
                   <div className="space-y-3">
                     {[
