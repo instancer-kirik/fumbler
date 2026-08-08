@@ -695,5 +695,8 @@ function normalizeOldInternal(raw: Obj): Obj {
     connection: raw.connection,
     discovery: raw.discovery,
     getToKnowMe: raw.getToKnowMe,
+    faveth: raw.faveth,
+    skills: raw.skills,
+
   });
 }
