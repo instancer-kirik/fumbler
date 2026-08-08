@@ -346,7 +346,14 @@ const emptyData: ResonanceData = {
     shirt: "", pants: "", dress: "", shoe: "", bra: "", ring: "",
     hat: "", gloves: "", waist: "", inseam: "", height: "", notes: "",
   },
+  faveth: {
+    flowers: [], plants: [], animals: [], vehicles: [], media: [],
+    instruments: [], foodDrink: [], places: [], colors: [], scents: [],
+    dateIdeas: [], other: [],
+  },
+  skills: [],
   frames: {
+
     astrology: { sun: "", moon: "", rising: "", notes: "" },
     mbti: { type: "", notes: "" },
     enneagram: { type: "", wing: "", stack: "", notes: "" },
