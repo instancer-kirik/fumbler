@@ -170,6 +170,9 @@ interface ResonanceData {
     currentObsession?: string;
     idealWeekend?: string;
   };
+  faveth?: Record<string, string[]>;
+  skills?: Array<{ name: string; level?: string; intent?: string; note?: string }>;
+
 
   // ── Consumer Interface ────────────────────────────────────────────────────
   consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
