@@ -170,6 +170,9 @@ interface ResonanceData {
     currentObsession?: string;
     idealWeekend?: string;
   };
+  faveth?: Record<string, string[]>;
+  skills?: Array<{ name: string; level?: string; intent?: string; note?: string }>;
+
 
   // ── Consumer Interface ────────────────────────────────────────────────────
   consumer?: { trustSignals?: string[]; distrustSignals?: string[] };
@@ -679,34 +682,111 @@ const ResonanceProfileView = ({
                         />
                       </div>
                     ) : null}
-                    {rd.getToKnowMe.favoriteFlowers?.length ? (
-                      <div>
-                        <p className="text-xs font-semibold text-foreground mb-1.5">
-                          Favorite flowers
-                        </p>
-                        <TagList
-                          items={rd.getToKnowMe.favoriteFlowers}
-                          variant="warm"
-                        />
-                      </div>
-                    ) : null}
-                    {rd.getToKnowMe.dateIdeas?.length ? (
-                      <div>
-                        <p className="text-xs font-semibold text-foreground mb-1.5">
-                          Date ideas
-                        </p>
-                        <TagList
-                          items={rd.getToKnowMe.dateIdeas}
-                          variant="warm"
-                        />
-                      </div>
-                    ) : null}
                   </div>
                 </SectionCard>
               ) : null
             ) : (
               renderLocked("👤", "Get to Know Me", "gtky")
             )}
+
+            {/* Faveth */}
+            {canSee("faveth") ? (
+              rd?.faveth &&
+              Object.values(rd.faveth).some((v: any) => v?.length) ? (
+                <SectionCard
+                  icon="🌷"
+                  label="Faveth"
+                  description="Preferred, significant, otherwise important"
+                >
+                  <div className="space-y-3">
+                    {[
+                      ["flowers", "Flowers"],
+                      ["plants", "Plants"],
+                      ["animals", "Animals"],
+                      ["vehicles", "Dream cars / vehicles"],
+                      ["media", "Media"],
+                      ["instruments", "Instruments & sounds"],
+                      ["foodDrink", "Food & drink"],
+                      ["places", "Places"],
+                      ["colors", "Colors"],
+                      ["scents", "Scents"],
+                      ["dateIdeas", "Date ideas"],
+                      ["other", "Other faves"],
+                    ].map(([key, label]) =>
+                      (rd.faveth as any)[key]?.length ? (
+                        <div key={key}>
+                          <p className="text-xs font-semibold text-foreground mb-1.5">
+                            {label}
+                          </p>
+                          <TagList
+                            items={(rd.faveth as any)[key]}
+                            variant="warm"
+                          />
+                        </div>
+                      ) : null,
+                    )}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🌷", "Faveth", "faveth")
+            )}
+
+            {/* Skills */}
+            {canSee("skills") ? (
+              rd?.skills?.length ? (
+                <SectionCard
+                  icon="🛠"
+                  label="Skills"
+                  description="What they do, teach, or want to learn"
+                >
+                  <div className="space-y-3">
+                    {[
+                      ["teach", "Can teach"],
+                      ["learn", "Want to learn"],
+                      ["practice", "Practicing"],
+                    ].map(([intent, label]) => {
+                      const group = (rd.skills || []).filter(
+                        (s: any) => (s.intent || "practice") === intent,
+                      );
+                      if (!group.length) return null;
+                      return (
+                        <div key={intent}>
+                          <p className="text-xs font-semibold text-foreground mb-1.5">
+                            {label}
+                          </p>
+                          <div className="space-y-1.5">
+                            {group.map((s: any, i: number) => (
+                              <div
+                                key={i}
+                                className="flex items-center gap-2 flex-wrap"
+                              >
+                                <span className="text-sm text-foreground">
+                                  {s.name}
+                                </span>
+                                {s.level ? (
+                                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
+                                    {s.level}
+                                  </span>
+                                ) : null}
+                                {s.note ? (
+                                  <span className="text-xs text-muted-foreground">
+                                    — {s.note}
+                                  </span>
+                                ) : null}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </SectionCard>
+              ) : null
+            ) : (
+              renderLocked("🛠", "Skills", "skills")
+            )}
+
 
             {/* Aura */}
             {canSee("aura") ? (
