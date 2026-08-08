@@ -1310,7 +1310,10 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
     "offering",
     "collaborations",
     "sizing",
+    "faveth",
+    "skills",
     "frames",
+
 
 
     "safety",
