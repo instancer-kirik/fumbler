@@ -1808,7 +1808,120 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                 </TabsContent>
 
                 {/* ═══ TAB 2: ATTRACTION ═══ */}
+                {/* ═══ TAB: FAVETH ═══ */}
+                <TabsContent value="faveth" className="space-y-3">
+                  <EditorSection
+                    icon="🌷"
+                    label="Faveth"
+                    description="Preferred, significant, or otherwise important things"
+                    visibility={vis("faveth")}
+                    onVisibilityChange={(v) => setVis("faveth", v)}
+                  >
+                    <TagField label="Flowers" tags={data.faveth.flowers} onChange={(v) => set(["faveth", "flowers"], v)} placeholder="ranunculus, cosmos..." />
+                    <TagField label="Plants" tags={data.faveth.plants} onChange={(v) => set(["faveth", "plants"], v)} placeholder="monstera, sagebrush..." />
+                    <TagField label="Animals" tags={data.faveth.animals} onChange={(v) => set(["faveth", "animals"], v)} placeholder="crows, big dogs..." />
+                    <TagField label="Dream cars / vehicles" tags={data.faveth.vehicles} onChange={(v) => set(["faveth", "vehicles"], v)} placeholder="80s land cruiser, cafe racer..." />
+                    <TagField label="Media" tags={data.faveth.media} onChange={(v) => set(["faveth", "media"], v)} placeholder="books, films, albums, games" />
+                    <TagField label="Instruments & sounds" tags={data.faveth.instruments} onChange={(v) => set(["faveth", "instruments"], v)} placeholder="upright bass, rain on metal..." />
+                    <TagField label="Food & drink" tags={data.faveth.foodDrink} onChange={(v) => set(["faveth", "foodDrink"], v)} placeholder="ramen, black coffee..." />
+                    <TagField label="Places" tags={data.faveth.places} onChange={(v) => set(["faveth", "places"], v)} placeholder="high desert, harbor towns..." />
+                    <TagField label="Colors" tags={data.faveth.colors} onChange={(v) => set(["faveth", "colors"], v)} placeholder="moss green, oxblood..." />
+                    <TagField label="Scents" tags={data.faveth.scents} onChange={(v) => set(["faveth", "scents"], v)} placeholder="cedar, petrichor..." />
+                    <TagField label="Date ideas" tags={data.faveth.dateIdeas} onChange={(v) => set(["faveth", "dateIdeas"], v)} placeholder="junkyard walk, night drive..." />
+                    <TagField label="Other faves" tags={data.faveth.other} onChange={(v) => set(["faveth", "other"], v)} placeholder="anything else that matters" />
+                  </EditorSection>
+                </TabsContent>
+
+                {/* ═══ TAB: SKILLS ═══ */}
+                <TabsContent value="skills" className="space-y-3">
+                  <EditorSection
+                    icon="🛠"
+                    label="Skills"
+                    description="What you can do, teach, or want to learn"
+                    visibility={vis("skills")}
+                    onVisibilityChange={(v) => setVis("skills", v)}
+                  >
+                    <div className="space-y-3">
+                      {data.skills.map((s, i) => (
+                        <div key={i} className="rounded-2xl bg-secondary/50 p-3 space-y-2">
+                          <div className="flex gap-2">
+                            <input
+                              value={s.name}
+                              onChange={(e) => {
+                                const next = [...data.skills];
+                                next[i] = { ...next[i], name: e.target.value };
+                                set(["skills"], next);
+                              }}
+                              placeholder="welding, bass guitar, Blender..."
+                              className="flex-1 rounded-xl bg-background px-3 py-2 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-primary"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => set(["skills"], data.skills.filter((_, j) => j !== i))}
+                              className="rounded-xl px-3 text-xs text-muted-foreground hover:text-destructive"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <select
+                              value={s.level}
+                              onChange={(e) => {
+                                const next = [...data.skills];
+                                next[i] = { ...next[i], level: e.target.value };
+                                set(["skills"], next);
+                              }}
+                              className="rounded-xl bg-background px-3 py-2 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-primary"
+                            >
+                              <option value="dabbling">Dabbling</option>
+                              <option value="working">Working</option>
+                              <option value="solid">Solid</option>
+                              <option value="deep">Deep</option>
+                            </select>
+                            <select
+                              value={s.intent}
+                              onChange={(e) => {
+                                const next = [...data.skills];
+                                next[i] = { ...next[i], intent: e.target.value };
+                                set(["skills"], next);
+                              }}
+                              className="rounded-xl bg-background px-3 py-2 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-primary"
+                            >
+                              <option value="practice">Just do it</option>
+                              <option value="teach">Can teach</option>
+                              <option value="learn">Want to learn</option>
+                            </select>
+                          </div>
+                          <input
+                            value={s.note}
+                            onChange={(e) => {
+                              const next = [...data.skills];
+                              next[i] = { ...next[i], note: e.target.value };
+                              set(["skills"], next);
+                            }}
+                            placeholder="One line of context (optional)"
+                            className="w-full rounded-xl bg-background px-3 py-2 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-primary"
+                          />
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          set(["skills"], [
+                            ...data.skills,
+                            { name: "", level: "working", intent: "practice", note: "" },
+                          ])
+                        }
+                        className="w-full rounded-2xl border border-dashed border-border py-2.5 text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        + Add skill
+                      </button>
+                    </div>
+                  </EditorSection>
+                </TabsContent>
+
                 <TabsContent value="attraction" className="space-y-3">
+
                   {/* Archetypes — v0.9: name/definition/activationContext */}
                   <EditorSection
                     icon="🎭"
