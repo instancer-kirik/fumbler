@@ -1475,18 +1475,11 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                       tags={data.getToKnowMe.favoriteMedia}
                       onChange={(v) => set(["getToKnowMe", "favoriteMedia"], v)}
                     />
-                    <TagField
-                      label="Favorite flowers"
-                      tags={data.getToKnowMe.favoriteFlowers}
-                      onChange={(v) =>
-                        set(["getToKnowMe", "favoriteFlowers"], v)
-                      }
-                    />
-                    <TagField
-                      label="Date ideas"
-                      tags={data.getToKnowMe.dateIdeas}
-                      onChange={(v) => set(["getToKnowMe", "dateIdeas"], v)}
-                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Flowers, date ideas and other faves now live in the
+                      Faveth tab.
+                    </p>
+
 
                   </EditorSection>
 
