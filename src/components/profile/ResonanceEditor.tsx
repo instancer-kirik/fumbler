@@ -153,6 +153,32 @@ interface ResonanceData {
     notes: string;
   };
 
+  // Faveth — preferred / significant / otherwise important things
+  faveth: {
+    flowers: string[];
+    plants: string[];
+    animals: string[];
+    vehicles: string[];
+    media: string[];
+    instruments: string[];
+    foodDrink: string[];
+    places: string[];
+    colors: string[];
+    scents: string[];
+    dateIdeas: string[];
+    other: string[];
+  };
+
+  // Skills — what you can do, teach, or want to learn
+  skills: Array<{
+    name: string;
+    level: string; // dabbling | working | solid | deep
+    intent: string; // teach | learn | practice
+    note: string;
+  }>;
+
+
+
   // Frames — identity systems (astrology, MBTI, enneagram, custom)
   frames: {
     astrology: { sun: string; moon: string; rising: string; notes: string };
