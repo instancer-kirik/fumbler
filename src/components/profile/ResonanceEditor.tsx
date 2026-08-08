@@ -1414,12 +1414,18 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
           ) : (
             <div className="px-5 pb-8 mt-1">
               <Tabs defaultValue="foundations" className="w-full">
-                <TabsList className="w-full grid grid-cols-5 mb-4 h-auto p-1">
+                <TabsList className="w-full grid grid-cols-4 mb-4 h-auto p-1 gap-1">
                   <TabsTrigger
                     value="foundations"
                     className="text-xs px-1 py-2"
                   >
                     Foundations
+                  </TabsTrigger>
+                  <TabsTrigger value="faveth" className="text-xs px-1 py-2">
+                    Faveth
+                  </TabsTrigger>
+                  <TabsTrigger value="skills" className="text-xs px-1 py-2">
+                    Skills
                   </TabsTrigger>
                   <TabsTrigger value="attraction" className="text-xs px-1 py-2">
                     Attraction
@@ -1434,6 +1440,7 @@ const ResonanceEditor = ({ open, onOpenChange }: ResonanceEditorProps) => {
                     Meta
                   </TabsTrigger>
                 </TabsList>
+
 
                 {/* ═══ TAB 1: FOUNDATIONS ═══ */}
                 <TabsContent value="foundations" className="space-y-3">
