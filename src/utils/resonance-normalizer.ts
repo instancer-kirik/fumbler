@@ -277,6 +277,43 @@ function normalizeV9Flat(raw: Obj): Obj {
       height: str(obj(raw.sizing).height),
       notes: str(obj(raw.sizing).notes),
     },
+    faveth: (() => {
+      const f = obj(raw.faveth);
+      const legacyGtky = obj(raw.getToKnowMe);
+      const merge = (a: unknown, b: unknown) => {
+        const out = [...arr(a), ...arr(b)];
+        return Array.from(new Set(out));
+      };
+      return {
+        flowers: merge(f.flowers, legacyGtky.favoriteFlowers),
+        plants: arr(f.plants),
+        animals: arr(f.animals),
+        vehicles: arr(f.vehicles),
+        media: arr(f.media),
+        instruments: arr(f.instruments),
+        foodDrink: arr(f.foodDrink),
+        places: arr(f.places),
+        colors: arr(f.colors),
+        scents: arr(f.scents),
+        dateIdeas: merge(f.dateIdeas, legacyGtky.dateIdeas),
+        other: arr(f.other),
+      };
+    })(),
+    skills: Array.isArray(raw.skills)
+      ? (raw.skills as unknown[])
+          .map((s) =>
+            typeof s === "string"
+              ? { name: s, level: "working", intent: "practice", note: "" }
+              : {
+                  name: str(obj(s).name),
+                  level: str(obj(s).level) || "working",
+                  intent: str(obj(s).intent) || "practice",
+                  note: str(obj(s).note),
+                },
+          )
+          .filter((s) => s.name)
+      : [],
+
     frames: {
       astrology: {
         sun: str(obj(obj(raw.frames).astrology).sun),
