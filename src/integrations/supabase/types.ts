@@ -1969,6 +1969,128 @@ export type Database = {
         }
         Relationships: []
       }
+      glossary_concepts: {
+        Row: {
+          category: string | null
+          created_at: string
+          domains: string[]
+          formula: string | null
+          id: string
+          name: string
+          short: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          domains?: string[]
+          formula?: string | null
+          id?: string
+          name: string
+          short?: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          domains?: string[]
+          formula?: string | null
+          id?: string
+          name?: string
+          short?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      glossary_definitions: {
+        Row: {
+          concept_id: string
+          context_label: string
+          created_at: string
+          domain_slug: string | null
+          example: string
+          id: string
+          meaning: string
+          misleads: string
+          sort_order: number
+          updated_at: string
+          used: string
+          why: string
+        }
+        Insert: {
+          concept_id: string
+          context_label?: string
+          created_at?: string
+          domain_slug?: string | null
+          example?: string
+          id?: string
+          meaning?: string
+          misleads?: string
+          sort_order?: number
+          updated_at?: string
+          used?: string
+          why?: string
+        }
+        Update: {
+          concept_id?: string
+          context_label?: string
+          created_at?: string
+          domain_slug?: string | null
+          example?: string
+          id?: string
+          meaning?: string
+          misleads?: string
+          sort_order?: number
+          updated_at?: string
+          used?: string
+          why?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glossary_definitions_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "glossary_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      glossary_domains: {
+        Row: {
+          blurb: string | null
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          blurb?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          blurb?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ingredients: {
         Row: {
           alternatives: string[] | null
@@ -2017,6 +2139,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          datasheet_url: string | null
           description: string | null
           dimensions_height: number | null
           dimensions_length: number | null
@@ -2027,17 +2150,21 @@ export type Database = {
           metadata: Json | null
           name: string
           owner_id: string | null
+          part_numbers: string[] | null
           quantity: number | null
           status: string | null
           tags: string[] | null
           type: string | null
           updated_at: string
+          voltage_max: number | null
+          voltage_min: number | null
           volume_cubic_ft: number | null
           weight_lbs: number | null
         }
         Insert: {
           category?: string | null
           created_at?: string
+          datasheet_url?: string | null
           description?: string | null
           dimensions_height?: number | null
           dimensions_length?: number | null
@@ -2048,17 +2175,21 @@ export type Database = {
           metadata?: Json | null
           name: string
           owner_id?: string | null
+          part_numbers?: string[] | null
           quantity?: number | null
           status?: string | null
           tags?: string[] | null
           type?: string | null
           updated_at?: string
+          voltage_max?: number | null
+          voltage_min?: number | null
           volume_cubic_ft?: number | null
           weight_lbs?: number | null
         }
         Update: {
           category?: string | null
           created_at?: string
+          datasheet_url?: string | null
           description?: string | null
           dimensions_height?: number | null
           dimensions_length?: number | null
@@ -2069,11 +2200,14 @@ export type Database = {
           metadata?: Json | null
           name?: string
           owner_id?: string | null
+          part_numbers?: string[] | null
           quantity?: number | null
           status?: string | null
           tags?: string[] | null
           type?: string | null
           updated_at?: string
+          voltage_max?: number | null
+          voltage_min?: number | null
           volume_cubic_ft?: number | null
           weight_lbs?: number | null
         }
@@ -6654,6 +6788,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          image_url: string | null
           name: string
           notes: string | null
           project_id: string
@@ -6665,6 +6800,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          image_url?: string | null
           name: string
           notes?: string | null
           project_id: string
@@ -6676,6 +6812,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          image_url?: string | null
           name?: string
           notes?: string | null
           project_id?: string
@@ -6923,6 +7060,90 @@ export type Database = {
             columns: ["axis_id"]
             isOneToOne: false
             referencedRelation: "project_design_axes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_images: {
+        Row: {
+          caption: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          project_id: string
+          sort_order: number
+          url: string
+          variant_label: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          project_id: string
+          sort_order?: number
+          url: string
+          variant_label?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          project_id?: string
+          sort_order?: number
+          url?: string
+          variant_label?: string | null
+        }
+        Relationships: []
+      }
+      project_inventory_items: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          inventory_item_id: string
+          notes: string | null
+          project_id: string
+          quantity: number
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_item_id: string
+          notes?: string | null
+          project_id: string
+          quantity?: number
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_item_id?: string
+          notes?: string | null
+          project_id?: string
+          quantity?: number
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_inventory_items_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_inventory_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects_catalog"
             referencedColumns: ["id"]
           },
         ]
@@ -7201,6 +7422,7 @@ export type Database = {
       }
       projects_catalog: {
         Row: {
+          asset_format: string | null
           created_at: string
           created_by: string | null
           description: string
@@ -7214,17 +7436,22 @@ export type Database = {
           id: string
           image_url: string | null
           is_public: boolean
+          license: string | null
           name: string
           owner_id: string | null
           path: string | null
+          poly_count: number | null
+          price_usd: number | null
           product_idea_id: string | null
           project_type: string | null
           source_url: string | null
           status: string
+          store_url: string | null
           tech_stack: string[] | null
           updated_at: string
         }
         Insert: {
+          asset_format?: string | null
           created_at?: string
           created_by?: string | null
           description: string
@@ -7238,17 +7465,22 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_public?: boolean
+          license?: string | null
           name: string
           owner_id?: string | null
           path?: string | null
+          poly_count?: number | null
+          price_usd?: number | null
           product_idea_id?: string | null
           project_type?: string | null
           source_url?: string | null
           status?: string
+          store_url?: string | null
           tech_stack?: string[] | null
           updated_at?: string
         }
         Update: {
+          asset_format?: string | null
           created_at?: string
           created_by?: string | null
           description?: string
@@ -7262,13 +7494,17 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_public?: boolean
+          license?: string | null
           name?: string
           owner_id?: string | null
           path?: string | null
+          poly_count?: number | null
+          price_usd?: number | null
           product_idea_id?: string | null
           project_type?: string | null
           source_url?: string | null
           status?: string
+          store_url?: string | null
           tech_stack?: string[] | null
           updated_at?: string
         }
@@ -10566,6 +10802,7 @@ export type Database = {
       }
       unified_projects: {
         Row: {
+          asset_format: string | null
           category_name: string | null
           created_at: string | null
           created_by: string | null
@@ -10581,14 +10818,18 @@ export type Database = {
           id: string | null
           image_url: string | null
           is_public: boolean | null
+          license: string | null
           name: string | null
           owner_id: string | null
           owner_ids: string[] | null
           path: string | null
+          poly_count: number | null
+          price_usd: number | null
           project_type: string | null
           source_table: string | null
           source_url: string | null
           status: string | null
+          store_url: string | null
           tech_stack: string[] | null
         }
         Relationships: []
