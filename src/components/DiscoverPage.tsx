@@ -144,7 +144,13 @@ const DiscoverPage = () => {
       const { data, error } = await query;
 
       if (!error && data) {
-        const mapped = data.map(dbToCardProfile);
+        const rows = extras.hasResonance
+          ? (data as any[]).filter(
+              (r) => r.resonance_data && Object.keys(r.resonance_data).length > 0,
+            )
+          : (data as any[]);
+        const mapped = rows.map(dbToCardProfile);
+
         if (pinSelf) {
           mapped.sort((a: any, b: any) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
         }
