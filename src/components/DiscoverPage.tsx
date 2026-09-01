@@ -368,7 +368,11 @@ const DiscoverPage = () => {
       <DiscoverFiltersSheet
         open={filtersOpen}
         onOpenChange={setFiltersOpen}
-        onSaved={() => setFilterVersion((v) => v + 1)}
+        onSaved={() => {
+          setExtraCount(countActiveExtras(loadExtraFilters()));
+          setFilterVersion((v) => v + 1);
+        }}
+
       />
     </div>
   );
