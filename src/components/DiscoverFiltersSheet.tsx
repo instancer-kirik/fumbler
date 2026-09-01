@@ -71,7 +71,9 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
       return;
     }
     setSaving(true);
+    saveExtraFilters(extras);
     const { error } = await supabase
+
       .from("profiles")
       .update({
         interested_in: interestedIn,
