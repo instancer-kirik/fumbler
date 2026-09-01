@@ -3,6 +3,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import {
+  DEFAULT_EXTRA_FILTERS,
+  ExtraFilters,
+  ORIENTATIONS,
+  PROFILE_TYPES,
+  loadExtraFilters,
+  saveExtraFilters,
+} from "@/lib/discover-filters";
 
 interface Props {
   open: boolean;
@@ -19,7 +27,9 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const [lookingFor, setLookingFor] = useState<string[]>([]);
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
+  const [extras, setExtras] = useState<ExtraFilters>(DEFAULT_EXTRA_FILTERS);
   const [saving, setSaving] = useState(false);
+
 
   useEffect(() => {
     if (!open || !user) return;
