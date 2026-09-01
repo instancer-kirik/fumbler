@@ -148,6 +148,82 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
             </div>
           </div>
 
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Orientation</label>
+            <div className="flex flex-wrap gap-1.5">
+              {ORIENTATIONS.map((o) => (
+                <Chip
+                  key={o}
+                  active={extras.orientations.includes(o)}
+                  onClick={() =>
+                    setExtras((e) => ({
+                      ...e,
+                      orientations: e.orientations.includes(o)
+                        ? e.orientations.filter((x) => x !== o)
+                        : [...e.orientations, o],
+                    }))
+                  }
+                >
+                  {o}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Here for</label>
+            <div className="flex flex-wrap gap-1.5">
+              {PROFILE_TYPES.map((t) => (
+                <Chip
+                  key={t}
+                  active={extras.profileTypes.includes(t)}
+                  onClick={() =>
+                    setExtras((e) => ({
+                      ...e,
+                      profileTypes: e.profileTypes.includes(t)
+                        ? e.profileTypes.filter((x) => x !== t)
+                        : [...e.profileTypes, t],
+                    }))
+                  }
+                >
+                  {t}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Only show</label>
+            <div className="flex flex-wrap gap-1.5">
+              <Chip
+                active={extras.hasPhoto}
+                onClick={() => setExtras((e) => ({ ...e, hasPhoto: !e.hasPhoto }))}
+              >
+                Has photo
+              </Chip>
+              <Chip
+                active={extras.hasResonance}
+                onClick={() => setExtras((e) => ({ ...e, hasResonance: !e.hasResonance }))}
+              >
+                Has resonance profile
+              </Chip>
+              <Chip
+                active={extras.publicOnly}
+                onClick={() => setExtras((e) => ({ ...e, publicOnly: !e.publicOnly }))}
+              >
+                Public profile
+              </Chip>
+            </div>
+            <button
+              type="button"
+              onClick={() => setExtras(DEFAULT_EXTRA_FILTERS)}
+              className="mt-3 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            >
+              Reset extra filters
+            </button>
+          </div>
+
+
           <button
             onClick={handleSave}
             disabled={saving}
