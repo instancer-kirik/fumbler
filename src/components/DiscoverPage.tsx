@@ -59,6 +59,10 @@ const DiscoverPage = () => {
   });
 
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [extraCount, setExtraCount] = useState(() =>
+    countActiveExtras(loadExtraFilters()),
+  );
+
   const [filterVersion, setFilterVersion] = useState(0);
   const [search, setSearch] = useState<string>(() => {
     if (typeof window === "undefined") return "";
