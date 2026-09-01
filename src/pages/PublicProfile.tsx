@@ -1647,7 +1647,10 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
+          <SupportPrompt className="mt-2" />
+
           {/* CTA for unauthenticated */}
+
           <div className="rounded-2xl bg-card border border-border p-5 text-center mt-2">
             <p className="text-sm font-medium text-foreground mb-1">
               Want to share your context?
