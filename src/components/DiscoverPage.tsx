@@ -9,6 +9,8 @@ import DiscoverFiltersSheet from "./DiscoverFiltersSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
+import { countActiveExtras, loadExtraFilters } from "@/lib/discover-filters";
+
 
 // Map "Interested in" preferences → gender values on candidate profiles
 const INTEREST_TO_GENDER: Record<string, string[]> = {
@@ -57,6 +59,10 @@ const DiscoverPage = () => {
   });
 
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [extraCount, setExtraCount] = useState(() =>
+    countActiveExtras(loadExtraFilters()),
+  );
+
   const [filterVersion, setFilterVersion] = useState(0);
   const [search, setSearch] = useState<string>(() => {
     if (typeof window === "undefined") return "";
@@ -90,10 +96,22 @@ const DiscoverPage = () => {
         age_max?: number | null;
       };
 
+      const extras = loadExtraFilters();
+
       let query: any = supabase
         .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age, gender, looking_for")
+        .select(
+          "id, full_name, username, avatar_url, bio, age, gender, looking_for, orientation, profile_types, is_public, resonance_data",
+        )
         .eq("onboarding_complete", true);
+
+      if (extras.orientations.length > 0)
+        query = query.in("orientation", extras.orientations);
+      if (extras.profileTypes.length > 0)
+        query = query.overlaps("profile_types", extras.profileTypes);
+      if (extras.hasPhoto) query = query.not("avatar_url", "is", null);
+      if (extras.publicOnly) query = query.eq("is_public", true);
+
 
       if (!pinSelf) query = query.neq("id", user.id);
 
@@ -132,7 +150,13 @@ const DiscoverPage = () => {
       const { data, error } = await query;
 
       if (!error && data) {
-        const mapped = data.map(dbToCardProfile);
+        const rows = extras.hasResonance
+          ? (data as any[]).filter(
+              (r) => r.resonance_data && Object.keys(r.resonance_data).length > 0,
+            )
+          : (data as any[]);
+        const mapped = rows.map(dbToCardProfile);
+
         if (pinSelf) {
           mapped.sort((a: any, b: any) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0));
         }
@@ -240,10 +264,16 @@ const DiscoverPage = () => {
           </button>
           <button
             onClick={() => setFiltersOpen(true)}
-            className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
+            className="relative rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
           >
             <Sliders className="h-5 w-5 text-foreground" />
+            {extraCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                {extraCount}
+              </span>
+            )}
           </button>
+
         </div>
       </div>
 
@@ -338,7 +368,11 @@ const DiscoverPage = () => {
       <DiscoverFiltersSheet
         open={filtersOpen}
         onOpenChange={setFiltersOpen}
-        onSaved={() => setFilterVersion((v) => v + 1)}
+        onSaved={() => {
+          setExtraCount(countActiveExtras(loadExtraFilters()));
+          setFilterVersion((v) => v + 1);
+        }}
+
       />
     </div>
   );

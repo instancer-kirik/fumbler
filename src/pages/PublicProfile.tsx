@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
+import SupportPrompt from "@/components/SupportPrompt";
+
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
 import {
@@ -1647,7 +1649,10 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
+          <SupportPrompt className="mt-2" />
+
           {/* CTA for unauthenticated */}
+
           <div className="rounded-2xl bg-card border border-border p-5 text-center mt-2">
             <p className="text-sm font-medium text-foreground mb-1">
               Want to share your context?

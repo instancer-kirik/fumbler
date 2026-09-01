@@ -3,6 +3,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import {
+  DEFAULT_EXTRA_FILTERS,
+  ExtraFilters,
+  ORIENTATIONS,
+  PROFILE_TYPES,
+  loadExtraFilters,
+  saveExtraFilters,
+} from "@/lib/discover-filters";
 
 interface Props {
   open: boolean;
@@ -19,10 +27,15 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const [lookingFor, setLookingFor] = useState<string[]>([]);
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
+  const [extras, setExtras] = useState<ExtraFilters>(DEFAULT_EXTRA_FILTERS);
   const [saving, setSaving] = useState(false);
 
+
   useEffect(() => {
-    if (!open || !user) return;
+    if (!open) return;
+    setExtras(loadExtraFilters());
+    if (!user) return;
+
     (async () => {
       const { data } = await supabase
         .from("profiles")
@@ -58,7 +71,9 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
       return;
     }
     setSaving(true);
+    saveExtraFilters(extras);
     const { error } = await supabase
+
       .from("profiles")
       .update({
         interested_in: interestedIn,
@@ -132,6 +147,82 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
               <input type="number" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} placeholder="Max" min={18} max={120} className={inputClass} />
             </div>
           </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Orientation</label>
+            <div className="flex flex-wrap gap-1.5">
+              {ORIENTATIONS.map((o) => (
+                <Chip
+                  key={o}
+                  active={extras.orientations.includes(o)}
+                  onClick={() =>
+                    setExtras((e) => ({
+                      ...e,
+                      orientations: e.orientations.includes(o)
+                        ? e.orientations.filter((x) => x !== o)
+                        : [...e.orientations, o],
+                    }))
+                  }
+                >
+                  {o}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Here for</label>
+            <div className="flex flex-wrap gap-1.5">
+              {PROFILE_TYPES.map((t) => (
+                <Chip
+                  key={t}
+                  active={extras.profileTypes.includes(t)}
+                  onClick={() =>
+                    setExtras((e) => ({
+                      ...e,
+                      profileTypes: e.profileTypes.includes(t)
+                        ? e.profileTypes.filter((x) => x !== t)
+                        : [...e.profileTypes, t],
+                    }))
+                  }
+                >
+                  {t}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Only show</label>
+            <div className="flex flex-wrap gap-1.5">
+              <Chip
+                active={extras.hasPhoto}
+                onClick={() => setExtras((e) => ({ ...e, hasPhoto: !e.hasPhoto }))}
+              >
+                Has photo
+              </Chip>
+              <Chip
+                active={extras.hasResonance}
+                onClick={() => setExtras((e) => ({ ...e, hasResonance: !e.hasResonance }))}
+              >
+                Has resonance profile
+              </Chip>
+              <Chip
+                active={extras.publicOnly}
+                onClick={() => setExtras((e) => ({ ...e, publicOnly: !e.publicOnly }))}
+              >
+                Public profile
+              </Chip>
+            </div>
+            <button
+              type="button"
+              onClick={() => setExtras(DEFAULT_EXTRA_FILTERS)}
+              className="mt-3 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            >
+              Reset extra filters
+            </button>
+          </div>
+
 
           <button
             onClick={handleSave}
