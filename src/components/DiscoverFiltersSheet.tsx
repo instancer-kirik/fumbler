@@ -32,7 +32,10 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
 
 
   useEffect(() => {
-    if (!open || !user) return;
+    if (!open) return;
+    setExtras(loadExtraFilters());
+    if (!user) return;
+
     (async () => {
       const { data } = await supabase
         .from("profiles")
