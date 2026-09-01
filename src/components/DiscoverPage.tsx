@@ -9,6 +9,8 @@ import DiscoverFiltersSheet from "./DiscoverFiltersSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
+import { countActiveExtras, loadExtraFilters } from "@/lib/discover-filters";
+
 
 // Map "Interested in" preferences → gender values on candidate profiles
 const INTEREST_TO_GENDER: Record<string, string[]> = {
