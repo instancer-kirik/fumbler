@@ -90,10 +90,22 @@ const DiscoverPage = () => {
         age_max?: number | null;
       };
 
+      const extras = loadExtraFilters();
+
       let query: any = supabase
         .from("profiles")
-        .select("id, full_name, username, avatar_url, bio, age, gender, looking_for")
+        .select(
+          "id, full_name, username, avatar_url, bio, age, gender, looking_for, orientation, profile_types, is_public, resonance_data",
+        )
         .eq("onboarding_complete", true);
+
+      if (extras.orientations.length > 0)
+        query = query.in("orientation", extras.orientations);
+      if (extras.profileTypes.length > 0)
+        query = query.overlaps("profile_types", extras.profileTypes);
+      if (extras.hasPhoto) query = query.not("avatar_url", "is", null);
+      if (extras.publicOnly) query = query.eq("is_public", true);
+
 
       if (!pinSelf) query = query.neq("id", user.id);
 
