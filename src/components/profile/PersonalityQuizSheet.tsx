@@ -34,9 +34,10 @@ const GROUPS: { key: keyof PrefillGroups; label: string }[] = [
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSaved?: () => void;
 }
 
-const PersonalityQuizSheet = ({ open, onOpenChange }: Props) => {
+const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const { user } = useAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
@@ -92,8 +93,10 @@ const PersonalityQuizSheet = ({ open, onOpenChange }: Props) => {
       const merged = applyQuizToResonance((existing?.resonance_data as any) ?? {}, result, groups);
       const { error } = await supabase.from("profiles").update({ resonance_data: merged }).eq("id", user.id);
       if (error) throw error;
-      await (supabase as any).from("quiz_results").insert({ user_id: user.id, answers, result });
+      const { error: resultError } = await (supabase as any).from("quiz_results").insert({ user_id: user.id, answers, result });
+      if (resultError) throw resultError;
       toast.success("Added to your Resonance profile");
+      onSaved?.();
       onOpenChange(false);
       reset();
     } catch (e: any) {
