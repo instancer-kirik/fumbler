@@ -185,6 +185,43 @@ const ProfilePage = () => {
         </p>
       </motion.div>
 
+      {!quizCompleted && !quizDismissed && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative mt-5 rounded-2xl border border-primary/20 bg-card p-4 shadow-card"
+        >
+          <button
+            aria-label="Dismiss personality quiz prompt"
+            onClick={() => {
+              if (user) localStorage.setItem(`fumbler.quizDismissed.${user.id}`, "true");
+              setQuizDismissed(true);
+            }}
+            className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <div className="flex items-start gap-3 pr-6">
+            <div className="rounded-xl bg-secondary p-2.5">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Find your pattern</h3>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                40 quick questions to suggest your type, attachment style, and profile starting points.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowQuiz(true)}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl gradient-warm py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            Take the personality quiz
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </motion.div>
+      )}
+
       {/* Share card */}
       {profileUrl && (
         <motion.div
