@@ -102,7 +102,7 @@ export function scoreQuiz(chosen: QuizEffects[]): QuizResult {
     .filter(([key, score]) => key.startsWith("core.") && score > 0)
     .map(([key, score]) => {
       const coreKey = key.slice("core.".length);
-      return { key: coreKey, label: CORE_LABELS[coreKey] ?? coreKey.replaceAll("_", " "), score };
+      return { key: coreKey, label: CORE_LABELS[coreKey] ?? coreKey.replace(/_/g, " "), score };
     })
     .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
     .slice(0, 3);
