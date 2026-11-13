@@ -6,10 +6,18 @@ export type QuizEffects = {
   a?: Record<string, unknown>;
 };
 
+export type CoreMatch = {
+  key: string;
+  label: string;
+  score: number;
+};
+
 export type QuizResult = {
   mbti: string;
   attachment: string | null;
   internetCore: string | null;
+  internetCores: CoreMatch[];
+  coreConfidence: "none" | "light" | "mixed" | "clear";
   creativeMode: string | null;
   projectStyle: string | null;
   scores: Record<string, number>;

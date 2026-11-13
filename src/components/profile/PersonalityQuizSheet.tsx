@@ -27,7 +27,7 @@ const FRAMEWORK_LABEL: Record<string, string> = {
 };
 
 const GROUPS: { key: keyof PrefillGroups; label: string }[] = [
-  { key: "frames", label: "Identity Frames (type, attachment, core)" },
+  { key: "frames", label: "Identity Frames (type, attachment, aesthetic blend)" },
   { key: "desires", label: "Desires, dynamics & love languages" },
   { key: "archetypes", label: "Archetypes" },
   { key: "qualities", label: "Qualities, values & aesthetics" },

@@ -13,6 +13,18 @@ describe("personality quiz", () => {
     const r = scoreQuiz([{ s: { "att.anxious": 2, "core.goblincore": 1 } }, { s: { "att.secure": 1, "core.goblincore": 2 } }]);
     expect(r.attachment).toBe("Anxious");
     expect(r.internetCore).toBe("Goblincore");
+    expect(r.internetCores.map((core) => core.label)).toEqual(["Goblincore"]);
+  });
+
+  it("keeps close aesthetic scores as a blend instead of forcing one winner", () => {
+    const r = scoreQuiz([{ s: { "core.goblincore": 3, "core.dreamcore": 3, "core.weirdcore": 1 } }]);
+    expect(r.internetCores.map((core) => core.label)).toEqual(["Dreamcore", "Goblincore", "Weirdcore"]);
+    expect(r.coreConfidence).toBe("mixed");
+  });
+
+  it("recognizes the expanded aesthetic set", () => {
+    const r = scoreQuiz([{ s: { "core.solarpunk": 2 } }, { s: { "core.dark_academia": 2 } }]);
+    expect(r.internetCores.map((core) => core.label)).toEqual(["Dark Academia", "Solarpunk"]);
   });
 
   it("keeps existing profile entries and doesn't duplicate", () => {
