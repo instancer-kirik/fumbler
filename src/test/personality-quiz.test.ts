@@ -27,6 +27,12 @@ describe("personality quiz", () => {
     expect(r.internetCores.map((core) => core.label)).toEqual(["Dark Academia", "Solarpunk"]);
   });
 
+  it("saves a close aesthetic blend to Identity Frames", () => {
+    const r = scoreQuiz([{ s: { "core.goblincore": 3, "core.dreamcore": 3 } }]);
+    const out = applyQuizToResonance({}, r, all);
+    expect(out.frames.custom).toContainEqual(expect.objectContaining({ system: "Internet core", value: "Dreamcore + Goblincore" }));
+  });
+
   it("keeps existing profile entries and doesn't duplicate", () => {
     const r = scoreQuiz([{ a: { qualities: ["Direct", "Maker"] } }]);
     const out = applyQuizToResonance({ qualities: ["direct", "Funny"] }, r, all);

@@ -170,7 +170,7 @@ export function applyQuizToResonance(raw: Obj, r: QuizResult, g: PrefillGroups):
       else custom.push({ system, value, notes: "From the Fumbler quiz" });
     };
     upsert("Attachment style", r.attachment);
-    upsert("Internet core", r.internetCore);
+    upsert("Internet core", r.internetCores.map((core) => core.label).join(" + ") || null);
     data.frames.custom = custom;
   }
 
