@@ -55,6 +55,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
     (supabase as any)
       .from("quiz_questions")
       .select("id, position, framework, prompt, quiz_options(id, position, label, effects)")
+      .eq("active", true)
       .order("position")
       .then(({ data, error }: any) => {
         if (error) toast.error("Couldn't load the quiz");
@@ -183,9 +184,13 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">Suggestions from your answers</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {Object.values(result.adds).flatMap((v) =>
-                    Array.isArray(v) ? v.map((x: any, i) => chip(suggestionLabel(x), i)) : [chip(suggestionLabel(v), 0)],
-                  )}
+                  {Array.from(
+                    new Set(
+                      Object.values(result.adds).flatMap((v) =>
+                        (Array.isArray(v) ? v : [v]).map((x: any) => suggestionLabel(x)),
+                      ),
+                    ),
+                  ).map((label, i) => chip(label, i))}
                 </div>
               </div>
             )}
