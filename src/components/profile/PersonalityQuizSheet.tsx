@@ -34,9 +34,10 @@ const GROUPS: { key: keyof PrefillGroups; label: string }[] = [
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSaved?: () => void;
 }
 
-const PersonalityQuizSheet = ({ open, onOpenChange }: Props) => {
+const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const { user } = useAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);

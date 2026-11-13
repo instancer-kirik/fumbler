@@ -57,6 +57,8 @@ const ProfilePage = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [showPhotos, setShowPhotos] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [quizDismissed, setQuizDismissed] = useState(true);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
