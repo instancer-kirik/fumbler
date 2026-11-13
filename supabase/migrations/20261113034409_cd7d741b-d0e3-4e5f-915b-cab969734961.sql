@@ -1,0 +1,1 @@
+UPDATE public.quiz_questions SET active = false WHERE id IN ('37a9aabc-09a5-41ea-b548-a4fce2758d0e','161b39e0-cf13-435c-b53b-94785f86039f','6fe0c736-4af6-41d2-bc2e-e14edc5f5275','912fa046-aace-4f1a-b387-5a7c295de6b8');
