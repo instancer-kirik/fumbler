@@ -351,7 +351,11 @@ const ProfilePage = () => {
 
       <ToonImportSheet open={showImport} onOpenChange={setShowImport} />
 
-      <PersonalityQuizSheet open={showQuiz} onOpenChange={setShowQuiz} />
+      <PersonalityQuizSheet
+        open={showQuiz}
+        onOpenChange={setShowQuiz}
+        onSaved={() => setQuizCompleted(true)}
+      />
 
       <SafetyPrivacySheet open={showSafety} onOpenChange={setShowSafety} />
 
