@@ -93,8 +93,10 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
       const merged = applyQuizToResonance((existing?.resonance_data as any) ?? {}, result, groups);
       const { error } = await supabase.from("profiles").update({ resonance_data: merged }).eq("id", user.id);
       if (error) throw error;
-      await (supabase as any).from("quiz_results").insert({ user_id: user.id, answers, result });
+      const { error: resultError } = await (supabase as any).from("quiz_results").insert({ user_id: user.id, answers, result });
+      if (resultError) throw resultError;
       toast.success("Added to your Resonance profile");
+      onSaved?.();
       onOpenChange(false);
       reset();
     } catch (e: any) {

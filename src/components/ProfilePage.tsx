@@ -84,7 +84,7 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const [profileRes, photosRes] = await Promise.all([
+    const [profileRes, photosRes, quizRes] = await Promise.all([
       supabase
         .from("profiles")
         .select("id, full_name, username, avatar_url, bio, age")
@@ -94,9 +94,15 @@ const ProfilePage = () => {
         .from("fumble_photos")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id),
+      (supabase as any)
+        .from("quiz_results")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
     ]);
     if (profileRes.data) setProfile(profileRes.data);
     setPhotoCount(photosRes.count ?? 0);
+    setQuizCompleted((quizRes.count ?? 0) > 0);
+    setQuizDismissed(localStorage.getItem(`fumbler.quizDismissed.${user.id}`) === "true");
     setLoading(false);
   };
 
