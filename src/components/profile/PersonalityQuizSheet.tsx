@@ -167,9 +167,8 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-2">
               {[
-                ["Type", result.mbti],
-                ["Attachment", result.attachment ?? "—"],
-                ["Core", result.internetCore ?? "—"],
+                ["Type lean", result.mbti],
+                ["Attachment lean", result.attachment ?? "—"],
                 ["Creative pull", result.creativeMode ?? "—"],
                 ["Project pull", result.projectStyle ?? "—"],
               ].map(([k, v]) => (
@@ -178,6 +177,20 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
                   <div className="font-display text-base text-foreground">{v}</div>
                 </div>
               ))}
+            </div>
+
+            <div className="rounded-2xl bg-card p-4 shadow-card">
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Aesthetic blend</div>
+              <div className="mt-1 font-display text-lg text-foreground">
+                {result.internetCores.map((core) => core.label).join(" + ") || "No clear signal"}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {result.coreConfidence === "mixed"
+                  ? "These scores are close. Keep the whole blend, one part, or none of it."
+                  : result.coreConfidence === "light"
+                    ? "A light signal from a few answers, not a fixed identity. Edit or skip it freely."
+                    : "Your strongest signals from these answers, not a definitive label. Your other sides still count."}
+              </p>
             </div>
 
             {Object.keys(result.adds).length > 0 && (

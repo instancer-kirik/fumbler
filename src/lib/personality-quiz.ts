@@ -98,12 +98,31 @@ export function scoreQuiz(chosen: QuizEffects[]): QuizResult {
   const mbti = pick("I", "E") + pick("N", "S") + pick("F", "T") + pick("P", "J");
   const att = top(scores, "att");
   const core = top(scores, "core");
+  const internetCores: CoreMatch[] = Object.entries(scores)
+    .filter(([key, score]) => key.startsWith("core.") && score > 0)
+    .map(([key, score]) => {
+      const coreKey = key.slice("core.".length);
+      return { key: coreKey, label: CORE_LABELS[coreKey] ?? coreKey.replaceAll("_", " "), score };
+    })
+    .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+    .slice(0, 3);
+  const strongestCore = internetCores[0]?.score ?? 0;
+  const runnerUpCore = internetCores[1]?.score ?? 0;
+  const coreConfidence: QuizResult["coreConfidence"] = strongestCore === 0
+    ? "none"
+    : strongestCore < 4
+      ? "light"
+      : runnerUpCore > 0 && strongestCore - runnerUpCore <= 1
+        ? "mixed"
+        : "clear";
   const creative = top(scores, "creative");
   const project = top(scores, "project");
   return {
     mbti,
     attachment: att ? ATTACHMENT_LABELS[att] ?? att : null,
     internetCore: core ? CORE_LABELS[core] ?? core : null,
+    internetCores,
+    coreConfidence,
     creativeMode: creative ? CREATIVE_LABELS[creative] ?? creative : null,
     projectStyle: project ? PROJECT_LABELS[project] ?? project : null,
     scores,
