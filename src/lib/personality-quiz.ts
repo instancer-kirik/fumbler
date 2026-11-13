@@ -110,10 +110,10 @@ export function scoreQuiz(chosen: QuizEffects[]): QuizResult {
   const runnerUpCore = internetCores[1]?.score ?? 0;
   const coreConfidence: QuizResult["coreConfidence"] = strongestCore === 0
     ? "none"
-    : strongestCore < 4
-      ? "light"
-      : runnerUpCore > 0 && strongestCore - runnerUpCore <= 1
-        ? "mixed"
+    : runnerUpCore > 0 && strongestCore - runnerUpCore <= 1
+      ? "mixed"
+      : strongestCore < 4
+        ? "light"
         : "clear";
   const creative = top(scores, "creative");
   const project = top(scores, "project");

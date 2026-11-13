@@ -189,7 +189,9 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
                   ? "These scores are close. Keep the whole blend, one part, or none of it."
                   : result.coreConfidence === "light"
                     ? "A light signal from a few answers, not a fixed identity. Edit or skip it freely."
-                    : "Your strongest signals from these answers, not a definitive label. Your other sides still count."}
+                    : result.coreConfidence === "none"
+                      ? "No aesthetic stood out from these answers, and that is a valid result."
+                      : "Your strongest signals from these answers, not a definitive label. Your other sides still count."}
               </p>
             </div>
 
