@@ -7733,6 +7733,92 @@ export type Database = {
           },
         ]
       }
+      quiz_options: {
+        Row: {
+          created_at: string
+          effects: Json
+          id: string
+          label: string
+          position: number
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          effects?: Json
+          id?: string
+          label: string
+          position?: number
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          effects?: Json
+          id?: string
+          label?: string
+          position?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          active: boolean
+          created_at: string
+          framework: string
+          id: string
+          position: number
+          prompt: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          framework?: string
+          id?: string
+          position?: number
+          prompt: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          framework?: string
+          id?: string
+          position?: number
+          prompt?: string
+        }
+        Relationships: []
+      }
+      quiz_results: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          result: Json
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          result?: Json
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          result?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       radio_channels: {
         Row: {
           created_at: string
