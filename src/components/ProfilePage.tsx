@@ -16,6 +16,7 @@ import {
   Eye,
   Key,
   Image as ImageIcon,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,6 +30,7 @@ import ShareKeysSheet from "@/components/profile/ShareKeysSheet";
 import SafetyPrivacySheet from "@/components/profile/SafetyPrivacySheet";
 import HelpSupportSheet from "@/components/profile/HelpSupportSheet";
 import PhotoManagerSheet from "@/components/profile/PhotoManagerSheet";
+import PersonalityQuizSheet from "@/components/profile/PersonalityQuizSheet";
 
 interface UserProfile {
   id: string;
@@ -54,6 +56,7 @@ const ProfilePage = () => {
   const [showSafety, setShowSafety] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showPhotos, setShowPhotos] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   const profileUrl = profile?.username
     ? `https://fumbler.lovable.app/u/${profile.username}`
@@ -255,6 +258,11 @@ const ProfilePage = () => {
             action: () => setShowResonance(true),
           },
           {
+            icon: Sparkles,
+            label: "Personality Quiz",
+            action: () => setShowQuiz(true),
+          },
+          {
             icon: Key,
             label: "Share Links",
             action: () => setShowShareKeys(true),
@@ -297,6 +305,8 @@ const ProfilePage = () => {
       <ResonanceEditor open={showResonance} onOpenChange={setShowResonance} />
 
       <ToonImportSheet open={showImport} onOpenChange={setShowImport} />
+
+      <PersonalityQuizSheet open={showQuiz} onOpenChange={setShowQuiz} />
 
       <SafetyPrivacySheet open={showSafety} onOpenChange={setShowSafety} />
 
