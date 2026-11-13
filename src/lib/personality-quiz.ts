@@ -6,10 +6,18 @@ export type QuizEffects = {
   a?: Record<string, unknown>;
 };
 
+export type CoreMatch = {
+  key: string;
+  label: string;
+  score: number;
+};
+
 export type QuizResult = {
   mbti: string;
   attachment: string | null;
   internetCore: string | null;
+  internetCores: CoreMatch[];
+  coreConfidence: "none" | "light" | "mixed" | "clear";
   creativeMode: string | null;
   projectStyle: string | null;
   scores: Record<string, number>;
@@ -30,6 +38,12 @@ const CORE_LABELS: Record<string, string> = {
   weirdcore: "Weirdcore",
   dreamcore: "Dreamcore",
   frutiger_aero: "Frutiger Aero",
+  solarpunk: "Solarpunk",
+  dark_academia: "Dark Academia",
+  vaporwave: "Vaporwave",
+  fairycore: "Fairycore",
+  cybercore: "Cybercore",
+  grunge: "Grunge",
 };
 
 const CREATIVE_LABELS: Record<string, string> = {
@@ -84,12 +98,31 @@ export function scoreQuiz(chosen: QuizEffects[]): QuizResult {
   const mbti = pick("I", "E") + pick("N", "S") + pick("F", "T") + pick("P", "J");
   const att = top(scores, "att");
   const core = top(scores, "core");
+  const internetCores: CoreMatch[] = Object.entries(scores)
+    .filter(([key, score]) => key.startsWith("core.") && score > 0)
+    .map(([key, score]) => {
+      const coreKey = key.slice("core.".length);
+      return { key: coreKey, label: CORE_LABELS[coreKey] ?? coreKey.replace(/_/g, " "), score };
+    })
+    .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+    .slice(0, 3);
+  const strongestCore = internetCores[0]?.score ?? 0;
+  const runnerUpCore = internetCores[1]?.score ?? 0;
+  const coreConfidence: QuizResult["coreConfidence"] = strongestCore === 0
+    ? "none"
+    : runnerUpCore > 0 && strongestCore - runnerUpCore <= 1
+      ? "mixed"
+      : strongestCore < 4
+        ? "light"
+        : "clear";
   const creative = top(scores, "creative");
   const project = top(scores, "project");
   return {
     mbti,
     attachment: att ? ATTACHMENT_LABELS[att] ?? att : null,
     internetCore: core ? CORE_LABELS[core] ?? core : null,
+    internetCores,
+    coreConfidence,
     creativeMode: creative ? CREATIVE_LABELS[creative] ?? creative : null,
     projectStyle: project ? PROJECT_LABELS[project] ?? project : null,
     scores,
@@ -137,7 +170,7 @@ export function applyQuizToResonance(raw: Obj, r: QuizResult, g: PrefillGroups):
       else custom.push({ system, value, notes: "From the Fumbler quiz" });
     };
     upsert("Attachment style", r.attachment);
-    upsert("Internet core", r.internetCore);
+    upsert("Internet core", r.internetCores.map((core) => core.label).join(" + ") || null);
     data.frames.custom = custom;
   }
 
