@@ -125,7 +125,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
             <Sparkles className="h-4 w-4 text-primary" /> Personality quiz
           </SheetTitle>
           <p className="text-xs text-muted-foreground">
-            {questions.length ? `${questions.length} quick questions. ` : ""}Your answers suggest a type and fill in parts of your profile; you pick what to keep.
+            {questions.length ? `${questions.length} quick questions. ` : ""}Your answers suggest tendencies, not definitive labels. You can have a blend, and you pick what to keep.
           </p>
         </SheetHeader>
 

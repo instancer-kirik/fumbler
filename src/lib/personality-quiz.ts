@@ -38,6 +38,12 @@ const CORE_LABELS: Record<string, string> = {
   weirdcore: "Weirdcore",
   dreamcore: "Dreamcore",
   frutiger_aero: "Frutiger Aero",
+  solarpunk: "Solarpunk",
+  dark_academia: "Dark Academia",
+  vaporwave: "Vaporwave",
+  fairycore: "Fairycore",
+  cybercore: "Cybercore",
+  grunge: "Grunge",
 };
 
 const CREATIVE_LABELS: Record<string, string> = {
