@@ -10,6 +10,8 @@ export type QuizResult = {
   mbti: string;
   attachment: string | null;
   internetCore: string | null;
+  creativeMode: string | null;
+  projectStyle: string | null;
   scores: Record<string, number>;
   adds: Record<string, unknown[] | string>;
 };
@@ -28,6 +30,24 @@ const CORE_LABELS: Record<string, string> = {
   weirdcore: "Weirdcore",
   dreamcore: "Dreamcore",
   frutiger_aero: "Frutiger Aero",
+};
+
+const CREATIVE_LABELS: Record<string, string> = {
+  maker: "Maker",
+  worldbuilder: "Worldbuilder",
+  collaborator: "Co-creator",
+  director: "Creative director",
+};
+
+const PROJECT_LABELS: Record<string, string> = {
+  solo: "Parallel practice",
+  duo: "Creative duo",
+  crew: "Small crew",
+  network: "Loose network",
+  starter: "Idea starter",
+  builder: "Prototype builder",
+  finisher: "Finishing energy",
+  connector: "Audience connector",
 };
 
 const top = (scores: Record<string, number>, prefix: string): string | null => {
@@ -64,10 +84,14 @@ export function scoreQuiz(chosen: QuizEffects[]): QuizResult {
   const mbti = pick("I", "E") + pick("N", "S") + pick("F", "T") + pick("P", "J");
   const att = top(scores, "att");
   const core = top(scores, "core");
+  const creative = top(scores, "creative");
+  const project = top(scores, "project");
   return {
     mbti,
     attachment: att ? ATTACHMENT_LABELS[att] ?? att : null,
     internetCore: core ? CORE_LABELS[core] ?? core : null,
+    creativeMode: creative ? CREATIVE_LABELS[creative] ?? creative : null,
+    projectStyle: project ? PROJECT_LABELS[project] ?? project : null,
     scores,
     adds,
   };
@@ -78,6 +102,7 @@ export type PrefillGroups = {
   desires: boolean;
   archetypes: boolean;
   qualities: boolean;
+  projects: boolean;
 };
 
 type Obj = Record<string, any>;
@@ -129,6 +154,48 @@ export function applyQuizToResonance(raw: Obj, r: QuizResult, g: PrefillGroups):
     if (Array.isArray(r.adds.qualities)) addArr(["qualities"], r.adds.qualities);
     if (Array.isArray(r.adds.values)) addArr(["values"], r.adds.values);
     if (Array.isArray(r.adds.aesthetics)) addArr(["aesthetics"], r.adds.aesthetics);
+  }
+
+  if (g.projects) {
+    const roles = r.adds["offering.roles"];
+    if (Array.isArray(roles)) addArr(["offering", "roles"], roles);
+    if (Array.isArray(r.adds.aspirations)) addArr(["aspirations"], r.adds.aspirations);
+
+    if (Array.isArray(r.adds.skills)) {
+      const existing: Obj[] = Array.isArray(data.skills) ? data.skills : [];
+      const names = new Set(existing.map((s) => String(s?.name ?? "").trim().toLowerCase()));
+      for (const skill of r.adds.skills as Obj[]) {
+        const name = String(skill?.name ?? "").trim();
+        if (!name || names.has(name.toLowerCase())) continue;
+        existing.push({
+          name,
+          level: skill.level || "working",
+          intent: skill.intent || "practice",
+          note: skill.note || "Suggested by the quiz; edit freely.",
+        });
+        names.add(name.toLowerCase());
+      }
+      data.skills = existing;
+    }
+
+    if (Array.isArray(r.adds.collaborations)) {
+      const existing: Obj[] = Array.isArray(data.collaborations) ? data.collaborations : [];
+      const keyOf = (c: Obj) => `${String(c?.kind ?? "").trim().toLowerCase()}|${String(c?.role ?? "").trim().toLowerCase()}`;
+      const keys = new Set(existing.map(keyOf));
+      for (const collab of r.adds.collaborations as Obj[]) {
+        const kind = String(collab?.kind ?? "").trim();
+        const role = String(collab?.role ?? "").trim();
+        if ((!kind && !role) || keys.has(keyOf(collab))) continue;
+        existing.push({
+          kind,
+          role,
+          lookingFor: collab.lookingFor || "",
+          notes: collab.notes || "Suggested by the quiz; edit freely.",
+        });
+        keys.add(keyOf(collab));
+      }
+      data.collaborations = existing;
+    }
   }
 
   if (g.desires) {

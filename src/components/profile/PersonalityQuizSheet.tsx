@@ -22,6 +22,8 @@ const FRAMEWORK_LABEL: Record<string, string> = {
   attachment: "Love & attachment",
   internet: "Internet core",
   dynamics: "Relationship dynamics",
+  creative: "Creative practice",
+  projects: "Projects & collaborations",
 };
 
 const GROUPS: { key: keyof PrefillGroups; label: string }[] = [
@@ -29,6 +31,7 @@ const GROUPS: { key: keyof PrefillGroups; label: string }[] = [
   { key: "desires", label: "Desires, dynamics & love languages" },
   { key: "archetypes", label: "Archetypes" },
   { key: "qualities", label: "Qualities, values & aesthetics" },
+  { key: "projects", label: "Creative roles, skills & collaborations" },
 ];
 
 interface Props {
@@ -43,7 +46,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [groups, setGroups] = useState<PrefillGroups>({ frames: true, desires: true, archetypes: true, qualities: true });
+  const [groups, setGroups] = useState<PrefillGroups>({ frames: true, desires: true, archetypes: true, qualities: true, projects: true });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -107,9 +110,11 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
   };
 
   const q = questions[step];
-  const chip = (s: string) => (
-    <span key={s} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">{s}</span>
+  const chip = (label: string, index: number) => (
+    <span key={`${label}-${index}`} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">{label}</span>
   );
+  const suggestionLabel = (value: any) =>
+    typeof value === "string" ? value : value?.name ?? value?.role ?? value?.kind ?? value?.label ?? "Profile suggestion";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -119,7 +124,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
             <Sparkles className="h-4 w-4 text-primary" /> Personality quiz
           </SheetTitle>
           <p className="text-xs text-muted-foreground">
-            {questions.length || 40} quick questions. Your answers suggest a type and fill in parts of your profile; you pick what to keep.
+            {questions.length ? `${questions.length} quick questions. ` : ""}Your answers suggest a type and fill in parts of your profile; you pick what to keep.
           </p>
         </SheetHeader>
 
@@ -159,11 +164,13 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
 
         {result && (
           <div className="space-y-5">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 ["Type", result.mbti],
                 ["Attachment", result.attachment ?? "—"],
                 ["Core", result.internetCore ?? "—"],
+                ["Creative pull", result.creativeMode ?? "—"],
+                ["Project pull", result.projectStyle ?? "—"],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-2xl bg-card p-3 text-center shadow-card">
                   <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{k}</div>
@@ -177,7 +184,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
                 <p className="text-xs text-muted-foreground">Suggestions from your answers</p>
                 <div className="flex flex-wrap gap-1.5">
                   {Object.values(result.adds).flatMap((v) =>
-                    Array.isArray(v) ? v.map((x: any) => chip(typeof x === "string" ? x : x.name)) : [chip(v)],
+                    Array.isArray(v) ? v.map((x: any, i) => chip(suggestionLabel(x), i)) : [chip(suggestionLabel(v), 0)],
                   )}
                 </div>
               </div>
@@ -191,7 +198,7 @@ const PersonalityQuizSheet = ({ open, onOpenChange, onSaved }: Props) => {
                   {g.label}
                 </label>
               ))}
-              <p className="text-[11px] text-muted-foreground">Nothing you've already written is removed. Visibility settings stay the same.</p>
+              <p className="text-[11px] text-muted-foreground">Nothing you've already written is removed. Visibility settings stay the same. Edit any suggested skill or project afterward.</p>
             </div>
 
             <div className="flex gap-2">
