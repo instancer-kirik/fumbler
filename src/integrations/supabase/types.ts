@@ -14,6 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
+      aesthetic_boards: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["aesthetic_board_visibility"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["aesthetic_board_visibility"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["aesthetic_board_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aesthetic_boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aesthetic_boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aesthetic_boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aesthetic_entries: {
+        Row: {
+          category: Database["public"]["Enums"]["aesthetic_category"]
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+          name: string
+          related_slugs: string[]
+          slug: string
+          summary: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["aesthetic_category"]
+          created_at?: string
+          created_by: string
+          description?: string
+          id?: string
+          name: string
+          related_slugs?: string[]
+          slug: string
+          summary: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["aesthetic_category"]
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+          name?: string
+          related_slugs?: string[]
+          slug?: string
+          summary?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aesthetic_entries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aesthetic_entries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aesthetic_entries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aesthetic_pins: {
+        Row: {
+          aesthetic_slug: string
+          board_id: string
+          created_at: string
+          id: string
+          note: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          aesthetic_slug: string
+          board_id: string
+          created_at?: string
+          id?: string
+          note?: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          aesthetic_slug?: string
+          board_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aesthetic_pins_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "aesthetic_boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artists: {
         Row: {
           bio: string | null
@@ -11450,6 +11598,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_goal_style_board: { Args: { target_id: string }; Returns: Json }
       get_instance_context_hierarchy: {
         Args: { instance_id: string }
         Returns: {
@@ -11923,6 +12072,8 @@ export type Database = {
       }
     }
     Enums: {
+      aesthetic_board_visibility: "private" | "matches" | "public"
+      aesthetic_category: "fashion" | "spaces" | "art" | "music"
       bot_kind: "assistant" | "scheduled" | "moderator"
       content_type:
         | "project"
@@ -12148,6 +12299,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      aesthetic_board_visibility: ["private", "matches", "public"],
+      aesthetic_category: ["fashion", "spaces", "art", "music"],
       bot_kind: ["assistant", "scheduled", "moderator"],
       content_type: [
         "project",
