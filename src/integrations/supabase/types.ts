@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.3"
   }
   public: {
     Tables: {
@@ -1022,6 +1022,84 @@ export type Database = {
         }
         Relationships: []
       }
+      creator_survey_responses: {
+        Row: {
+          collaboration_types: string | null
+          contact_email: string | null
+          country: string | null
+          created_at: string
+          discoverability: string | null
+          fell_through: string | null
+          finding_opportunities: string | null
+          hardest_part: string | null
+          id: string
+          instant_yes: string | null
+          issue_frequency: string | null
+          one_change: string | null
+          paid_tools: string | null
+          process: string | null
+          role: string | null
+          role_other: string | null
+          tools: string | null
+          trust_platforms: string | null
+          trust_requirements: string | null
+          updated_at: string
+          user_id: string | null
+          values_most: string | null
+          willing_to_pay: string | null
+        }
+        Insert: {
+          collaboration_types?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          discoverability?: string | null
+          fell_through?: string | null
+          finding_opportunities?: string | null
+          hardest_part?: string | null
+          id?: string
+          instant_yes?: string | null
+          issue_frequency?: string | null
+          one_change?: string | null
+          paid_tools?: string | null
+          process?: string | null
+          role?: string | null
+          role_other?: string | null
+          tools?: string | null
+          trust_platforms?: string | null
+          trust_requirements?: string | null
+          updated_at?: string
+          user_id?: string | null
+          values_most?: string | null
+          willing_to_pay?: string | null
+        }
+        Update: {
+          collaboration_types?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          discoverability?: string | null
+          fell_through?: string | null
+          finding_opportunities?: string | null
+          hardest_part?: string | null
+          id?: string
+          instant_yes?: string | null
+          issue_frequency?: string | null
+          one_change?: string | null
+          paid_tools?: string | null
+          process?: string | null
+          role?: string | null
+          role_other?: string | null
+          tools?: string | null
+          trust_platforms?: string | null
+          trust_requirements?: string | null
+          updated_at?: string
+          user_id?: string | null
+          values_most?: string | null
+          willing_to_pay?: string | null
+        }
+        Relationships: []
+      }
       development_projects: {
         Row: {
           created_at: string
@@ -1386,6 +1464,7 @@ export type Database = {
           id: string
           kind: Database["public"]["Enums"]["floorplan_item_kind"]
           label: string | null
+          level: number
           meta: Json
           rotation: number
           updated_at: string
@@ -1401,6 +1480,7 @@ export type Database = {
           id?: string
           kind: Database["public"]["Enums"]["floorplan_item_kind"]
           label?: string | null
+          level?: number
           meta?: Json
           rotation?: number
           updated_at?: string
@@ -1416,6 +1496,7 @@ export type Database = {
           id?: string
           kind?: Database["public"]["Enums"]["floorplan_item_kind"]
           label?: string | null
+          level?: number
           meta?: Json
           rotation?: number
           updated_at?: string
@@ -1427,6 +1508,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "floorplan_items_floorplan_id_fkey"
+            columns: ["floorplan_id"]
+            isOneToOne: false
+            referencedRelation: "venue_floorplans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      floorplan_layouts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          floorplan_id: string
+          id: string
+          is_default: boolean
+          name: string
+          snapshot: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          floorplan_id: string
+          id?: string
+          is_default?: boolean
+          name: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          floorplan_id?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "floorplan_layouts_floorplan_id_fkey"
             columns: ["floorplan_id"]
             isOneToOne: false
             referencedRelation: "venue_floorplans"
@@ -4945,6 +5070,86 @@ export type Database = {
           },
         ]
       }
+      meeting_availability_polls: {
+        Row: {
+          created_at: string
+          description: string
+          duration_minutes: number
+          id: string
+          organizer_id: string
+          selected_start: string | null
+          share_token: string
+          slots: string[]
+          timezone: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          id?: string
+          organizer_id: string
+          selected_start?: string | null
+          share_token?: string
+          slots: string[]
+          timezone: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          id?: string
+          organizer_id?: string
+          selected_start?: string | null
+          share_token?: string
+          slots?: string[]
+          timezone?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      meeting_availability_responses: {
+        Row: {
+          available_slots: string[]
+          created_at: string
+          edit_key: string
+          id: string
+          name: string
+          poll_id: string
+          updated_at: string
+        }
+        Insert: {
+          available_slots?: string[]
+          created_at?: string
+          edit_key?: string
+          id?: string
+          name: string
+          poll_id: string
+          updated_at?: string
+        }
+        Update: {
+          available_slots?: string[]
+          created_at?: string
+          edit_key?: string
+          id?: string
+          name?: string
+          poll_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_availability_responses_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_availability_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meeting_schedules: {
         Row: {
           created_at: string | null
@@ -6172,6 +6377,7 @@ export type Database = {
           id: string
           image: string | null
           slug: string | null
+          status: string
           title: string
           updated_at: string | null
         }
@@ -6185,6 +6391,7 @@ export type Database = {
           id?: string
           image?: string | null
           slug?: string | null
+          status?: string
           title: string
           updated_at?: string | null
         }
@@ -6198,6 +6405,7 @@ export type Database = {
           id?: string
           image?: string | null
           slug?: string | null
+          status?: string
           title?: string
           updated_at?: string | null
         }
@@ -8576,6 +8784,68 @@ export type Database = {
           },
         ]
       }
+      snack_materials: {
+        Row: {
+          base_ingredient_class: string | null
+          chemical_profile: string | null
+          created_at: string
+          density: string | null
+          effect_purpose: string | null
+          hardening_process: string | null
+          id: string
+          microwave_behavior: string | null
+          oxidation_weathering: string | null
+          snack_id: string
+          solubility: string | null
+          stickiness: string | null
+          strength_metrics: string | null
+          texture_consistency: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_ingredient_class?: string | null
+          chemical_profile?: string | null
+          created_at?: string
+          density?: string | null
+          effect_purpose?: string | null
+          hardening_process?: string | null
+          id?: string
+          microwave_behavior?: string | null
+          oxidation_weathering?: string | null
+          snack_id: string
+          solubility?: string | null
+          stickiness?: string | null
+          strength_metrics?: string | null
+          texture_consistency?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_ingredient_class?: string | null
+          chemical_profile?: string | null
+          created_at?: string
+          density?: string | null
+          effect_purpose?: string | null
+          hardening_process?: string | null
+          id?: string
+          microwave_behavior?: string | null
+          oxidation_weathering?: string | null
+          snack_id?: string
+          solubility?: string | null
+          stickiness?: string | null
+          strength_metrics?: string | null
+          texture_consistency?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "snack_materials_snack_id_fkey"
+            columns: ["snack_id"]
+            isOneToOne: true
+            referencedRelation: "snacks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       snack_ratings: {
         Row: {
           comment: string | null
@@ -8794,6 +9064,88 @@ export type Database = {
           {
             foreignKeyName: "snacks_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_tools: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          details: string[]
+          id: string
+          kind: string
+          links: string[]
+          location: string | null
+          name: string
+          owner_id: string | null
+          owner_name: string | null
+          params: Json
+          place: string
+          quantity: string | null
+          sort_order: number
+          training_required: boolean
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          details?: string[]
+          id?: string
+          kind?: string
+          links?: string[]
+          location?: string | null
+          name: string
+          owner_id?: string | null
+          owner_name?: string | null
+          params?: Json
+          place?: string
+          quantity?: string | null
+          sort_order?: number
+          training_required?: boolean
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          details?: string[]
+          id?: string
+          kind?: string
+          links?: string[]
+          location?: string | null
+          name?: string
+          owner_id?: string | null
+          owner_name?: string | null
+          params?: Json
+          place?: string
+          quantity?: string | null
+          sort_order?: number
+          training_required?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_tools_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_tools_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_tools_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "user_profiles"
             referencedColumns: ["id"]
@@ -11027,6 +11379,10 @@ export type Database = {
           world_name: string
         }[]
       }
+      get_meeting_availability_poll: {
+        Args: { p_token: string }
+        Returns: Json
+      }
       get_project_components: {
         Args: { p_project_id: string }
         Returns: {
@@ -11352,6 +11708,15 @@ export type Database = {
         Returns: undefined
       }
       refresh_work_discovery: { Args: never; Returns: undefined }
+      save_meeting_availability_response: {
+        Args: {
+          p_edit_key: string
+          p_name: string
+          p_slots: string[]
+          p_token: string
+        }
+        Returns: string
+      }
       search_context_drops: {
         Args: {
           limit_count?: number
@@ -11585,12 +11950,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -11614,11 +11979,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -11639,11 +12004,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -11664,11 +12029,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -11681,11 +12046,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
