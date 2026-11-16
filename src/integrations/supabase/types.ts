@@ -162,6 +162,56 @@ export type Database = {
           },
         ]
       }
+      artist_media: {
+        Row: {
+          artist_id: string
+          created_at: string
+          description: string | null
+          id: string
+          kind: string
+          mime_type: string | null
+          position: number
+          storage_path: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind: string
+          mime_type?: string | null
+          position?: number
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          position?: number
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_media_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artists: {
         Row: {
           bio: string | null
@@ -169,9 +219,11 @@ export type Database = {
           disciplines: string[] | null
           id: string
           image_url: string | null
+          is_discoverable: boolean
           location: string | null
           multidisciplinary: boolean | null
           name: string
+          owner_id: string | null
           social_links: string[] | null
           styles: string[] | null
           subtype: string | null
@@ -185,9 +237,11 @@ export type Database = {
           disciplines?: string[] | null
           id?: string
           image_url?: string | null
+          is_discoverable?: boolean
           location?: string | null
           multidisciplinary?: boolean | null
           name: string
+          owner_id?: string | null
           social_links?: string[] | null
           styles?: string[] | null
           subtype?: string | null
@@ -201,9 +255,11 @@ export type Database = {
           disciplines?: string[] | null
           id?: string
           image_url?: string | null
+          is_discoverable?: boolean
           location?: string | null
           multidisciplinary?: boolean | null
           name?: string
+          owner_id?: string | null
           social_links?: string[] | null
           styles?: string[] | null
           subtype?: string | null
@@ -11461,6 +11517,10 @@ export type Database = {
       }
     }
     Functions: {
+      artist_id_from_media_path: {
+        Args: { object_name: string }
+        Returns: string
+      }
       calculate_company_avg_rating: {
         Args: { company_id: string }
         Returns: number
