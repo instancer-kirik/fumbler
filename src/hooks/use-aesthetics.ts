@@ -113,6 +113,7 @@ export function useAddCommunityAesthetic() {
       if (!user) throw new Error("Sign in to add an aesthetic");
       const slug = slugifyAesthetic(input.name);
       if (!slug) throw new Error("Give the aesthetic a name");
+      if (curatedAestheticBySlug.has(slug)) throw new Error("That style is already in the curated atlas");
       const { data, error } = await (supabase as any)
         .from("aesthetic_entries")
         .insert({
