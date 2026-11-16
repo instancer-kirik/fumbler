@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bookmark, Check, ChevronRight, Compass, Plus, Search, Trash2 } from "lucide-react";
+import { Bookmark, ChevronRight, Compass, Plus, Search, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
