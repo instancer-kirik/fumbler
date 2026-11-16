@@ -55,6 +55,7 @@ const App = () => (
             {/* Public sharable profile */}
             <Route path="/u/:username" element={<PublicProfile />} />
             <Route path="/about" element={<About />} />
+            <Route path="/aesthetics" element={<AestheticsPage />} />
 
             {/* Authenticated app routes */}
             <Route

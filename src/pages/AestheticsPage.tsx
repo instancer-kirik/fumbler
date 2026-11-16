@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Bookmark, Check, ChevronRight, Compass, Plus, Search, Trash2 } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   AESTHETIC_CATEGORIES,
   CURATED_AESTHETICS,
