@@ -15,6 +15,7 @@ import PeoplePage from "@/components/PeoplePage";
 import PublicProfile from "@/pages/PublicProfile";
 import AppLayout from "@/components/AppLayout";
 import About from "./pages/About";
+import AestheticsPage from "./pages/AestheticsPage";
 
 const queryClient = new QueryClient();
 

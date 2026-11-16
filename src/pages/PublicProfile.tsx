@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ArrowLeft, ChevronRight, Share2, Check } from "lucide-react";
 import SupportPrompt from "@/components/SupportPrompt";
+import PublicGoalStyle from "@/components/aesthetics/PublicGoalStyle";
 
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeImportData } from "@/utils/resonance-normalizer";
