@@ -69,6 +69,11 @@ const AestheticsPage = () => {
   };
 
   const toggleSave = (entry: AestheticEntry) => {
+    if (!user) {
+      toast.info("Sign in to build your Goal Style list");
+      navigate("/auth");
+      return;
+    }
     if (savedSlugs.has(entry.slug)) {
       if (!board.id) return;
       remove.mutate({ boardId: board.id, slug: entry.slug }, {
