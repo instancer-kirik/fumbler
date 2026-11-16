@@ -30,6 +30,8 @@ const visibilityCopy: Record<GoalStyleVisibility, string> = {
 };
 
 const AestheticsPage = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTabState] = useState<"atlas" | "goal">(searchParams.get("tab") === "goal" ? "goal" : "atlas");
   const [query, setQuery] = useState("");

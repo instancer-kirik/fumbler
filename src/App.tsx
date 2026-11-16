@@ -66,7 +66,6 @@ const App = () => (
               }
             >
               <Route path="/discover" element={<DiscoverPage />} />
-              <Route path="/aesthetics" element={<AestheticsPage />} />
               <Route path="/matches" element={<MatchesPage />} />
               <Route path="/people" element={<PeoplePage />} />
               <Route path="/profile" element={<ProfilePage />} />
