@@ -1670,6 +1670,10 @@ const PublicProfile = () => {
           </div>
         </div>
       )}
+
+      <div className="mt-3">
+        <PublicGoalStyle targetId={profile.id} />
+      </div>
     </div>
   );
 };
