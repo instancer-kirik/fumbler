@@ -5,4 +5,4 @@
 - [x] Add Goal Style saving, notes, removal, and list visibility controls.
 - [x] Add atlas navigation and permitted list display on shared profiles.
 - [x] Remove the unused generated moodboards after the scope change.
-- [ ] Add privacy tests and verify the preview and main flows.
+- [x] Verify atlas integrity, public browsing, anonymous write denial, privacy rules, and preview; signed-in browser testing is unavailable with external auth.
