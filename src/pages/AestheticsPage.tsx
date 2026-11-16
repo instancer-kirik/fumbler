@@ -90,7 +90,7 @@ const AestheticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background px-4 pb-28 pt-6">
+    <div className="mx-auto min-h-screen max-w-lg bg-background px-4 pb-28 pt-6">
       <header className="mb-5 flex items-start justify-between gap-3">
         <div>
           <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">A cross-linked field guide</p>
