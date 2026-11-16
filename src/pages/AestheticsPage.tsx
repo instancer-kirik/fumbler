@@ -152,9 +152,16 @@ const AestheticsPage = () => {
         </>
       ) : (
         <div className="space-y-4">
+          {!user && (
+            <section className="rounded-2xl border border-primary/20 bg-card p-4">
+              <p className="text-sm font-semibold text-foreground">Your list starts with an account</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Sign in to save styles, add your own notes, and choose who can see them.</p>
+              <button onClick={() => navigate("/auth")} className="mt-3 rounded-xl gradient-warm px-4 py-2 text-xs font-semibold text-primary-foreground">Sign in to build Goal Style</button>
+            </section>
+          )}
           <section className="rounded-2xl border border-border bg-card p-4">
             <label htmlFor="goal-visibility" className="text-xs font-semibold text-foreground">Who can see your Goal Style?</label>
-            <select id="goal-visibility" value={board.visibility} disabled={setVisibility.isPending} onChange={(event) => setVisibility.mutate(event.target.value as GoalStyleVisibility, { onSuccess: () => toast.success("Visibility updated"), onError: () => toast.error("Couldn't update visibility") })} className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/40">
+            <select id="goal-visibility" value={board.visibility} disabled={!user || setVisibility.isPending} onChange={(event) => setVisibility.mutate(event.target.value as GoalStyleVisibility, { onSuccess: () => toast.success("Visibility updated"), onError: () => toast.error("Couldn't update visibility") })} className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/40">
               <option value="private">Private</option>
               <option value="matches">Matches only</option>
               <option value="public">Public on my profile</option>
