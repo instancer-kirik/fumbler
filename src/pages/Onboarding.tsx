@@ -1,108 +1,114 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ArtistIntroStep from "@/components/onboarding/ArtistIntroStep";
 
 const Onboarding = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user, refreshOnboarding } = useAuth();
+  const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [bio, setBio] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleComplete = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleComplete = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!user) return;
 
     setLoading(true);
     const { error } = await supabase
       .from("profiles")
       .update({
-        full_name: name,
-        age: parseInt(age),
-        bio: bio || null,
+        full_name: name.trim(),
+        age: parseInt(age, 10),
+        bio: bio.trim() || null,
         onboarding_complete: true,
       })
       .eq("id", user.id);
-
     setLoading(false);
 
     if (error) {
       toast.error("Failed to save profile: " + error.message);
-    } else {
-      navigate("/discover");
+      return;
     }
+    await refreshOnboarding();
+    setStep(2);
   };
 
   return (
-    <div className="mx-auto max-w-lg min-h-screen bg-background flex flex-col justify-center px-6">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center bg-background px-6 py-8">
       <motion.div
+        key={step}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-          Let's set you up
-        </h1>
-        <p className="text-muted-foreground text-sm mb-8">
-          The basics — you can add photos later.
-        </p>
+        {step === 2 ? (
+          <ArtistIntroStep defaultName={name.trim()} onBack={() => setStep(1)} />
+        ) : (
+          <>
+            <div className="mb-8">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Step 1 of 2 · The basics</p>
+              <h1 className="mb-2 font-display text-3xl font-bold text-foreground">Let's set you up</h1>
+              <p className="text-sm text-muted-foreground">The basics — you can add photos and more later.</p>
+            </div>
 
-        <form onSubmit={handleComplete} className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="What should people call you?"
-              required
-              className="w-full rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground transition-all"
-            />
-          </div>
+            <form onSubmit={handleComplete} className="space-y-4">
+              <div>
+                <label htmlFor="onboarding-name" className="mb-1 block text-xs font-medium text-muted-foreground">Name</label>
+                <input
+                  id="onboarding-name"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="What should people call you?"
+                  required
+                  maxLength={100}
+                  className="w-full rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border transition-all placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
+                />
+              </div>
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Age
-            </label>
-            <input
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="18+"
-              required
-              min={18}
-              max={120}
-              className="w-full rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground transition-all"
-            />
-          </div>
+              <div>
+                <label htmlFor="onboarding-age" className="mb-1 block text-xs font-medium text-muted-foreground">Age</label>
+                <input
+                  id="onboarding-age"
+                  type="number"
+                  value={age}
+                  onChange={(event) => setAge(event.target.value)}
+                  placeholder="18+"
+                  required
+                  min={18}
+                  max={120}
+                  className="w-full rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border transition-all placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
+                />
+              </div>
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Bio <span className="text-muted-foreground/60">(optional)</span>
-            </label>
-            <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="A little about you..."
-              maxLength={300}
-              rows={3}
-              className="w-full rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground transition-all resize-none"
-            />
-          </div>
+              <div>
+                <label htmlFor="onboarding-bio" className="mb-1 block text-xs font-medium text-muted-foreground">
+                  Bio <span className="text-muted-foreground/60">(optional)</span>
+                </label>
+                <textarea
+                  id="onboarding-bio"
+                  value={bio}
+                  onChange={(event) => setBio(event.target.value)}
+                  placeholder="A little about you…"
+                  maxLength={300}
+                  rows={3}
+                  className="w-full resize-none rounded-2xl bg-card px-4 py-3.5 text-sm text-foreground outline-none ring-1 ring-border transition-all placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
+                />
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading || !name || !age}
-            className="w-full rounded-2xl gradient-warm py-3.5 text-sm font-semibold text-primary-foreground disabled:opacity-50 transition-opacity mt-4"
-          >
-            {loading ? "Saving..." : "Let's fumble"}
-          </button>
-        </form>
+              <button
+                type="submit"
+                disabled={loading || !name.trim() || !age}
+                className="mt-4 w-full rounded-2xl gradient-warm py-3.5 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-50"
+              >
+                {loading ? "Saving…" : "Continue"}
+              </button>
+            </form>
+          </>
+        )}
       </motion.div>
     </div>
   );

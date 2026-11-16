@@ -17,11 +17,12 @@ import {
   Key,
   Image as ImageIcon,
   Sparkles,
+  Music2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ThemePalette from "@/components/profile/ThemePalette";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ResonanceEditor from "@/components/profile/ResonanceEditor";
@@ -31,6 +32,7 @@ import SafetyPrivacySheet from "@/components/profile/SafetyPrivacySheet";
 import HelpSupportSheet from "@/components/profile/HelpSupportSheet";
 import PhotoManagerSheet from "@/components/profile/PhotoManagerSheet";
 import PersonalityQuizSheet from "@/components/profile/PersonalityQuizSheet";
+import ArtistStudioSheet from "@/components/profile/ArtistStudioSheet";
 
 interface UserProfile {
   id: string;
@@ -44,6 +46,8 @@ interface UserProfile {
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showArtistStudio, setShowArtistStudio] = useState(searchParams.get("artist") === "studio");
   const [showPalette, setShowPalette] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showResonance, setShowResonance] = useState(false);
@@ -298,6 +302,11 @@ const ProfilePage = () => {
             action: () => setShowPhotos(true),
           },
           {
+            icon: Music2,
+            label: "Artist Intro & Media",
+            action: () => setShowArtistStudio(true),
+          },
+          {
             icon: Settings,
             label: "Resonance Profile",
             action: () => setShowResonance(true),
@@ -350,6 +359,14 @@ const ProfilePage = () => {
         onOpenChange={setShowEdit}
         profile={profile}
         onSaved={fetchProfile}
+      />
+
+      <ArtistStudioSheet
+        open={showArtistStudio}
+        onOpenChange={(open) => {
+          setShowArtistStudio(open);
+          if (!open && searchParams.has("artist")) setSearchParams({});
+        }}
       />
 
       <ResonanceEditor open={showResonance} onOpenChange={setShowResonance} />
