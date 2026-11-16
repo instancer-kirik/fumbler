@@ -97,7 +97,7 @@ const AestheticsPage = () => {
           <p className="mt-1 max-w-sm text-xs leading-relaxed text-muted-foreground">Explore directions, mix what fits, and leave the rest. No images, no definitive taxonomy, no label police.</p>
         </div>
         {tab === "atlas" && (
-          <button onClick={() => setCommunityOpen(true)} aria-label="Add a community aesthetic" className="shrink-0 rounded-xl gradient-warm p-2.5 text-primary-foreground">
+          <button onClick={() => user ? setCommunityOpen(true) : navigate("/auth")} aria-label="Add a community aesthetic" className="shrink-0 rounded-xl gradient-warm p-2.5 text-primary-foreground">
             <Plus className="h-5 w-5" />
           </button>
         )}
