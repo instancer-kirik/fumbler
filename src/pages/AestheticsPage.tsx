@@ -195,7 +195,6 @@ const AestheticsPage = () => {
                       </button>
                     </div>
                     <textarea key={`${pin.id}:${pin.note}`} defaultValue={pin.note} onBlur={(event) => { const note = event.target.value.trim(); if (note !== pin.note) save.mutate({ slug: pin.aestheticSlug, note }, { onError: () => toast.error("Couldn't save your note") }); }} placeholder="What does this mean for your goal style?" maxLength={500} className="mt-3 min-h-20 w-full resize-none rounded-xl border border-border bg-secondary px-3 py-2.5 text-xs leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/40" />
-                    {save.isSuccess && <Check className="ml-auto h-3.5 w-3.5 text-primary" />}
                   </article>
                 );
               })}
