@@ -303,6 +303,11 @@ const ProfilePage = () => {
             action: () => setShowResonance(true),
           },
           {
+            icon: Palette,
+            label: "Aesthetic Atlas & Goal Style",
+            action: () => navigate("/aesthetics"),
+          },
+          {
             icon: Sparkles,
             label: "Personality Quiz",
             action: () => setShowQuiz(true),

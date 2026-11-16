@@ -15,6 +15,7 @@ import PeoplePage from "@/components/PeoplePage";
 import PublicProfile from "@/pages/PublicProfile";
 import AppLayout from "@/components/AppLayout";
 import About from "./pages/About";
+import AestheticsPage from "./pages/AestheticsPage";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             {/* Public sharable profile */}
             <Route path="/u/:username" element={<PublicProfile />} />
             <Route path="/about" element={<About />} />
+            <Route path="/aesthetics" element={<AestheticsPage />} />
 
             {/* Authenticated app routes */}
             <Route

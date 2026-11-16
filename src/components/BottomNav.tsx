@@ -1,8 +1,9 @@
-import { Compass, Heart, ClipboardList, User } from "lucide-react";
+import { Compass, Heart, ClipboardList, User, Shapes } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { id: "discover", icon: Compass, label: "Discover", path: "/discover" },
+  { id: "aesthetics", icon: Shapes, label: "Atlas", path: "/aesthetics" },
   { id: "matches", icon: Heart, label: "Matches", path: "/matches" },
   { id: "people", icon: ClipboardList, label: "People", path: "/people" },
   { id: "profile", icon: User, label: "Profile", path: "/profile" },
@@ -23,7 +24,7 @@ const BottomNav = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1 rounded-xl px-4 py-2 transition-all ${
+              className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 transition-all ${
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
