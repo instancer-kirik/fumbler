@@ -206,6 +206,7 @@ const AestheticsPage = () => {
 
       <AestheticDetailsSheet entry={selected} entriesBySlug={entriesBySlug} saved={selected ? savedSlugs.has(selected.slug) : false} saving={save.isPending || remove.isPending} onOpenChange={(open) => !open && setSelected(null)} onToggleSave={() => selected && toggleSave(selected)} onSelectRelated={setSelected} />
       <CommunityAestheticSheet open={communityOpen} onOpenChange={setCommunityOpen} onAdded={setSelected} />
+      {user && <BottomNav />}
     </div>
   );
 };
