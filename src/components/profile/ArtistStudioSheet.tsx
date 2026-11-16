@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, EyeOff, Loader2, Music2, Save, Trash2, X } from "lucide-react";
+import { Eye, EyeOff, Loader2, Music2, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import ArtistProfileFields, { type ArtistProfileDraft } from "@/components/artists/ArtistProfileFields";

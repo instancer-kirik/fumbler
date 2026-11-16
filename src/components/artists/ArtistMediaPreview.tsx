@@ -1,4 +1,4 @@
-import { ExternalLink, FileAudio, ImageOff } from "lucide-react";
+import { ExternalLink, FileAudio } from "lucide-react";
 import type { ArtistMediaRecord } from "@/lib/artist-media";
 import { isExternalStreamingPage } from "@/lib/artist-media";
 
