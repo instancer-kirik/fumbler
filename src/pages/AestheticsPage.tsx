@@ -22,6 +22,7 @@ import {
 import AestheticCard from "@/components/aesthetics/AestheticCard";
 import AestheticDetailsSheet from "@/components/aesthetics/AestheticDetailsSheet";
 import CommunityAestheticSheet from "@/components/aesthetics/CommunityAestheticSheet";
+import BottomNav from "@/components/BottomNav";
 
 const visibilityCopy: Record<GoalStyleVisibility, string> = {
   private: "Only you can see this list.",
