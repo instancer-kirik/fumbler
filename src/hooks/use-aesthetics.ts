@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { slugifyAesthetic, type AestheticCategory, type AestheticEntry } from "@/data/aesthetics";
+import { curatedAestheticBySlug, slugifyAesthetic, type AestheticCategory, type AestheticEntry } from "@/data/aesthetics";
 
 export type GoalStyleVisibility = "private" | "matches" | "public";
 export type GoalStylePin = { id: string; aestheticSlug: string; note: string; position: number };

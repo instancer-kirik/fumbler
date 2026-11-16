@@ -24,7 +24,7 @@ const BottomNav = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1 rounded-xl px-4 py-2 transition-all ${
+              className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 transition-all ${
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
