@@ -1650,8 +1650,6 @@ const PublicProfile = () => {
             </SectionCard>
           )}
 
-          <PublicGoalStyle targetId={profile.id} />
-
           <SupportPrompt className="mt-2" />
 
           {/* CTA for unauthenticated */}
