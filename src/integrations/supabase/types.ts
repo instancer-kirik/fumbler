@@ -11538,6 +11538,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_view_project: { Args: { _project_id: string }; Returns: boolean }
+      can_view_vehicle_component: {
+        Args: { _component_id: string }
+        Returns: boolean
+      }
+      can_view_vehicle_config: {
+        Args: { _config_id: string }
+        Returns: boolean
+      }
+      can_view_video_project: {
+        Args: { _video_project_id: string }
+        Returns: boolean
+      }
+      can_view_video_scene: { Args: { _scene_id: string }; Returns: boolean }
+      can_view_video_script: { Args: { _script_id: string }; Returns: boolean }
       cleanup_old_rotation_logs: { Args: never; Returns: undefined }
       create_template_instance: {
         Args: {
@@ -11960,6 +11975,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      is_community_member: {
+        Args: { _community_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_content_owner: {
         Args: {
           _content_id: string
@@ -11992,6 +12011,7 @@ export type Database = {
         Args: { _thread_id: string; _user_id: string }
         Returns: boolean
       }
+      project_id_from_storage_path: { Args: { _name: string }; Returns: string }
       record_template_analytics: {
         Args: {
           p_context_data?: Json
