@@ -126,7 +126,7 @@ const AestheticsPage = () => {
             ))}
           </div>
 
-          {community.isError && <p className="mb-4 rounded-xl bg-card p-3 text-xs text-muted-foreground">Community additions couldn’t load. The 48 curated styles are still available.</p>}
+          {community.isError && <p className="mb-4 rounded-xl bg-card p-3 text-xs text-muted-foreground">Community additions couldn’t load. The {CURATED_AESTHETICS.length} curated styles are still available.</p>}
           {filtered.length === 0 && (
             <div className="rounded-2xl border border-dashed border-border p-8 text-center">
               <p className="font-display text-lg text-foreground">No matching branch</p>

@@ -1,8 +1,6 @@
-# Artist discovery and intro material
+# Expand the aesthetic atlas
 
-- [x] Inspect existing artist, follow, media, and onboarding flows.
-- [x] Add artist intro-material storage and privacy-safe follow-suggestion data.
-- [x] Build a Follow page with playable demo tracks, art previews, and working follow controls.
-- [x] Add artist intro-material setup and editing without disrupting required onboarding.
-- [x] Add navigation and verify media rules, onboarding, Follow interactions, editor behavior, and preview layouts.
-- [ ] Exercise a real signed-in file upload and playback; blocked by external unmanaged auth without a browser test session.
+- [x] Audit the current 48 entries and category balance.
+- [x] Add 96 non-repetitive niche, historical, regional, and internet-native styles, for 144 total.
+- [x] Preserve valid cross-links, search, and category browsing.
+- [x] Update atlas tests and verify the expanded public browser.

@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { AESTHETIC_CATEGORIES, CURATED_AESTHETICS, curatedAestheticBySlug, filterAesthetics, slugifyAesthetic } from "@/data/aesthetics";
 
  describe("aesthetic atlas", () => {
-  it("starts with 48 styles across four equally sized branches", () => {
-    expect(CURATED_AESTHETICS).toHaveLength(48);
+  it("contains 144 styles across four equally sized branches", () => {
+    expect(CURATED_AESTHETICS).toHaveLength(144);
     for (const category of AESTHETIC_CATEGORIES) {
-      expect(CURATED_AESTHETICS.filter((entry) => entry.category === category.id)).toHaveLength(12);
+      expect(CURATED_AESTHETICS.filter((entry) => entry.category === category.id)).toHaveLength(36);
     }
   });
 

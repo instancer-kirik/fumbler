@@ -1,3 +1,8 @@
+import { FASHION_AESTHETICS } from "./aesthetics-fashion";
+import { SPACES_AESTHETICS } from "./aesthetics-spaces";
+import { ART_AESTHETICS } from "./aesthetics-art";
+import { MUSIC_AESTHETICS } from "./aesthetics-music";
+
 export type AestheticCategory = "fashion" | "spaces" | "art" | "music";
 
 export type AestheticEntry = {
@@ -20,7 +25,7 @@ export const AESTHETIC_CATEGORIES: { id: AestheticCategory; label: string; short
   { id: "music", label: "Music & atmosphere", shortLabel: "Music" },
 ];
 
-export const CURATED_AESTHETICS: AestheticEntry[] = [
+const BASE_AESTHETICS: AestheticEntry[] = [
   // Fashion & appearance — Scholarly
   { slug: "dark-academia", name: "Dark Academia", category: "fashion", family: "Scholarly", summary: "Old libraries, wool tailoring, candlelight, and romanticized study.", description: "A scholarly look built from tweed, wool, worn leather, and muted earth tones. It often pairs intellectual curiosity with gothic architecture and a little melancholy.", tags: ["tailoring", "libraries", "heritage", "autumn"], related: ["light-academia", "whimsigoth", "art-nouveau"], source: "curated" },
   { slug: "light-academia", name: "Light Academia", category: "fashion", family: "Scholarly", summary: "Sunlit study, cream linen, soft knitwear, and optimistic learning.", description: "The brighter sibling of Dark Academia: airy fabrics, warm neutrals, handwritten notes, and quiet mornings. It favors tenderness and curiosity over brooding.", tags: ["linen", "sunlight", "knitwear", "neutral"], related: ["dark-academia", "cottagecore", "japandi"], source: "curated" },
@@ -92,6 +97,14 @@ export const CURATED_AESTHETICS: AestheticEntry[] = [
   { slug: "acid-house", name: "Acid House", category: "music", family: "Dance & DIY", summary: "Squelching synth lines, warehouse joy, repetition, and collective release.", description: "A dance sound and visual culture driven by hypnotic basslines and communal motion. Smiling graphics and liquid light are recognizable, but the shared floor is central.", tags: ["warehouse", "squelch", "repetition", "dance"], related: ["jungle", "neo-psychedelia", "vaporwave"], source: "curated" },
   { slug: "hyperpop", name: "Hyperpop", category: "music", family: "Dance & DIY", summary: "Exaggerated pop, pitched vocals, glossy distortion, and maximal emotional contrast.", description: "A pop sensibility that turns commercial sounds past their expected limits. Sweetness, noise, sincerity, and artifice can all occupy the same track.", tags: ["pitched", "glossy", "distorted", "maximal"], related: ["glitchcore", "y2k", "indie-sleaze"], source: "curated" },
   { slug: "folk-punk", name: "Folk Punk", category: "music", family: "Dance & DIY", summary: "Scrappy acoustic instruments, direct lyrics, borrowed spaces, and mutual aid.", description: "A DIY atmosphere where acoustic instruments carry punk urgency and community politics. Its style comes from repair, travel, handbills, and making do together.", tags: ["acoustic", "DIY", "direct", "community"], related: ["grunge", "goblincore", "indie-sleaze"], source: "curated" },
+];
+
+export const CURATED_AESTHETICS: AestheticEntry[] = [
+  ...BASE_AESTHETICS,
+  ...FASHION_AESTHETICS,
+  ...SPACES_AESTHETICS,
+  ...ART_AESTHETICS,
+  ...MUSIC_AESTHETICS,
 ];
 
 export const slugifyAesthetic = (value: string) =>
