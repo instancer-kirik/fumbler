@@ -23,4 +23,4 @@
 ## Calling people
 
 - [x] Store an optional phone number on each private People entry and tap to dial it.
-- [ ] Show your real help-team number in Help & Support; the call row is built and currently shows a reserved placeholder number.
+- [x] Show your real help-team number in Help & Support: +1 (443) 280-8685.
