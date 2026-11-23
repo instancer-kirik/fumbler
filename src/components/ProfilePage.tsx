@@ -18,6 +18,7 @@ import {
   Image as ImageIcon,
   Sparkles,
   Music2,
+  Info,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -335,6 +336,11 @@ const ProfilePage = () => {
             icon: Shield,
             label: "Safety & Privacy",
             action: () => setShowSafety(true),
+          },
+          {
+            icon: Info,
+            label: "About Fumbler",
+            action: () => navigate("/about"),
           },
           {
             icon: HelpCircle,

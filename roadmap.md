@@ -1,5 +1,10 @@
 # Current tasks
 
+## About and FAQ
+
+- [x] Move only the unique FAQ details to About.
+- [x] Add a clearly labeled About link to the Profile menu and clarify the existing drawer label.
+
 ## Selected security findings
 
 - [ ] Map only the selected scan findings to their current table and storage policies.

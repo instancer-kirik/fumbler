@@ -27,8 +27,8 @@ const menuItems = [
   {
     id: "about",
     icon: Info,
-    label: "About & Support",
-    sublabel: "What this is, and how to keep it alive",
+    label: "About Fumbler",
+    sublabel: "What this is, your privacy, and how to help",
     emoji: "💛",
   },
 ];

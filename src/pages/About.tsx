@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, Coffee, DollarSign, Github } from "lucide-react";
+import { Heart, ArrowLeft, Coffee, DollarSign, ChevronDown } from "lucide-react";
 
 const About = () => {
   const navigate = useNavigate();
@@ -54,6 +54,59 @@ const About = () => {
             Built by me :3
           </p>
         </motion.div>
+
+        {/* The details worth keeping from the old FAQ */}
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+          className="space-y-3"
+          aria-labelledby="good-to-know"
+        >
+          <h2
+            id="good-to-know"
+            className="px-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+          >
+            Good to know
+          </h2>
+          <div className="overflow-hidden rounded-2xl bg-card shadow-card">
+            {[
+              {
+                question: "Who can see my resonance profile?",
+                answer:
+                  "You control visibility section by section. Public sections can appear on your public profile; other sections stay limited to matches or people you explicitly grant access.",
+              },
+              {
+                question: "What are share links?",
+                answer:
+                  "Share links let someone see more of your resonance profile than the public default—useful before a date or meetup. You can set them to expire and revoke them anytime from Share Links; the viewer does not need an account.",
+              },
+              {
+                question: "What is variety invoicing?",
+                answer:
+                  "An experimental, consensual way to handle dynamics around treating, paying, or gifting. It is disabled by default and only activates when both people explicitly opt in.",
+              },
+              {
+                question: "Is my data sold or shared?",
+                answer:
+                  "No. Fumbler doesn't run ads, sell data, or share your information with third parties.",
+              },
+            ].map((item) => (
+              <details
+                key={item.question}
+                className="group border-b border-border last:border-b-0"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 text-left text-sm font-semibold text-foreground marker:hidden [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                </summary>
+                <p className="px-4 pb-4 text-sm leading-relaxed text-muted-foreground">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </motion.section>
 
         {/* Support section */}
         <motion.div
