@@ -55,7 +55,7 @@ const faqs = [
   },
   {
     q: "Is my data sold or shared?",
-    a: "No. fumbler doesn't run ads, sell data, or share your information with third parties. It's a weird little app built by one person who also uses it.",
+    a: "No. fumbler doesn't run ads, sell data, or share your information with third parties.",
     icon: HelpCircle,
   },
 ];
