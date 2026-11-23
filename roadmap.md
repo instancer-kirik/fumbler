@@ -1,4 +1,11 @@
-# Platonic mode and meetups
+# Current tasks
+
+## Help team button
+
+- [ ] Add a playful global Help button and private help-request form.
+- [ ] Store requests with owner-only access and verify submission states.
+
+## Platonic mode and meetups
 
 - [x] Add an All / Platonic discovery mode without changing existing dating preferences; keep platonic seekers visible in All with a Platonic badge.
 - [x] Add isolated meetup and RSVP storage with owner-scoped access and capacity validation.
