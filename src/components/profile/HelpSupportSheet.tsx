@@ -149,7 +149,7 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
     }
 
     setSubmitting(true);
-    const { error: saveError } = await (supabase as any)
+    const { error: saveError } = await supabase
       .from("fumble_help_requests")
       .insert({
         requester_id: user.id,
@@ -344,8 +344,8 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
               rel="noopener noreferrer"
               className="flex items-center gap-4 rounded-2xl bg-card shadow-card p-4 hover:bg-muted/50 transition-colors group"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF5E5B]/10 group-hover:bg-[#FF5E5B]/20 transition-colors">
-                <Coffee className="h-5 w-5 text-[#FF5E5B]" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                <Coffee className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground">Buy me a coffee</p>
@@ -360,8 +360,8 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
               rel="noopener noreferrer"
               className="flex items-center gap-4 rounded-2xl bg-card shadow-card p-4 hover:bg-muted/50 transition-colors group"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00D54B]/10 group-hover:bg-[#00D54B]/20 transition-colors">
-                <DollarSign className="h-5 w-5 text-[#00D54B]" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                <DollarSign className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground">Cash App</p>
