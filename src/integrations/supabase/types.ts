@@ -6114,6 +6114,7 @@ export type Database = {
           next_action_due: string | null
           notes: string | null
           owner_id: string
+          phone_number: string | null
           priority: string
           profile_id: string | null
           reveal_to_person: boolean
@@ -6136,6 +6137,7 @@ export type Database = {
           next_action_due?: string | null
           notes?: string | null
           owner_id?: string
+          phone_number?: string | null
           priority?: string
           profile_id?: string | null
           reveal_to_person?: boolean
@@ -6158,6 +6160,7 @@ export type Database = {
           next_action_due?: string | null
           notes?: string | null
           owner_id?: string
+          phone_number?: string | null
           priority?: string
           profile_id?: string | null
           reveal_to_person?: boolean

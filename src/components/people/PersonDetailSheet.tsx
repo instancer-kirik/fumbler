@@ -14,7 +14,8 @@ import {
   useInteractions,
   useLogInteraction,
 } from "@/hooks/use-people";
-import { Trash2, ExternalLink, Eye, EyeOff } from "lucide-react";
+import { Trash2, ExternalLink, Eye, EyeOff, Phone } from "lucide-react";
+import { normalizePhone, telHref } from "@/lib/phone";
 
 const input =
   "w-full rounded-2xl bg-secondary px-4 py-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary placeholder:text-muted-foreground transition-all";
@@ -53,6 +54,7 @@ const PersonDetailSheet = ({ person, onClose }: Props) => {
   const [nextAction, setNextAction] = useState(person.next_action || "");
   const [due, setDue] = useState(person.next_action_due || "");
   const [contactValue, setContactValue] = useState(person.contact_value || "");
+  const [phone, setPhone] = useState(person.phone_number || "");
   const [entryKind, setEntryKind] = useState("note");
   const [entryNote, setEntryNote] = useState("");
 
@@ -158,6 +160,31 @@ const PersonDetailSheet = ({ person, onClose }: Props) => {
               onChange={(e) => setContactValue(e.target.value)}
               onBlur={() => set({ contact_value: contactValue || null })}
             />
+          </Field>
+
+          <Field label="Phone">
+            <div className="flex gap-2">
+              <input
+                className={input}
+                value={phone}
+                inputMode="tel"
+                maxLength={40}
+                placeholder="number you can dial"
+                onChange={(e) => setPhone(e.target.value)}
+                onBlur={() => set({ phone_number: normalizePhone(phone) || null })}
+              />
+              {telHref(phone) && (
+                <a
+                  href={telHref(phone) ?? undefined}
+                  className="inline-flex items-center gap-1.5 rounded-2xl gradient-warm px-4 text-sm font-semibold text-primary-foreground shrink-0"
+                >
+                  <Phone className="h-4 w-4" /> Call
+                </a>
+              )}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Only you can see this. Tapping Call opens your dialer.
+            </p>
           </Field>
 
           <Field label="Private notes">

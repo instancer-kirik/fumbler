@@ -19,3 +19,8 @@
 - [x] Build the Meetups page, hosting flow, responses, and navigation.
 - [x] Add rule tests and verify the preview at mobile and desktop sizes.
 - [ ] Exercise the UI with a real signed-in account; blocked by external/unmanaged Supabase auth. Rolled-back database permission/capacity tests and mocked UI flows passed.
+
+## Calling people
+
+- [x] Store an optional phone number on each private People entry and tap to dial it.
+- [ ] Show your real help-team number in Help & Support; the call row is built and currently shows a reserved placeholder number.

@@ -56,6 +56,7 @@ export interface Person {
   next_action_due: string | null;
   contact_channel: string | null;
   contact_value: string | null;
+  phone_number: string | null;
   notes: string | null;
   tags: string[];
   last_touched_at: string | null;

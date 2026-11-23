@@ -16,6 +16,7 @@ import {
   Send,
   CheckCircle2,
   Loader2,
+  Phone,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,6 +27,8 @@ import {
   helpRequestSchema,
   type HelpRequestInput,
 } from "@/lib/help-request";
+import { HELP_TEAM_PHONE } from "@/lib/support-contact";
+import { telHref } from "@/lib/phone";
 
 interface HelpSupportSheetProps {
   open: boolean;
@@ -329,6 +332,33 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
               <span className="text-xs text-muted-foreground shrink-0">↗</span>
             </a>
           </motion.section>
+
+          {/* Call the help team */}
+          {telHref(HELP_TEAM_PHONE) && (
+            <motion.section
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
+              className="space-y-2"
+            >
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-1">
+                Reach the help team
+              </h2>
+              <a
+                href={telHref(HELP_TEAM_PHONE) ?? undefined}
+                className="flex items-center gap-4 rounded-2xl bg-card shadow-card p-4 hover:bg-muted/50 transition-colors group"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                  <Phone className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Call the help team</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 font-mono">{HELP_TEAM_PHONE}</p>
+                </div>
+                <span className="text-xs text-muted-foreground shrink-0">tap to dial</span>
+              </a>
+            </motion.section>
+          )}
 
           {/* Support the dev */}
           <motion.section

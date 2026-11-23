@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, X, AlertCircle } from "lucide-react";
+import { Search, Plus, X, AlertCircle, Phone } from "lucide-react";
 import {
   usePeople,
   useCreatePerson,
@@ -231,9 +231,12 @@ const PeoplePage = () => {
                 <p className="text-xs text-muted-foreground mt-1 truncate">Next: {p.next_action}</p>
               )}
             </div>
-            <span className="text-[10px] text-muted-foreground shrink-0">
-              {STATUS_LABELS[p.status as keyof typeof STATUS_LABELS] || p.status}
-            </span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {p.phone_number && <Phone className="h-3.5 w-3.5 text-primary" />}
+              <span className="text-[10px] text-muted-foreground">
+                {STATUS_LABELS[p.status as keyof typeof STATUS_LABELS] || p.status}
+              </span>
+            </div>
           </motion.button>
         ))}
       </div>
