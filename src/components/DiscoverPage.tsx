@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sliders, Menu, Pin, Search, X } from "lucide-react";
+import { Sliders, Menu, Pin, Search, X, UsersRound, CalendarDays } from "lucide-react";
+import { Link } from "react-router-dom";
 import ProfileCard from "./ProfileCard";
 import SwipeActions from "./SwipeActions";
 import MissedConnectionsDrawer from "./MissedConnectionsDrawer";
@@ -10,6 +11,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ResonanceProfile } from "@/data/resonance-profile";
 import { countActiveExtras, loadExtraFilters } from "@/lib/discover-filters";
+import {
+  filtersForMode,
+  getCandidateIntentFilter,
+  loadConnectionMode,
+  saveConnectionMode,
+  type ConnectionMode,
+} from "@/lib/connection-mode";
 
 
 // Map "Interested in" preferences → gender values on candidate profiles
@@ -21,12 +29,20 @@ const INTEREST_TO_GENDER: Record<string, string[]> = {
 
 const SEARCH_KEY = "fumbler.discover.search";
 
+type DiscoverCardProfile = ResonanceProfile & {
+  username?: string;
+  lookingFor: string[];
+  profileTypes: string[];
+};
+
 // Build a minimal ResonanceProfile from DB row for the card stack
-const dbToCardProfile = (row: any): ResonanceProfile & { username?: string } => ({
+const dbToCardProfile = (row: any): DiscoverCardProfile => ({
   id: row.id,
   name: row.full_name || "Anonymous",
   handle: `@${row.username || "unknown"}`,
   username: row.username,
+  lookingFor: row.looking_for || [],
+  profileTypes: row.profile_types || [],
   description: row.bio || "",
   image: row.avatar_url || "/placeholder.svg",
   age: row.age || 0,
@@ -48,8 +64,9 @@ const PIN_SELF_KEY = "fumbler.dev.pinSelf";
 
 const DiscoverPage = () => {
   const { user } = useAuth();
-  const [profiles, setProfiles] = useState<ResonanceProfile[]>([]);
+  const [profiles, setProfiles] = useState<DiscoverCardProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [connectionMode, setConnectionMode] = useState<ConnectionMode>(loadConnectionMode);
   const [menuOpen, setMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,7 +77,7 @@ const DiscoverPage = () => {
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [extraCount, setExtraCount] = useState(() =>
-    countActiveExtras(loadExtraFilters()),
+    countActiveExtras(filtersForMode(loadExtraFilters(), loadConnectionMode())),
   );
 
   const [filterVersion, setFilterVersion] = useState(0);
@@ -96,7 +113,7 @@ const DiscoverPage = () => {
         age_max?: number | null;
       };
 
-      const extras = loadExtraFilters();
+      const extras = filtersForMode(loadExtraFilters(), connectionMode);
 
       let query: any = supabase
         .from("profiles")
@@ -123,7 +140,7 @@ const DiscoverPage = () => {
 
       // Interested in → gender array overlap, null/empty allowed through
       const interested = me.interested_in || [];
-      if (interested.length > 0 && !interested.includes("Everyone")) {
+      if (connectionMode === "all" && interested.length > 0 && !interested.includes("Everyone")) {
         const genders = interested.flatMap((i) => INTEREST_TO_GENDER[i] || []);
         if (genders.length > 0) {
           const arr = `{${genders.join(",")}}`;
@@ -132,11 +149,15 @@ const DiscoverPage = () => {
       }
 
       // Looking for overlap — null/empty allowed through
-      const wants = me.looking_for || [];
+      const wants = connectionMode === "all" ? me.looking_for || [] : [];
       if (wants.length > 0) {
         const arr = `{${wants.join(",")}}`;
         query = query.or(`looking_for.eq.{},looking_for.ov.${arr}`);
       }
+
+      // Platonic is an explicit opt-in filter; All leaves the existing pool intact.
+      const candidateIntentFilter = getCandidateIntentFilter(connectionMode);
+      if (candidateIntentFilter) query = query.or(candidateIntentFilter);
 
       // Keyword search across name/username/bio
       const q = searchDebounced.trim();
@@ -166,7 +187,13 @@ const DiscoverPage = () => {
       setLoading(false);
     };
     fetchProfiles();
-  }, [user, pinSelf, filterVersion, searchDebounced]);
+  }, [user, pinSelf, filterVersion, searchDebounced, connectionMode]);
+
+  const changeConnectionMode = (mode: ConnectionMode) => {
+    saveConnectionMode(mode);
+    setConnectionMode(mode);
+    setExtraCount(countActiveExtras(filtersForMode(loadExtraFilters(), mode)));
+  };
 
   const togglePinSelf = () => {
     setPinSelf((prev) => {
@@ -258,12 +285,14 @@ const DiscoverPage = () => {
           </button>
           <button
             onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
             className="rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
           >
             <Menu className="h-5 w-5 text-foreground" />
           </button>
           <button
             onClick={() => setFiltersOpen(true)}
+            aria-label="Discovery filters"
             className="relative rounded-full bg-secondary p-2.5 transition-colors hover:bg-secondary/80"
           >
             <Sliders className="h-5 w-5 text-foreground" />
@@ -276,6 +305,37 @@ const DiscoverPage = () => {
 
         </div>
       </div>
+
+      {/* Connection mode */}
+      <div className="flex items-center gap-2 px-5 pb-2">
+        <div className="grid flex-1 grid-cols-2 rounded-2xl bg-secondary p-1">
+          {(["all", "platonic"] as ConnectionMode[]).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => changeConnectionMode(mode)}
+              aria-pressed={connectionMode === mode}
+              className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold capitalize transition-colors ${
+                connectionMode === mode ? "bg-card text-foreground shadow-card" : "text-muted-foreground"
+              }`}
+            >
+              {mode === "platonic" && <UsersRound className="h-3.5 w-3.5" />}
+              {mode === "all" ? "All" : "Platonic"}
+            </button>
+          ))}
+        </div>
+        {connectionMode === "platonic" && (
+          <Link to="/meetups" aria-label="Browse platonic meetups" className="gradient-warm rounded-2xl p-3 text-primary-foreground">
+            <CalendarDays className="h-4 w-4" />
+          </Link>
+        )}
+      </div>
+      {connectionMode === "platonic" && (
+        <div className="px-5 pb-2">
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            People who chose Platonic or Friends. Gender, orientation, and romantic-intent filters are ignored. <Link to="/meetups" className="font-medium text-foreground underline underline-offset-2">Browse meetups</Link>
+          </p>
+        </div>
+      )}
 
       {/* Search */}
       <div className="px-5 pb-2">
@@ -316,12 +376,12 @@ const DiscoverPage = () => {
               <span className="mb-4 text-6xl">🫠</span>
               <h2 className="mb-2 font-display text-xl font-bold text-foreground">
                 {profiles.length === 0
-                  ? "No one here yet!"
+                  ? connectionMode === "platonic" ? "No platonic profiles yet" : "No one here yet!"
                   : "No more profiles!"}
               </h2>
               <p className="text-center text-sm text-muted-foreground px-8">
                 {profiles.length === 0
-                  ? "Be patient — more people are joining."
+                  ? connectionMode === "platonic" ? "Try All, adjust your filters, or start a meetup." : "Be patient — more people are joining."
                   : "You've seen everyone nearby. Check back later for new fumbles."}
               </p>
               {profiles.length > 0 && (
@@ -344,6 +404,7 @@ const DiscoverPage = () => {
                     profile={profile}
                     onSwipe={handleSwipe}
                     isTop={i === visibleProfiles.length - 1}
+                    connectionMode={connectionMode}
                   />
                 ))}
             </AnimatePresence>
@@ -354,7 +415,7 @@ const DiscoverPage = () => {
       {/* Actions */}
       {!allSwiped && !loading && profiles.length > 0 && (
         <div className="py-4">
-          <SwipeActions onSwipe={handleSwipe} onSuperLike={handleSuperLike} />
+          <SwipeActions onSwipe={handleSwipe} onSuperLike={handleSuperLike} connectionMode={connectionMode} />
         </div>
       )}
 
@@ -368,8 +429,9 @@ const DiscoverPage = () => {
       <DiscoverFiltersSheet
         open={filtersOpen}
         onOpenChange={setFiltersOpen}
+        mode={connectionMode}
         onSaved={() => {
-          setExtraCount(countActiveExtras(loadExtraFilters()));
+          setExtraCount(countActiveExtras(filtersForMode(loadExtraFilters(), connectionMode)));
           setFilterVersion((v) => v + 1);
         }}
 

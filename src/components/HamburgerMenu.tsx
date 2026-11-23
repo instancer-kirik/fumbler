@@ -1,6 +1,6 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Info, X } from "lucide-react";
+import { MessageCircle, Info, X, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface HamburgerMenuProps {
@@ -16,6 +16,13 @@ const menuItems = [
     label: "Missed Connections",
     sublabel: "Someone out there is wondering about you",
     emoji: "👀",
+  },
+  {
+    id: "meetups",
+    icon: CalendarDays,
+    label: "Platonic Meetups",
+    sublabel: "Host or join an activity-based plan",
+    emoji: "🤝",
   },
   {
     id: "about",
@@ -40,6 +47,8 @@ const HamburgerMenu = ({
       setTimeout(() => onMissedConnections(), 150);
     } else if (id === "about") {
       navigate("/about");
+    } else if (id === "meetups") {
+      navigate("/meetups");
     }
   };
 

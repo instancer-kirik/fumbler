@@ -1826,8 +1826,10 @@ export type Database = {
           created_at: string
           description: string
           ends_at: string | null
+          going_count: number
           host_id: string
           id: string
+          interested_count: number
           location_name: string
           starts_at: string
           status: string
@@ -1840,8 +1842,10 @@ export type Database = {
           created_at?: string
           description?: string
           ends_at?: string | null
+          going_count?: number
           host_id: string
           id?: string
+          interested_count?: number
           location_name: string
           starts_at: string
           status?: string
@@ -1854,8 +1858,10 @@ export type Database = {
           created_at?: string
           description?: string
           ends_at?: string | null
+          going_count?: number
           host_id?: string
           id?: string
+          interested_count?: number
           location_name?: string
           starts_at?: string
           status?: string

@@ -1,9 +1,10 @@
-import { Compass, Heart, ClipboardList, User, Shapes, UserPlus } from "lucide-react";
+import { Compass, Heart, ClipboardList, User, Shapes, UserPlus, CalendarDays } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { id: "discover", icon: Compass, label: "Discover", path: "/discover" },
   { id: "follow", icon: UserPlus, label: "Follow", path: "/follow" },
+  { id: "meetups", icon: CalendarDays, label: "Meetups", path: "/meetups" },
   { id: "aesthetics", icon: Shapes, label: "Atlas", path: "/aesthetics" },
   { id: "matches", icon: Heart, label: "Matches", path: "/matches" },
   { id: "people", icon: ClipboardList, label: "People", path: "/people" },

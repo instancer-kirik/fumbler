@@ -17,6 +17,7 @@ import AppLayout from "@/components/AppLayout";
 import About from "./pages/About";
 import AestheticsPage from "./pages/AestheticsPage";
 import FollowPage from "./pages/FollowPage";
+import MeetupsPage from "./pages/MeetupsPage";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             >
               <Route path="/discover" element={<DiscoverPage />} />
               <Route path="/follow" element={<FollowPage />} />
+              <Route path="/meetups" element={<MeetupsPage />} />
               <Route path="/matches" element={<MatchesPage />} />
               <Route path="/people" element={<PeoplePage />} />
               <Route path="/profile" element={<ProfilePage />} />

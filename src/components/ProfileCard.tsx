@@ -2,14 +2,17 @@ import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { MapPin, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ResonanceProfile } from "@/data/resonance-profile";
+import { getPlatonicBadge, type ConnectionMode } from "@/lib/connection-mode";
 
 interface ProfileCardProps {
-  profile: ResonanceProfile & { username?: string };
+  profile: ResonanceProfile & { username?: string; lookingFor?: string[]; profileTypes?: string[] };
   onSwipe: (direction: "left" | "right") => void;
   isTop: boolean;
+  connectionMode: ConnectionMode;
 }
 
-const ProfileCard = ({ profile, onSwipe, isTop }: ProfileCardProps) => {
+const ProfileCard = ({ profile, onSwipe, isTop, connectionMode }: ProfileCardProps) => {
+  const platonicBadge = getPlatonicBadge(profile);
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
@@ -49,7 +52,7 @@ const ProfileCard = ({ profile, onSwipe, isTop }: ProfileCardProps) => {
               className="absolute left-6 top-8 z-20 rounded-xl border-4 border-primary px-4 py-2 font-display text-2xl font-bold text-primary"
               style={{ opacity: likeOpacity, rotate: -12 }}
             >
-              LIKE 💛
+              {connectionMode === "platonic" ? "CONNECT 🤝" : "LIKE 💛"}
             </motion.div>
             <motion.div
               className="absolute right-6 top-8 z-20 rounded-xl border-4 border-destructive px-4 py-2 font-display text-2xl font-bold text-destructive"
@@ -71,9 +74,11 @@ const ProfileCard = ({ profile, onSwipe, isTop }: ProfileCardProps) => {
             </h2>
           </div>
 
-          <div className="mb-3 flex items-center gap-1.5 text-sm opacity-80">
-            <MapPin className="h-3.5 w-3.5" />
-            <span>{profile.distance}</span>
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+            <span className="flex items-center gap-1.5 opacity-80"><MapPin className="h-3.5 w-3.5" />{profile.distance}</span>
+            {platonicBadge && (
+              <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground">{platonicBadge}</span>
+            )}
           </div>
 
           <p className="mb-4 text-sm leading-relaxed opacity-90">{profile.bio}</p>

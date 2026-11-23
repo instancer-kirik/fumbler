@@ -3,6 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import type { ConnectionMode } from "@/lib/connection-mode";
 import {
   DEFAULT_EXTRA_FILTERS,
   ExtraFilters,
@@ -16,12 +17,13 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSaved?: () => void;
+  mode: ConnectionMode;
 }
 
 const INTERESTED_IN = ["Women", "Men", "Non-binary", "Everyone"];
 const LOOKING_FOR = ["Platonic", "Romantic", "Casual", "Serious", "Play", "Collab"];
 
-const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
+const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved, mode }: Props) => {
   const { user } = useAuth();
   const [interestedIn, setInterestedIn] = useState<string[]>([]);
   const [lookingFor, setLookingFor] = useState<string[]>([]);
@@ -113,31 +115,41 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
           <SheetTitle className="font-display text-lg">Discovery filters</SheetTitle>
         </SheetHeader>
         <div className="mt-4 space-y-5 pb-6 overflow-y-auto flex-1">
-          <p className="text-xs text-muted-foreground">
-            These live on your profile — updating here also updates your profile prefs.
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {mode === "platonic"
+              ? "Platonic mode uses your existing Looking for and Friends preferences. Dating-only controls are hidden and ignored."
+              : "These live on your profile — updating here also updates your profile prefs."}
           </p>
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Show me</label>
-            <div className="flex flex-wrap gap-1.5">
-              {INTERESTED_IN.map((i) => (
-                <Chip key={i} active={interestedIn.includes(i)} onClick={() => toggle(interestedIn, i, setInterestedIn)}>
-                  {i}
-                </Chip>
-              ))}
+          {mode === "all" && (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">Show me</label>
+              <div className="flex flex-wrap gap-1.5">
+                {INTERESTED_IN.map((i) => (
+                  <Chip key={i} active={interestedIn.includes(i)} onClick={() => toggle(interestedIn, i, setInterestedIn)}>
+                    {i}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Looking for</label>
-            <div className="flex flex-wrap gap-1.5">
-              {LOOKING_FOR.map((l) => (
-                <Chip key={l} active={lookingFor.includes(l)} onClick={() => toggle(lookingFor, l, setLookingFor)}>
-                  {l}
-                </Chip>
-              ))}
+          {mode === "all" ? (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">Looking for</label>
+              <div className="flex flex-wrap gap-1.5">
+                {LOOKING_FOR.map((l) => (
+                  <Chip key={l} active={lookingFor.includes(l)} onClick={() => toggle(lookingFor, l, setLookingFor)}>
+                    {l}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-2xl bg-primary/10 p-3 text-xs leading-relaxed text-foreground">
+              Showing people who explicitly selected <strong>Platonic</strong> or <strong>Friends</strong>. Your saved Looking for choices are unchanged.
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-2 block">Age range</label>
@@ -148,49 +160,53 @@ const DiscoverFiltersSheet = ({ open, onOpenChange, onSaved }: Props) => {
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Orientation</label>
-            <div className="flex flex-wrap gap-1.5">
-              {ORIENTATIONS.map((o) => (
-                <Chip
-                  key={o}
-                  active={extras.orientations.includes(o)}
-                  onClick={() =>
-                    setExtras((e) => ({
-                      ...e,
-                      orientations: e.orientations.includes(o)
-                        ? e.orientations.filter((x) => x !== o)
-                        : [...e.orientations, o],
-                    }))
-                  }
-                >
-                  {o}
-                </Chip>
-              ))}
+          {mode === "all" && (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">Orientation</label>
+              <div className="flex flex-wrap gap-1.5">
+                {ORIENTATIONS.map((o) => (
+                  <Chip
+                    key={o}
+                    active={extras.orientations.includes(o)}
+                    onClick={() =>
+                      setExtras((e) => ({
+                        ...e,
+                        orientations: e.orientations.includes(o)
+                          ? e.orientations.filter((x) => x !== o)
+                          : [...e.orientations, o],
+                      }))
+                    }
+                  >
+                    {o}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Here for</label>
-            <div className="flex flex-wrap gap-1.5">
-              {PROFILE_TYPES.map((t) => (
-                <Chip
-                  key={t}
-                  active={extras.profileTypes.includes(t)}
-                  onClick={() =>
-                    setExtras((e) => ({
-                      ...e,
-                      profileTypes: e.profileTypes.includes(t)
-                        ? e.profileTypes.filter((x) => x !== t)
-                        : [...e.profileTypes, t],
-                    }))
-                  }
-                >
-                  {t}
-                </Chip>
-              ))}
+          {mode === "all" && (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">Here for</label>
+              <div className="flex flex-wrap gap-1.5">
+                {PROFILE_TYPES.map((t) => (
+                  <Chip
+                    key={t}
+                    active={extras.profileTypes.includes(t)}
+                    onClick={() =>
+                      setExtras((e) => ({
+                        ...e,
+                        profileTypes: e.profileTypes.includes(t)
+                          ? e.profileTypes.filter((x) => x !== t)
+                          : [...e.profileTypes, t],
+                      }))
+                    }
+                  >
+                    {t}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-2 block">Only show</label>
