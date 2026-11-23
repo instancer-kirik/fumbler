@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Loader2,
   Phone,
+  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,6 +22,7 @@ import {
 } from "@/lib/help-request";
 import { HELP_TEAM_PHONE } from "@/lib/support-contact";
 import { telHref } from "@/lib/phone";
+import HelpChat from "@/components/profile/HelpChat";
 
 interface HelpSupportSheetProps {
   open: boolean;
@@ -36,6 +38,7 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
   const [allowContact, setAllowContact] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const contactHref = [
@@ -98,6 +101,10 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
         side="bottom"
         className="z-[70] rounded-t-3xl bg-background max-h-[90vh] flex flex-col p-0"
       >
+        {showChat ? (
+          <HelpChat onBack={() => setShowChat(false)} />
+        ) : (
+          <>
         <SheetHeader className="shrink-0 px-5 pt-6 pb-3">
           <SheetTitle className="font-display text-xl font-bold text-foreground flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-primary" />
@@ -207,6 +214,14 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   {submitting ? "Saving your request…" : "Send to the help team"}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShowChat(true)}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-secondary py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                >
+                  <MessageCircle className="h-4 w-4 text-primary" />
+                  Start chat
+                </button>
               </form>
             )}
           </motion.section>
@@ -270,6 +285,8 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
             About fumbler
           </button>
         </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   );

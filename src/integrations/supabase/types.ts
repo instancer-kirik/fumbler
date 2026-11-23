@@ -1763,6 +1763,38 @@ export type Database = {
           },
         ]
       }
+      fumble_help_messages: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          request_id: string
+        }
+        Insert: {
+          author_id?: string
+          body: string
+          created_at?: string
+          id?: string
+          request_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fumble_help_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "fumble_help_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fumble_help_requests: {
         Row: {
           allow_contact: boolean

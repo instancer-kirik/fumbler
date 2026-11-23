@@ -20,3 +20,9 @@ export const helpRequestSchema = z.object({
 });
 
 export type HelpRequestInput = z.infer<typeof helpRequestSchema>;
+
+export const helpChatMessageSchema = z
+  .string()
+  .trim()
+  .min(1, "Write a message before sending.")
+  .max(2000, "Keep each chat message under 2,000 characters.");
