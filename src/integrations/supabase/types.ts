@@ -1763,6 +1763,129 @@ export type Database = {
           },
         ]
       }
+      fumble_meetup_rsvps: {
+        Row: {
+          created_at: string
+          id: string
+          meetup_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meetup_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meetup_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fumble_meetup_rsvps_meetup_id_fkey"
+            columns: ["meetup_id"]
+            isOneToOne: false
+            referencedRelation: "fumble_meetups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_meetup_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_meetup_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_meetup_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fumble_meetups: {
+        Row: {
+          capacity: number | null
+          category: string
+          created_at: string
+          description: string
+          ends_at: string | null
+          host_id: string
+          id: string
+          location_name: string
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          category?: string
+          created_at?: string
+          description?: string
+          ends_at?: string | null
+          host_id: string
+          id?: string
+          location_name: string
+          starts_at: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          category?: string
+          created_at?: string
+          description?: string
+          ends_at?: string | null
+          host_id?: string
+          id?: string
+          location_name?: string
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fumble_meetups_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_meetups_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fumble_meetups_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fumble_photos: {
         Row: {
           created_at: string
@@ -11672,6 +11795,29 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_fumble_meetups: {
+        Args: never
+        Returns: {
+          capacity: number
+          category: string
+          created_at: string
+          description: string
+          ends_at: string
+          going_count: number
+          host_avatar_url: string
+          host_id: string
+          host_name: string
+          host_username: string
+          id: string
+          interested_count: number
+          location_name: string
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+          viewer_status: string
+        }[]
       }
       get_goal_style_board: { Args: { target_id: string }; Returns: Json }
       get_instance_context_hierarchy: {
