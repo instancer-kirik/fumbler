@@ -11,6 +11,12 @@
 - [ ] Replace broad signed-in and permissive rules with owner, membership, or role checks.
 - [ ] Test affected access paths, mark fixed findings, and leave every unselected finding unchanged.
 
+## Chat-only help
+
+- [x] Make the private chat the only help-request path and remove the separate inbox form.
+- [x] Preserve unsent drafts when switching between help conversations.
+- [x] Verify the chat-only flow at phone and desktop sizes.
+
 ## Help team button
 
 - [x] Add Start chat beside Send to help team, with private saved threads and help-team replies.

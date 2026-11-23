@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, MessageCircle, Plus, Send } from "lucide-react";
-import { SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Loader2, Mail, MessageCircle, Phone, Plus, Send } from "lucide-react";
+import { SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { HELP_REQUEST_CATEGORIES, helpChatMessageSchema, helpChatStartSchema } from "@/lib/help-request";
 import { useLocation } from "react-router-dom";
+import { HELP_TEAM_PHONE } from "@/lib/support-contact";
+import { telHref } from "@/lib/phone";
 
-interface HelpChatProps {
-  onBack: () => void;
-}
+const helpEmailHref = [
+  "mailto:kirik@instance.select",
+  "?subject=",
+  encodeURIComponent("fumbler feedback"),
+  "&body=",
+  encodeURIComponent("Hey,\n\n"),
+].join("");
+const helpPhoneHref = telHref(HELP_TEAM_PHONE);
 
 const categoryLabels = Object.fromEntries(
   HELP_REQUEST_CATEGORIES.map((category) => [category.value, category.label]),
@@ -24,13 +31,13 @@ const formatTime = (value: string) =>
     minute: "2-digit",
   }).format(new Date(value));
 
-const HelpChat = ({ onBack }: HelpChatProps) => {
+const HelpChat = () => {
   const { user } = useAuth();
   const location = useLocation();
   const queryClient = useQueryClient();
   const [activeRequestId, setActiveRequestId] = useState<string | null>(null);
   const [startingNew, setStartingNew] = useState(false);
-  const [draft, setDraft] = useState("");
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -64,15 +71,17 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
   });
 
   useEffect(() => {
-    if (!startingNew && !activeRequestId && requests[0]) {
+    if (!startingNew && !activeRequestId && requests[0] && !drafts.new) {
       setActiveRequestId(requests[0].id);
     }
-  }, [activeRequestId, requests, startingNew]);
+  }, [activeRequestId, drafts.new, requests, startingNew]);
 
   const activeRequest = useMemo(
     () => requests.find((request) => request.id === activeRequestId) ?? null,
     [activeRequestId, requests],
   );
+  const draftKey = startingNew || !activeRequestId ? "new" : activeRequestId;
+  const draft = drafts[draftKey] ?? "";
 
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
     queryKey: ["help-chat-messages", activeRequestId],
@@ -103,7 +112,7 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
 
       if (startingNew || !activeRequestId) {
         if (isHelpTeam && requests.length > 0) {
-          throw new Error("Choose a request from the help-team inbox to reply.");
+          throw new Error("Choose a help-team conversation to reply.");
         }
         const { data, error: createError } = await supabase
           .from("fumble_help_requests")
@@ -118,7 +127,7 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
           .select("id")
           .single();
         if (createError) throw createError;
-        return { requestId: data.id, isNew: true };
+        return { requestId: data.id, isNew: true, draftKey };
       }
 
       const { error: insertError } = await supabase
@@ -136,10 +145,10 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
           .update({ status: "in_progress" })
           .eq("id", activeRequestId);
       }
-      return { requestId: activeRequestId, isNew: false };
+      return { requestId: activeRequestId, isNew: false, draftKey };
     },
-    onSuccess: async ({ requestId, isNew }) => {
-      setDraft("");
+    onSuccess: async ({ requestId, isNew, draftKey: sentDraftKey }) => {
+      setDrafts((current) => ({ ...current, [sentDraftKey]: "" }));
       setError(null);
       setStartingNew(false);
       setActiveRequestId(requestId);
@@ -167,33 +176,42 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
   const startNewChat = () => {
     setStartingNew(true);
     setActiveRequestId(null);
-    setDraft("");
     setError(null);
   };
 
   return (
     <>
-      <SheetHeader className="shrink-0 px-5 pb-3 pt-6">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Back to Help and Support"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-card text-muted-foreground shadow-card transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <div>
-            <SheetTitle className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              {isHelpTeam ? "Help-team chat" : "Chat with the help team"}
-            </SheetTitle>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Private messages, saved for when you come back.
-            </p>
+      <div className="shrink-0 px-5 pb-3 pt-6">
+        <div className="pr-7">
+          <SheetTitle className="flex items-center gap-2 text-left font-display text-xl font-bold text-foreground">
+            <MessageCircle className="h-5 w-5 text-primary" />
+            {isHelpTeam ? "Help-team chat" : "Help & Support"}
+          </SheetTitle>
+          <p className="mt-1 text-left text-xs leading-relaxed text-muted-foreground">
+            {isHelpTeam
+              ? "Private conversations with people asking for help."
+              : "A private chat with the help team, saved for when you come back."}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <a
+              href={helpEmailHref}
+              className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Mail className="h-3.5 w-3.5 text-primary" />
+              Email
+            </a>
+            {helpPhoneHref && (
+              <a
+                href={helpPhoneHref}
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <Phone className="h-3.5 w-3.5 text-primary" />
+                Call
+              </a>
+            )}
           </div>
         </div>
-      </SheetHeader>
+      </div>
 
       <div className="flex min-h-0 flex-1 flex-col px-5 pb-6">
         {!user ? (
@@ -204,7 +222,7 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
           <>
             <div className="mb-3 flex items-center gap-2">
               <select
-                aria-label={isHelpTeam ? "Help-team request inbox" : "Your help conversations"}
+                aria-label={isHelpTeam ? "Help-team conversations" : "Your help conversations"}
                 value={startingNew ? "new" : activeRequestId ?? ""}
                 onChange={(event) => {
                   if (event.target.value === "new") {
@@ -292,7 +310,8 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
                 id="help-chat-message"
                 value={draft}
                 onChange={(event) => {
-                  setDraft(event.target.value);
+                  const { value } = event.target;
+                  setDrafts((current) => ({ ...current, [draftKey]: value }));
                   if (error) setError(null);
                 }}
                 rows={3}

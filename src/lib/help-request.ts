@@ -8,19 +8,6 @@ export const HELP_REQUEST_CATEGORIES = [
   { value: "other", label: "Something else" },
 ] as const;
 
-export const helpRequestSchema = z.object({
-  category: z.enum(["technical", "account", "safety", "connection", "other"]),
-  message: z
-    .string()
-    .trim()
-    .min(10, "Give us at least 10 characters so we know what went sideways.")
-    .max(2000, "Keep the request under 2,000 characters."),
-  pagePath: z.string().max(500),
-  allowContact: z.boolean(),
-});
-
-export type HelpRequestInput = z.infer<typeof helpRequestSchema>;
-
 export const helpChatMessageSchema = z
   .string()
   .trim()
