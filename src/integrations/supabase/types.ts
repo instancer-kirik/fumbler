@@ -1763,6 +1763,42 @@ export type Database = {
           },
         ]
       }
+      fumble_help_requests: {
+        Row: {
+          allow_contact: boolean
+          category: string
+          created_at: string
+          id: string
+          message: string
+          page_path: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          allow_contact?: boolean
+          category: string
+          created_at?: string
+          id?: string
+          message: string
+          page_path?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          allow_contact?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          page_path?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       fumble_meetup_rsvps: {
         Row: {
           created_at: string
