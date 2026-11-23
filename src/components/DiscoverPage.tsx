@@ -362,7 +362,7 @@ const DiscoverPage = () => {
 
       {/* Card stack */}
       <div className="relative mx-auto w-full max-w-sm flex-1 px-4">
-        <div className="relative h-[65vh] w-full">
+        <div className="relative h-[50vh] min-h-[320px] max-h-[620px] w-full">
           {loading ? (
             <div className="flex h-full items-center justify-center">
               <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
