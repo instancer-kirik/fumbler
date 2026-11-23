@@ -13,8 +13,9 @@
 
 ## Help team button
 
-- [ ] Add Start chat beside Send to help team, with private saved threads and help-team replies.
-- [ ] Test chat validation, permissions, and phone/desktop interactions.
+- [x] Add Start chat beside Send to help team, with private saved threads and help-team replies.
+- [x] Test chat validation, rolled-back permissions, and mocked phone-size interactions.
+- [ ] Exercise real signed-in chat submission; blocked by external/unmanaged Supabase auth. The mocked thread/reply walkthrough and database privacy checks passed.
 - [x] Add a playful global Help button and private help-request form.
 - [x] Store requests privately, allow help-team review, and verify validation, mocked submission, and database permissions.
 - [ ] Exercise a real signed-in submission; blocked by external/unmanaged Supabase auth. The mocked UI walkthrough passed.

@@ -5,7 +5,7 @@ import { SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { HELP_REQUEST_CATEGORIES, helpChatMessageSchema } from "@/lib/help-request";
+import { HELP_REQUEST_CATEGORIES, helpChatMessageSchema, helpChatStartSchema } from "@/lib/help-request";
 import { useLocation } from "react-router-dom";
 
 interface HelpChatProps {
@@ -155,7 +155,8 @@ const HelpChat = ({ onBack }: HelpChatProps) => {
 
   const handleSend = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const parsed = helpChatMessageSchema.safeParse(draft);
+    const schema = startingNew || !activeRequestId ? helpChatStartSchema : helpChatMessageSchema;
+    const parsed = schema.safeParse(draft);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Write a message first.");
       return;

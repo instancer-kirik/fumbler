@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { helpChatMessageSchema, helpRequestSchema } from "@/lib/help-request";
+import { helpChatMessageSchema, helpChatStartSchema, helpRequestSchema } from "@/lib/help-request";
 
 const validRequest = {
   category: "technical",
@@ -39,5 +39,10 @@ describe("help chat messages", () => {
 
   it("limits each chat message to 2,000 characters", () => {
     expect(helpChatMessageSchema.safeParse("x".repeat(2001)).success).toBe(false);
+  });
+
+  it("requires 10 characters for the first message but allows short follow-ups", () => {
+    expect(helpChatStartSchema.safeParse("too short").success).toBe(false);
+    expect(helpChatMessageSchema.safeParse("ok").success).toBe(true);
   });
 });
