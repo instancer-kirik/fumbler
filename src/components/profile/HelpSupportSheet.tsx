@@ -247,7 +247,10 @@ const HelpSupportSheet = ({ open, onOpenChange }: HelpSupportSheetProps) => {
                   <Textarea
                     id="help-message"
                     value={message}
-                    onChange={(event) => setMessage(event.target.value)}
+                    onChange={(event) => {
+                      setMessage(event.target.value);
+                      if (error) setError(null);
+                    }}
                     maxLength={2000}
                     rows={4}
                     placeholder="What you tried, what happened, and what you expected…"

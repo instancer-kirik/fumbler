@@ -2,8 +2,9 @@
 
 ## Help team button
 
-- [ ] Add a playful global Help button and private help-request form.
-- [ ] Store requests with owner-only access and verify submission states.
+- [x] Add a playful global Help button and private help-request form.
+- [x] Store requests privately, allow help-team review, and verify validation, mocked submission, and database permissions.
+- [ ] Exercise a real signed-in submission; blocked by external/unmanaged Supabase auth. The mocked UI walkthrough passed.
 
 ## Platonic mode and meetups
 
