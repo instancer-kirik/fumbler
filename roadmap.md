@@ -1,6 +1,6 @@
 # Platonic mode and meetups
 
-- [ ] Add an All / Platonic discovery mode without changing existing dating preferences.
+- [ ] Add an All / Platonic discovery mode without changing existing dating preferences; keep platonic seekers visible in All with a Platonic badge.
 - [ ] Add isolated meetup and RSVP storage with owner-scoped access and capacity validation.
 - [ ] Build the Meetups page, hosting flow, responses, and navigation.
 - [ ] Add rule tests and verify the preview at mobile and desktop sizes.
