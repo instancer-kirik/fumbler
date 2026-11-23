@@ -1,5 +1,11 @@
 # Current tasks
 
+## Selected security findings
+
+- [ ] Map only the selected scan findings to their current table and storage policies.
+- [ ] Replace broad signed-in and permissive rules with owner, membership, or role checks.
+- [ ] Test affected access paths, mark fixed findings, and leave every unselected finding unchanged.
+
 ## Help team button
 
 - [x] Add a playful global Help button and private help-request form.
